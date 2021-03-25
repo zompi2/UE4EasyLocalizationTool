@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.26",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "ELTExample",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"EasyLocalisationTool"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EasyLocalisationTool",
+			"Enabled": true
+		}
+	]
+}
