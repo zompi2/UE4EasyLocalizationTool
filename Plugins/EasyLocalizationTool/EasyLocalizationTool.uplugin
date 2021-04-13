@@ -1,30 +1,30 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0",
+	"VersionName": "0.1.0",
 	"FriendlyName": "EasyLocalizationTool",
-	"Description": "",
-	"Category": "Other",
-	"CreatedBy": "",
-	"CreatedByURL": "",
-	"DocsURL": "",
+	"Description": "Tool to simplify the way a simple localizations are handled.",
+	"Category": "Localization",
+	"CreatedBy": "Damian Nowakowski",
+	"CreatedByURL": "https://zompidev.blogspot.com",
+	"DocsURL": "https://github.com/zompi2/UE4EasyLocalizationTool",
 	"MarketplaceURL": "",
-	"SupportURL": "",
+	"EngineVersion": "4.26.0",
+	"SupportURL": "mailto:zompi2@gmail.com",
 	"CanContainContent": true,
-	"IsBetaVersion": false,
+	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
-	"Installed": false,
-	"Modules" :
-	[
+	"Installed": true,
+	"Modules": [
 		{
-			"Name" : "EasyLocalizationTool",
-			"Type" : "Runtime",
-			"LoadingPhase" : "Default"
+			"Name": "EasyLocalizationTool",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
-			"Name" : "EasyLocalizationToolEditor",
-			"Type" : "Editor",
-			"LoadingPhase" : "PreDefault"
+			"Name": "EasyLocalizationToolEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }
