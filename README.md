@@ -8,6 +8,6 @@ To open editor click `Window -> Easy Localization Tool` in the editor.
 
 This tool is under heavy construction and will be improved over time.
 
-Thank you all for support!
+Thank you all for the support!
 
 ![langpic](https://user-images.githubusercontent.com/7863125/114599474-7317d780-9c93-11eb-9b0b-c94b7e04f2db.png)
