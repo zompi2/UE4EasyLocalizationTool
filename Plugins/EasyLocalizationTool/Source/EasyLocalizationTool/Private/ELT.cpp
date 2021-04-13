@@ -13,6 +13,7 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
 	{
+		FInternationalization::Get().LoadAllCultureData();
 		const FString& CurrentLanguage = GetCurrentLanguage();
 		if (CurrentLanguage.IsEmpty())
 		{

@@ -167,11 +167,11 @@ void UELTEditor::OnCSVPathChanged(const FString& NewPath)
 {
 	if (CSVPaths.Contains(GetCurrentLocName()))
 	{
-		CSVPaths[GetCurrentLocName()] = NewPath;
+		CSVPaths[GetCurrentLocName()] = FPaths::ConvertRelativePathToFull(NewPath);
 	}
 	else
 	{
-		CSVPaths.Add(GetCurrentLocName(), NewPath);
+		CSVPaths.Add(GetCurrentLocName(), FPaths::ConvertRelativePathToFull(NewPath));
 	}
 	UELTEditorSettings::SetCSVPaths(CSVPaths);
 	EditorWidget->FillCSVPath(GetCurrentCSVPath());
@@ -183,7 +183,6 @@ void UELTEditor::OnGenerateLocFiles()
 	if (GenerateLocFiles(ReturnMessage))
 	{
 		RefreshAvailableLangs(true);
-		FTextLocalizationManager::Get().RefreshResources();
 		SetLanguagePreview();
 	}
 	

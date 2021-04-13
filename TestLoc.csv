@@ -1,0 +1,31 @@
+Namespace,Key,lang-en,lang-pl,lang-de
+GAME,TEST_EXAMPLE,This is some example text.,To jest przykładowy tekst.,Dies ist ein Beispieltext.
+GAME,TEST_EXAMPLE_2,"This, is some example, with punctuations!","To, jest przykładowy tekst, z interpunkcją!","Dies, ist ein Beispiel, mit Interpunktionen!"
+GAME,TEST_EXAMPLE_3,"This are some
+examples with
+new lines","To jest kilka
+przykładów z
+nowymi liniami","Das sind einige
+Beispiele mit
+neue Zeilen"
+GAME,TEST_EXAMPLE_4,"This are some
+examples with
+new lines and with
+
+new lines at the end
+
+","To jest kilka
+przykładów z
+nowymi liniami
+
+i nowymi liniami na końcu
+
+","Das sind einige
+Beispiele mit
+neue Zeilen und mit
+
+neue Zeilen am Ende
+
+"
+GAME,TEST_EXAMPLE_5,"""And here we ""have"" example in quote""","""A tu mamy ""przykład"" jako cytat","""Und hier haben wir"" Beispiel im Zitat """
+GAME,TEST_EXAMPLE_6,"And another ""quote"" example","I Inny ""przykład"" z cytatem","Und noch ein ""Zitat"" -Beispiel"
