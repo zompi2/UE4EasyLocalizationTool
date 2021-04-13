@@ -8,7 +8,7 @@
 class SWidget;
 
 UCLASS()
-class EASYLOCALISATIONTOOLEDITOR_API UELTEditor : public UObject
+class EASYLOCALIZATIONTOOLEDITOR_API UELTEditor : public UObject
 {
 public:
 
@@ -22,14 +22,14 @@ public:
 	void ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType);
 	void InitializeTheWidget();
 
-	void OnLocalisationPathChanged(const FString& NewPath);
+	void OnLocalizationPathChanged(const FString& NewPath);
 	void OnCSVPathChanged(const FString& NewPath);
 	void OnGenerateLocFiles();
 	void OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStartup);
-	void OnLocalisationPreviewChanged(bool bNewLocalisationPreview);
-	void OnLocalisationPreviewLangChanged(const FString& LangPreview);
-	void OnLocalisationFirstRunChanged(bool bNewLocalisationPreview);
-	void OnLocalisationFirstRunLangChanged(const FString& LangPreview);
+	void OnLocalizationPreviewChanged(bool bNewLocalizationPreview);
+	void OnLocalizationPreviewLangChanged(const FString& LangPreview);
+	void OnLocalizationFirstRunChanged(bool bNewLocalizationPreview);
+	void OnLocalizationFirstRunLangChanged(const FString& LangPreview);
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
 	void SetLanguagePreview();

@@ -7,7 +7,7 @@
 #include "ELT.generated.h"
 
 UCLASS()
-class EASYLOCALISATIONTOOL_API UELT : public UGameInstanceSubsystem
+class EASYLOCALIZATIONTOOL_API UELT : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

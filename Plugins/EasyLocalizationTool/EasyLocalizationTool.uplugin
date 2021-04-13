@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "EasyLocalisationTool",
+	"FriendlyName": "EasyLocalizationTool",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "",
@@ -17,12 +17,12 @@
 	"Modules" :
 	[
 		{
-			"Name" : "EasyLocalisationTool",
+			"Name" : "EasyLocalizationTool",
 			"Type" : "Runtime",
 			"LoadingPhase" : "Default"
 		},
 		{
-			"Name" : "EasyLocalisationToolEditor",
+			"Name" : "EasyLocalizationToolEditor",
 			"Type" : "Editor",
 			"LoadingPhase" : "PreDefault"
 		}

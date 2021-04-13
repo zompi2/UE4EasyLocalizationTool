@@ -14,7 +14,7 @@ public class ELTExample : ModuleRules
 			"Engine", 
 			"InputCore",
 			"UMG",
-			"EasyLocalisationTool"
+			"EasyLocalizationTool"
 		});
 	}
 }

@@ -10,14 +10,14 @@ Settings->_SettingName = _SettingValue; \
 Settings->SaveConfig();
 
 
-FString UELTEditorSettings::GetLocalisationPath()
+FString UELTEditorSettings::GetLocalizationPath()
 {
-	ELTE_GET_SETTING(LocalisationPath);
+	ELTE_GET_SETTING(LocalizationPath);
 }
 
-void UELTEditorSettings::SetLocalisationPath(const FString& NewLocalisationPath)
+void UELTEditorSettings::SetLocalizationPath(const FString& NewLocalizationPath)
 {
-	ELTE_SET_SETTING(LocalisationPath, NewLocalisationPath);
+	ELTE_SET_SETTING(LocalizationPath, NewLocalizationPath);
 }
 
 
@@ -32,25 +32,25 @@ void UELTEditorSettings::SetCSVPaths(const TMap<FString, FString>& NewCSVPaths)
 }
 
 
-bool UELTEditorSettings::GetLocalisationPreview()
+bool UELTEditorSettings::GetLocalizationPreview()
 {
-	ELTE_GET_SETTING(bLocalisationPreview);
+	ELTE_GET_SETTING(bLocalizationPreview);
 }
 
-void UELTEditorSettings::SetLocalisationPreview(bool bNewPreview)
+void UELTEditorSettings::SetLocalizationPreview(bool bNewPreview)
 {
-	ELTE_SET_SETTING(bLocalisationPreview, bNewPreview);
+	ELTE_SET_SETTING(bLocalizationPreview, bNewPreview);
 }
 
 
-FString UELTEditorSettings::GetLocalisationPreviewLang()
+FString UELTEditorSettings::GetLocalizationPreviewLang()
 {
-	ELTE_GET_SETTING(LocalisationPreviewLang);
+	ELTE_GET_SETTING(LocalizationPreviewLang);
 }
 
-void UELTEditorSettings::SetLocalisationPreiewLang(const FString& NewLocalisationPreviewLang)
+void UELTEditorSettings::SetLocalizationPreiewLang(const FString& NewLocalizationPreviewLang)
 {
-	ELTE_SET_SETTING(LocalisationPreviewLang, NewLocalisationPreviewLang);
+	ELTE_SET_SETTING(LocalizationPreviewLang, NewLocalizationPreviewLang);
 }
 
 

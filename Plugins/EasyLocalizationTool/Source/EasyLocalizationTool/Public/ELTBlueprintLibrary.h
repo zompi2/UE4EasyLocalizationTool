@@ -7,21 +7,21 @@
 #include "ELTBlueprintLibrary.generated.h"
 
 UCLASS()
-class EASYLOCALISATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionLibrary
+class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "Easy Localisation Tool")
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
 	static FString GetCurrentLanguage();
 
-	UFUNCTION(BlueprintPure, Category = "Easy Localisation Tool")
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
 	static TArray<FString> GetAvailableLanguages();
 
-	UFUNCTION(BlueprintPure, Category = "Easy Localisation Tool")
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
 	static bool CanSetLanguage(const FString& Language);
 
-	UFUNCTION(BlueprintCallable, Category = "Easy Localisation Tool")
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
 	static bool SetLanguage(const FString& Language);
 };

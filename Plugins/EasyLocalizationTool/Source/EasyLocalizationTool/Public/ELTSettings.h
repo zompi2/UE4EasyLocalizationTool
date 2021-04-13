@@ -6,7 +6,7 @@
 #include "ELTSettings.generated.h"
 
 UCLASS(config = Game, defaultconfig)
-class EASYLOCALISATIONTOOL_API UELTSettings : public UObject
+class EASYLOCALIZATIONTOOL_API UELTSettings : public UObject
 {
 
     GENERATED_BODY()

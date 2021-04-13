@@ -9,13 +9,13 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"EasyLocalisationTool"
+				"EasyLocalizationTool"
 			]
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "EasyLocalisationTool",
+			"Name": "EasyLocalizationTool",
 			"Enabled": true
 		}
 	]

@@ -6,23 +6,23 @@
 #include "ELTEditorSettings.generated.h"
 
 UCLASS(config = Editor)
-class EASYLOCALISATIONTOOLEDITOR_API UELTEditorSettings : public UObject
+class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorSettings : public UObject
 {
     GENERATED_BODY()
 
 public:
 
-	static FString GetLocalisationPath();
-	static void SetLocalisationPath(const FString& NewLocalisationPath);
+	static FString GetLocalizationPath();
+	static void SetLocalizationPath(const FString& NewLocalizationPath);
 
 	static TMap<FString, FString> GetCSVPaths();
 	static void SetCSVPaths(const TMap<FString, FString>& NewCSVPaths);
 
-	static bool GetLocalisationPreview();
-	static void SetLocalisationPreview(bool bNewPreview);
+	static bool GetLocalizationPreview();
+	static void SetLocalizationPreview(bool bNewPreview);
 
-	static FString GetLocalisationPreviewLang();
-	static void SetLocalisationPreiewLang(const FString& NewLocalisationPreviewLang);
+	static FString GetLocalizationPreviewLang();
+	static void SetLocalizationPreiewLang(const FString& NewLocalizationPreviewLang);
 
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
@@ -33,16 +33,16 @@ public:
 private:
 
 	UPROPERTY(config)
-	FString LocalisationPath = TEXT("");
+	FString LocalizationPath = TEXT("");
 
 	UPROPERTY(config)
 	TMap<FString, FString> CSVPaths;
 
 	UPROPERTY(config)
-	bool bLocalisationPreview = false;
+	bool bLocalizationPreview = false;
 
 	UPROPERTY(config)
-	FString LocalisationPreviewLang = TEXT("");
+	FString LocalizationPreviewLang = TEXT("");
 
 	UPROPERTY(config)
 	bool bReimportAtEditorStartup = false;

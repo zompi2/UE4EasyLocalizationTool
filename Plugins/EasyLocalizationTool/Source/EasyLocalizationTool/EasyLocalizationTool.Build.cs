@@ -2,12 +2,12 @@
 
 using UnrealBuildTool;
 
-public class EasyLocalisationTool : ModuleRules
+public class EasyLocalizationTool : ModuleRules
 {
-	public EasyLocalisationTool(ReadOnlyTargetRules Target) : base(Target)
+	public EasyLocalizationTool(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		PrivateIncludePaths.Add("EasyLocalisationTool/Private");
+		PrivateIncludePaths.Add("EasyLocalizationTool/Private");
 
 		PublicDependencyModuleNames.AddRange(
 			new string[]

@@ -2,18 +2,18 @@
 
 using UnrealBuildTool;
 
-public class EasyLocalisationToolEditor : ModuleRules
+public class EasyLocalizationToolEditor : ModuleRules
 {
-	public EasyLocalisationToolEditor(ReadOnlyTargetRules Target) : base(Target)
+	public EasyLocalizationToolEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		PrivateIncludePaths.Add("EasyLocalisationToolEditor/Private");
+		PrivateIncludePaths.Add("EasyLocalizationToolEditor/Private");
 
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
-				"EasyLocalisationTool",
+				"EasyLocalizationTool",
 				"Blutility",
 				"UMG",
 				"UMGEditor"

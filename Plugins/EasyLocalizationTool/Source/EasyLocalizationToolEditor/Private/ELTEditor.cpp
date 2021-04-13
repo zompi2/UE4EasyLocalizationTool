@@ -21,7 +21,7 @@
 void UELTEditor::Init()
 {
 	CSVPaths		= UELTEditorSettings::GetCSVPaths();
-	CurrentLocPath	= UELTEditorSettings::GetLocalisationPath();
+	CurrentLocPath	= UELTEditorSettings::GetLocalizationPath();
 
 	if (UELTEditorSettings::GetReimportAtEditorStartup())
 	{
@@ -37,7 +37,7 @@ void UELTEditor::Init()
 UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 {
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalisationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
+	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
 	return Cast<UEditorUtilityWidgetBlueprint>(AssetData.GetAsset());
 }
 
@@ -91,32 +91,36 @@ void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 
 void UELTEditor::InitializeTheWidget()
 {
-	// Check available languages (based on files in localisation directory)
+	// Check available languages (based on files in Localization directory)
 	RefreshAvailableLangs(true);
 
 	// Bind all required delegates
-	EditorWidget->OnLocalisationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalisationPathChanged);
+	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
 	EditorWidget->OnCSVPathChangedDelegate.BindUObject(this, &UELTEditor::OnCSVPathChanged);
 	EditorWidget->OnGenerateLocFilesDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
 	EditorWidget->OnReimportAtEditorStartupChangedDelegate.BindUObject(this, &UELTEditor::OnReimportAtEditorStartupChanged);
-	EditorWidget->OnLocalisationPreviewChangedDelegate.BindUObject(this, &UELTEditor::OnLocalisationPreviewChanged);
-	EditorWidget->OnLocalisationPreviewLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalisationPreviewLangChanged);
-	EditorWidget->OnLocalisationOnFirstRunChangedDelegate.BindUObject(this, &UELTEditor::OnLocalisationFirstRunChanged);
-	EditorWidget->OnLocalisationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalisationFirstRunLangChanged);
+	EditorWidget->OnLocalizationPreviewChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewChanged);
+	EditorWidget->OnLocalizationPreviewLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewLangChanged);
+	EditorWidget->OnLocalizationOnFirstRunChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunChanged);
+	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 
-	// Fill localisation paths list on the widget
-	const TArray<FString>& GameLocPaths = FPaths::GetGameLocalizationPaths();
-	EditorWidget->FillLocalisationPaths(GameLocPaths);
+	// Fill Localization paths list on the widget
+	TArray<FString> GameLocPaths = FPaths::GetGameLocalizationPaths();
+	for (FString& GameLocPath : GameLocPaths)
+	{
+		GameLocPath = FPaths::ConvertRelativePathToFull(GameLocPath);
+	}
+	EditorWidget->FillLocalizationPaths(GameLocPaths);
 	if (GameLocPaths.Num() > 0)
 	{
 		if (GameLocPaths.Contains(CurrentLocPath))
 		{
-			EditorWidget->SetLocalisationPath(CurrentLocPath);
+			EditorWidget->SetLocalizationPath(CurrentLocPath);
 		}
 		else
 		{
-			EditorWidget->SetLocalisationPath(GameLocPaths[0]);
+			EditorWidget->SetLocalizationPath(GameLocPaths[0]);
 		}
 	}
 
@@ -124,12 +128,12 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnSetReimportAtEditorStartupChanged(UELTEditorSettings::GetReimportAtEditorStartup());
 
 	// Load current value of localisaiton preview option
-	EditorWidget->SetLocalisationPreview(UELTEditorSettings::GetLocalisationPreview());
-	EditorWidget->SetLocalisationPreviewLang(UELTEditorSettings::GetLocalisationPreviewLang());
+	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
+	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
 	// Load current value of localisaiton override language at first run option
-	EditorWidget->SetLocalisationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
-	EditorWidget->SetLocalisationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
+	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
+	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
 	// Load current namespace
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
@@ -145,12 +149,12 @@ void UELTEditor::InitializeTheWidget()
 
 
 
-void UELTEditor::OnLocalisationPathChanged(const FString& NewPath)
+void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 {
 	CurrentLocPath = NewPath;
-	UELTEditorSettings::SetLocalisationPath(CurrentLocPath);
+	UELTEditorSettings::SetLocalizationPath(CurrentLocPath);
 
-	EditorWidget->FillLocalisationName(GetCurrentLocName());
+	EditorWidget->FillLocalizationName(GetCurrentLocName());
 	EditorWidget->FillCSVPath(GetCurrentCSVPath());
 
 	RefreshAvailableLangs(false);
@@ -191,24 +195,24 @@ void UELTEditor::OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStart
 	UELTEditorSettings::SetReimportAtEditorStartup(bNewReimportAtEditorStartup);
 }
 
-void UELTEditor::OnLocalisationPreviewChanged(bool bNewLocalisationPreview)
+void UELTEditor::OnLocalizationPreviewChanged(bool bNewLocalizationPreview)
 {
-	UELTEditorSettings::SetLocalisationPreview(bNewLocalisationPreview);
+	UELTEditorSettings::SetLocalizationPreview(bNewLocalizationPreview);
 	SetLanguagePreview();
 }
 
-void UELTEditor::OnLocalisationPreviewLangChanged(const FString& LangPreview)
+void UELTEditor::OnLocalizationPreviewLangChanged(const FString& LangPreview)
 {
-	UELTEditorSettings::SetLocalisationPreiewLang(LangPreview);
+	UELTEditorSettings::SetLocalizationPreiewLang(LangPreview);
 	SetLanguagePreview();
 }
 
-void UELTEditor::OnLocalisationFirstRunChanged(bool bOnFirstRun)
+void UELTEditor::OnLocalizationFirstRunChanged(bool bOnFirstRun)
 {
 	UELTSettings::SetOverrideLanguageAtFirstLaunch(bOnFirstRun);
 }
 
-void UELTEditor::OnLocalisationFirstRunLangChanged(const FString& LangOnFirstRun)
+void UELTEditor::OnLocalizationFirstRunLangChanged(const FString& LangOnFirstRun)
 {
 	UELTSettings::SetLanguageToOverrideAtFirstLaunch(LangOnFirstRun);
 }
@@ -231,8 +235,8 @@ void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 void UELTEditor::SetLanguagePreview()
 {
 	FTextLocalizationManager::Get().DisableGameLocalizationPreview();
-	const FString& CurrentLang = UELTEditorSettings::GetLocalisationPreviewLang();
-	if (UELTEditorSettings::GetLocalisationPreview() && CurrentAvailableLangs.Contains(CurrentLang))
+	const FString& CurrentLang = UELTEditorSettings::GetLocalizationPreviewLang();
+	if (UELTEditorSettings::GetLocalizationPreview() && CurrentAvailableLangs.Contains(CurrentLang))
 	{
 		FTextLocalizationManager::Get().EnableGameLocalizationPreview(CurrentLang);
 	}
@@ -266,18 +270,18 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 
 	if (bRefreshUI)
 	{
-		FString LangPreview = UELTEditorSettings::GetLocalisationPreviewLang();
+		FString LangPreview = UELTEditorSettings::GetLocalizationPreviewLang();
 		FString LangAtFirstLaunch = UELTSettings::GetLanguageToOverrideAtFirstLaunch();
 		EditorWidget->FillAvailableLangs(CurrentAvailableLangs);
 		EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
 		if (CurrentAvailableLangs.Contains(LangPreview) == false)
 		{
-			UELTEditorSettings::SetLocalisationPreiewLang(TEXT(""));
+			UELTEditorSettings::SetLocalizationPreiewLang(TEXT(""));
 		}
 		else
 		{
-			EditorWidget->SetLocalisationPreviewLang(LangPreview);
+			EditorWidget->SetLocalizationPreviewLang(LangPreview);
 		}
 
 		if (CurrentAvailableLangs.Contains(LangAtFirstLaunch) == false)
@@ -286,7 +290,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 		else
 		{
-			EditorWidget->SetLocalisationOnFirstRunLang(LangAtFirstLaunch);
+			EditorWidget->SetLocalizationOnFirstRunLang(LangAtFirstLaunch);
 		}
 	}
 

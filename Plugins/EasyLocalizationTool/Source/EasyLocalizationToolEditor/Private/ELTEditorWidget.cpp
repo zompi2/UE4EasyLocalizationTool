@@ -3,9 +3,9 @@
 #include "ELTEditorWidget.h"
 #include "DesktopPlatformModule.h"
 
-void UELTEditorWidget::OnLocalisationPathSelected(const FString& Path)
+void UELTEditorWidget::OnLocalizationPathSelected(const FString& Path)
 {
-	OnLocalisationPathSelectedDelegate.ExecuteIfBound(Path);
+	OnLocalizationPathSelectedDelegate.ExecuteIfBound(Path);
 }
 
 void UELTEditorWidget::SelectNewCSVPath()
@@ -33,24 +33,24 @@ void UELTEditorWidget::SetReimportAtEditorStartup(bool bReimportAtEditorStartup)
 	OnReimportAtEditorStartupChangedDelegate.ExecuteIfBound(bReimportAtEditorStartup);
 }
 
-void UELTEditorWidget::OnLocalisationPreviewChanged(bool LocalisationPreview)
+void UELTEditorWidget::OnLocalizationPreviewChanged(bool LocalizationPreview)
 {
-	OnLocalisationPreviewChangedDelegate.ExecuteIfBound(LocalisationPreview);
+	OnLocalizationPreviewChangedDelegate.ExecuteIfBound(LocalizationPreview);
 }
 
-void UELTEditorWidget::OnLocalisationPreviewLangChanged(const FString& NewPreviewLang)
+void UELTEditorWidget::OnLocalizationPreviewLangChanged(const FString& NewPreviewLang)
 {
-	OnLocalisationPreviewLangChangedDelegate.ExecuteIfBound(NewPreviewLang);
+	OnLocalizationPreviewLangChangedDelegate.ExecuteIfBound(NewPreviewLang);
 }
 
-void UELTEditorWidget::OnLocalisationOnFirstRun(bool LocalisationOnFirstRun)
+void UELTEditorWidget::OnLocalizationOnFirstRun(bool LocalizationOnFirstRun)
 {
-	OnLocalisationOnFirstRunChangedDelegate.ExecuteIfBound(LocalisationOnFirstRun);
+	OnLocalizationOnFirstRunChangedDelegate.ExecuteIfBound(LocalizationOnFirstRun);
 }
 
-void UELTEditorWidget::OnLocalisationOnFirstRunLangChanged(const FString& OnFirstRunLang)
+void UELTEditorWidget::OnLocalizationOnFirstRunLangChanged(const FString& OnFirstRunLang)
 {
-	OnLocalisationOnFirstRunLangChangedDelegate.ExecuteIfBound(OnFirstRunLang);
+	OnLocalizationOnFirstRunLangChangedDelegate.ExecuteIfBound(OnFirstRunLang);
 }
 
 void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)

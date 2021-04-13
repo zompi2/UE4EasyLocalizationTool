@@ -7,7 +7,7 @@
 #include "ELTCommandlet.generated.h"
 
 UCLASS()
-class EASYLOCALISATIONTOOLEDITOR_API UELTCommandlet : public UCommandlet
+class EASYLOCALIZATIONTOOLEDITOR_API UELTCommandlet : public UCommandlet
 {
 public:
 

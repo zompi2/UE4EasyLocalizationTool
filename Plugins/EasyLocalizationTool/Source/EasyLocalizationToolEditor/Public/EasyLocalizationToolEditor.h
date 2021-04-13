@@ -7,7 +7,7 @@
 
 class SDockTab;
 
-class EASYLOCALISATIONTOOLEDITOR_API FEasyLocalisationToolEditorModule : public IModuleInterface, public FGCObject
+class EASYLOCALIZATIONTOOLEDITOR_API FEasyLocalizationToolEditorModule : public IModuleInterface, public FGCObject
 {
 public:
 

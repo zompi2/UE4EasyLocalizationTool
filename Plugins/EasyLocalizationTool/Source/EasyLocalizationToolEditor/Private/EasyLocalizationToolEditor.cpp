@@ -1,6 +1,6 @@
 // Copyright (c) 2021 Damian Nowakowski. All rights reserved.
 
-#include "EasyLocalisationToolEditor.h"
+#include "EasyLocalizationToolEditor.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -8,7 +8,7 @@
 #include "ELTEditor.h"
 #include "LevelEditor.h"
 
-void FEasyLocalisationToolEditorModule::AddReferencedObjects(FReferenceCollector& Collector)
+void FEasyLocalizationToolEditorModule::AddReferencedObjects(FReferenceCollector& Collector)
 {
 	if (Editor)
 	{
@@ -16,18 +16,18 @@ void FEasyLocalisationToolEditorModule::AddReferencedObjects(FReferenceCollector
 	}
 }
 
-void FEasyLocalisationToolEditorModule::StartupModule()
+void FEasyLocalizationToolEditorModule::StartupModule()
 {
 	Editor = NewObject<UELTEditor>();
 	Editor->Init();
 
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FName(TEXT("ELT")), FOnSpawnTab::CreateRaw(this, &FEasyLocalisationToolEditorModule::SpawnEditor), FCanSpawnTab::CreateRaw(this, &FEasyLocalisationToolEditorModule::CanSpawnEditor))
-		.SetDisplayName(FText::FromString(TEXT("Easy Localisation Tool")))
-		.SetTooltipText(FText::FromString(TEXT("Open Easy Localisation Tool Editor")))
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FName(TEXT("ELT")), FOnSpawnTab::CreateRaw(this, &FEasyLocalizationToolEditorModule::SpawnEditor), FCanSpawnTab::CreateRaw(this, &FEasyLocalizationToolEditorModule::CanSpawnEditor))
+		.SetDisplayName(FText::FromString(TEXT("Easy Localization Tool")))
+		.SetTooltipText(FText::FromString(TEXT("Open Easy Localization Tool Editor")))
 		.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
 }
 
-bool FEasyLocalisationToolEditorModule::CanSpawnEditor(const FSpawnTabArgs& Args)
+bool FEasyLocalizationToolEditorModule::CanSpawnEditor(const FSpawnTabArgs& Args)
 {
 	if (Editor && Editor->CanCreateEditorUI())
 	{
@@ -36,7 +36,7 @@ bool FEasyLocalisationToolEditorModule::CanSpawnEditor(const FSpawnTabArgs& Args
 	return false;
 }
 
-TSharedRef<SDockTab> FEasyLocalisationToolEditorModule::SpawnEditor(const FSpawnTabArgs& Args)
+TSharedRef<SDockTab> FEasyLocalizationToolEditorModule::SpawnEditor(const FSpawnTabArgs& Args)
 {	
 	if (Editor && Editor->CanCreateEditorUI())
 	{
@@ -51,4 +51,4 @@ TSharedRef<SDockTab> FEasyLocalisationToolEditorModule::SpawnEditor(const FSpawn
 	return SAssignNew(EditorTab, SDockTab).TabRole(ETabRole::NomadTab);
 }
 
-IMPLEMENT_MODULE(FEasyLocalisationToolEditorModule, EasyLocalisationToolEditor)
+IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)

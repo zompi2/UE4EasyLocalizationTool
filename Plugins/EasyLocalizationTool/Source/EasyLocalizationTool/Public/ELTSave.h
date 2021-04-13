@@ -7,7 +7,7 @@
 
 
 UCLASS()
-class EASYLOCALISATIONTOOL_API UELTSave : public USaveGame
+class EASYLOCALIZATIONTOOL_API UELTSave : public USaveGame
 {
 	GENERATED_BODY()
 

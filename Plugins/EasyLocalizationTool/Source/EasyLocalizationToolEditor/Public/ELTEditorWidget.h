@@ -6,35 +6,35 @@
 #include "Blutility/Classes/EditorUtilityWidget.h"
 #include "ELTEditorWidget.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnLocalisationPathSelected, const FString&);
+DECLARE_DELEGATE_OneParam(FOnLocalizationPathSelected, const FString&);
 DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const FString&);
 DECLARE_DELEGATE(FOnGenerateLocFiles);
 DECLARE_DELEGATE_OneParam(FOnReimportAtEditorStartupChanged, bool);
-DECLARE_DELEGATE_OneParam(FOnLocalisationPreviewChanged, bool);
-DECLARE_DELEGATE_OneParam(FOnLocalisationPreviewLangChanged, const FString&);
-DECLARE_DELEGATE_OneParam(FOnLocalisationOnFirstRunChanged, bool);
-DECLARE_DELEGATE_OneParam(FOnLocalisationOnFirstRunLangChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewChanged, bool);
+DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewLangChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
+DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
 
 UCLASS()
-class EASYLOCALISATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWidget
+class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void FillLocalisationPaths(const TArray<FString>& Paths);
+	void FillLocalizationPaths(const TArray<FString>& Paths);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetLocalisationPath(const FString& Path);
+	void SetLocalizationPath(const FString& Path);
 
 	UFUNCTION(BlueprintCallable)
-	void OnLocalisationPathSelected(const FString& Path);
+	void OnLocalizationPathSelected(const FString& Path);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void FillLocalisationName(const FString& LocName);
+	void FillLocalizationName(const FString& LocName);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillAvailableLangs(const TArray<FString>& Langs);
@@ -54,17 +54,17 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetLocalisationPreview(bool LocalisationPreview);
+	void SetLocalizationPreview(bool LocalizationPreview);
 
 	UFUNCTION(BlueprintCallable)
-	void OnLocalisationPreviewChanged(bool LocalisationPreview);
+	void OnLocalizationPreviewChanged(bool LocalizationPreview);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetLocalisationPreviewLang(const FString& PreviewLang);
+	void SetLocalizationPreviewLang(const FString& PreviewLang);
 
 	UFUNCTION(BlueprintCallable)
-	void OnLocalisationPreviewLangChanged(const FString& PreviewLang);
+	void OnLocalizationPreviewLangChanged(const FString& PreviewLang);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -75,17 +75,17 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetLocalisationOnFirstRun(bool LocalisationOnFirstRun);
+	void SetLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
 	UFUNCTION(BlueprintCallable)
-	void OnLocalisationOnFirstRun(bool LocalisationOnFirstRun);
+	void OnLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetLocalisationOnFirstRunLang(const FString& OnFirstRunLang);
+	void SetLocalizationOnFirstRunLang(const FString& OnFirstRunLang);
 	
 	UFUNCTION(BlueprintCallable)
-	void OnLocalisationOnFirstRunLangChanged(const FString& OnFirstRunLang);
+	void OnLocalizationOnFirstRunLangChanged(const FString& OnFirstRunLang);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -95,13 +95,13 @@ public:
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
 
-	FOnLocalisationPathSelected OnLocalisationPathSelectedDelegate;
+	FOnLocalizationPathSelected OnLocalizationPathSelectedDelegate;
 	FOnCSVPathChanged OnCSVPathChangedDelegate;
 	FOnGenerateLocFiles OnGenerateLocFilesDelegate;
 	FOnReimportAtEditorStartupChanged OnReimportAtEditorStartupChangedDelegate;
-	FOnLocalisationPreviewChanged OnLocalisationPreviewChangedDelegate;
-	FOnLocalisationPreviewLangChanged OnLocalisationPreviewLangChangedDelegate;
-	FOnLocalisationOnFirstRunChanged OnLocalisationOnFirstRunChangedDelegate;
-	FOnLocalisationOnFirstRunLangChanged OnLocalisationOnFirstRunLangChangedDelegate;
+	FOnLocalizationPreviewChanged OnLocalizationPreviewChangedDelegate;
+	FOnLocalizationPreviewLangChanged OnLocalizationPreviewLangChangedDelegate;
+	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
+	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
 };
