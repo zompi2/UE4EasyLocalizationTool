@@ -43,6 +43,7 @@ UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 
 bool UELTEditor::CanCreateEditorUI()
 {
+	// Editor UI can be created only when we have proper Editor Utility Widget Blueprint available.
 	return GetUtilityWidgetBlueprint() != nullptr;
 }
 
@@ -124,14 +125,14 @@ void UELTEditor::InitializeTheWidget()
 		}
 	}
 
-	// Load current value of reimport on editor startup option
+	// Load current value of re import on editor startup option
 	EditorWidget->OnSetReimportAtEditorStartupChanged(UELTEditorSettings::GetReimportAtEditorStartup());
 
-	// Load current value of localisaiton preview option
+	// Load current value of localization preview option
 	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
 	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
-	// Load current value of localisaiton override language at first run option
+	// Load current value of localizaiton override language at first run option
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 

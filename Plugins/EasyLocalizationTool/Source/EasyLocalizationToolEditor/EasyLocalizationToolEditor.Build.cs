@@ -8,15 +8,12 @@ public class EasyLocalizationToolEditor : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		PrivateIncludePaths.Add("EasyLocalizationToolEditor/Private");
+		PrivateIncludePaths.Add("EasyLocalizationTool/Private");
 
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
-				"EasyLocalizationTool",
-				"Blutility",
-				"UMG",
-				"UMGEditor"
+				"Core"
 			}
 		);
 			
@@ -24,16 +21,18 @@ public class EasyLocalizationToolEditor : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"UnrealEd",
-				"ToolMenus",
+				"EasyLocalizationTool",
+                "Engine",
 				"CoreUObject",
-				"Engine",
 				"Slate",
-				"SlateCore",
+                "SlateCore",
+                "UnrealEd",
 				"WorkspaceMenuStructure",
 				"DesktopPlatform",
-				"LevelEditor"
-			}
+                "Blutility",
+                "UMG",
+                "UMGEditor"
+            }
 		);
 	}
 }

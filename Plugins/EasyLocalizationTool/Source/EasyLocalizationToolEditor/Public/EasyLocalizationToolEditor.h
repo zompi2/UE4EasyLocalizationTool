@@ -5,19 +5,37 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class SDockTab;
+/**
+ * Localization Editor module, which handles Editor object and DockTab creation.
+ */
 
 class EASYLOCALIZATIONTOOLEDITOR_API FEasyLocalizationToolEditorModule : public IModuleInterface, public FGCObject
 {
+
 public:
 
+	// IModuleInterface implementation
 	void StartupModule() override;
+
+	// FGCObject implementation
 	void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 private:
-	
-	class UELTEditor* Editor;
-	TWeakPtr<SDockTab> EditorTab;
-	TSharedRef<SDockTab> SpawnEditor(const FSpawnTabArgs& Args);
+
+	/**
+	 * Returns true if the editor can be spawned.
+	 */
 	bool CanSpawnEditor(const FSpawnTabArgs& Args);
+
+	/**
+	 * Spawns editor and returns a ref of the DockTab to which the editor
+	 * has been pinned.
+	 */
+	TSharedRef<class SDockTab> SpawnEditor(const FSpawnTabArgs& Args);
+	
+	// Editor object.
+	class UELTEditor* Editor;
+
+	// DockTab reference with the editor.
+	TWeakPtr<class SDockTab> EditorTab;
 };

@@ -5,6 +5,11 @@
 #include "CoreMinimal.h"
 #include "ELTEditorSettings.generated.h"
 
+/**
+ * Localization settings which are available for an editor only.
+ * Stored in Editor.ini file.
+ */
+
 UCLASS(config = Editor)
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorSettings : public UObject
 {
@@ -12,11 +17,20 @@ class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorSettings : public UObject
 
 public:
 
+	/**
+	 * Get/Set a path where localization files are stored.
+	 */
 	static FString GetLocalizationPath();
 	static void SetLocalizationPath(const FString& NewLocalizationPath);
 
+	/**
+	 * Get/Set a path where CSV files corresponded to
+	 */
 	static TMap<FString, FString> GetCSVPaths();
 	static void SetCSVPaths(const TMap<FString, FString>& NewCSVPaths);
+
+	static TMap<FString, FString> GetGlobalNamespaces();
+	static void SetGlobalNamespace(const TMap<FString, FString>& NewGlobalNamespaces);
 
 	static bool GetLocalizationPreview();
 	static void SetLocalizationPreview(bool bNewPreview);
@@ -27,9 +41,6 @@ public:
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
 
-	static TMap<FString, FString> GetGlobalNamespaces();
-	static void SetGlobalNamespace(const TMap<FString, FString>& NewGlobalNamespaces);
-
 private:
 
 	UPROPERTY(config)
@@ -39,6 +50,9 @@ private:
 	TMap<FString, FString> CSVPaths;
 
 	UPROPERTY(config)
+	TMap<FString, FString> GlobalNamespaces;
+
+	UPROPERTY(config)
 	bool bLocalizationPreview = false;
 
 	UPROPERTY(config)
@@ -46,7 +60,4 @@ private:
 
 	UPROPERTY(config)
 	bool bReimportAtEditorStartup = false;
-
-	UPROPERTY(config)
-	TMap<FString, FString> GlobalNamespaces;
 };

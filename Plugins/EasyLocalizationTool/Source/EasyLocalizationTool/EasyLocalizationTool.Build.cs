@@ -21,7 +21,7 @@ public class EasyLocalizationTool : ModuleRules
 			new string[]
 			{
 				"CoreUObject",
-				"Engine",
+				"Engine"
 			}
 		);
 	}

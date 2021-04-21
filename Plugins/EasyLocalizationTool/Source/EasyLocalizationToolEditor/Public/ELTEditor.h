@@ -5,20 +5,27 @@
 #include "CoreMinimal.h"
 #include "ELTEditor.generated.h"
 
-class SWidget;
+/**
+ * 
+ */
 
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditor : public UObject
 {
-public:
 
 	GENERATED_BODY()
 
-	void Init();
+public:
 
+	void Init();
 	bool CanCreateEditorUI();
-	TSharedRef<SWidget> CreateEditorUI();
-	TSharedRef<SWidget> CreateEditorWidget();
+	TSharedRef<class SWidget> CreateEditorUI();
+	TWeakPtr<class SDockTab> EditorTab;
+	static bool GenerateLocFilesImpl(const FString& CSVPath, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage);
+
+private:
+
+	TSharedRef<class SWidget> CreateEditorWidget();
 	void ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType);
 	void InitializeTheWidget();
 
@@ -35,7 +42,7 @@ public:
 	void SetLanguagePreview();
 	void RefreshAvailableLangs(bool bRefreshUI);
 	bool GenerateLocFiles(FString& OutMessage);
-	static bool GenerateLocFilesImpl(const FString& CSVPath, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage);
+
 	const FString& GetCurrentCSVPath();
 	const FString GetCurrentLocName();
 	const FString GetCurrentGlobalNamespace();
@@ -47,7 +54,7 @@ public:
 
 	UPROPERTY()
 	class UELTEditorWidget* EditorWidget;
-	TWeakPtr<SDockTab> EditorTab;
+
 
 	class UEditorUtilityWidgetBlueprint* GetUtilityWidgetBlueprint();
 };
