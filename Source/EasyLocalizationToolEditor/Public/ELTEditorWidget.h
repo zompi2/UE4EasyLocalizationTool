@@ -3,9 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blutility/Classes/EditorUtilityWidget.h"
+#include "EditorUtilityWidget.h"
 #include "ELTEditorWidget.generated.h"
 
+/**
+ * Widget code used to comunicate between code and BP widget.
+ */
+
+/**
+ * Declaration of all required delegates for a proper communication with UI.
+ * They will be broadcasted to inform the plugin code about changes in UI.
+ */
 DECLARE_DELEGATE_OneParam(FOnLocalizationPathSelected, const FString&);
 DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const FString&);
 DECLARE_DELEGATE(FOnGenerateLocFiles);
@@ -23,27 +31,48 @@ class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWid
 
 public:
 
+	/**
+	 * Call BP to fill up the list of localization paths.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillLocalizationPaths(const TArray<FString>& Paths);
 
+	/**
+	 * Call BP to display a current localization path.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetLocalizationPath(const FString& Path);
 
+	/**
+	 * BP calls the code to inform that the localization path has been selected.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnLocalizationPathSelected(const FString& Path);
 
-
+	/**
+	 * Call BP to fill up a name of current localization path.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillLocalizationName(const FString& LocName);
 
+	/**
+	 * Call BP to fill up all available languages.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillAvailableLangs(const TArray<FString>& Langs);
 
+	/**
+	 * Call BP to fill up available languages in selected localization path.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillAvailableLangsInLocFile(const TArray<FString>& Langs);
 
+	/**
+	 * Call BP to fill up the path to the CSV file
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillCSVPath(const FString& CSVPath);
+
 
 
 	UFUNCTION(BlueprintCallable)

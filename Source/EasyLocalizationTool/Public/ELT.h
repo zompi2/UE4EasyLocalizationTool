@@ -41,7 +41,7 @@ public:
 
 	/**
 	 * Sets a language represented by a given code.
-	 * Returns true if language was set with success.
+	 * Returns true if a language was set with success.
 	 */
 	static bool SetLanguage(const FString& Lang);
 

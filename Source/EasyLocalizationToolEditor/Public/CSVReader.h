@@ -4,21 +4,97 @@
 
 #include "CoreMinimal.h"
 #include "Misc/FileHelper.h"
+#include "Serialization/Csv/CsvParser.h"
 
+/**
+ * A class for parsing CSV files. Because it is easier to us to handle localizations
+ * with datas in columns it will store localization data in a column fashin struct.
+ */
+
+ /**
+  * A struct which keeps csv data in columns.
+  */
 struct FCSVColumn
 {
 	TArray<FString> Values;
-	FCSVColumn(const FString& _FirstVal)
+	FCSVColumn(const FString& FirstValue)
 	{
-		Values.Add(_FirstVal);
+		Values.Add(FirstValue);
 	}
 };
 
+#if ELT_USE_UNREAL_CSV_PARSER
 
-class FCSVReader 
+/**
+ * A version of csv reader which uses an UE4 built in parser.
+ */
+class FCSVReader
 {
 public:
 	TArray<FCSVColumn> Columns;
+
+	bool LoadFromFile(const FString& FilePath, FString& OutMessage)
+	{
+		FString FileContent;
+		if (FFileHelper::LoadFileToString(FileContent, *FilePath))
+		{
+			const FCsvParser Parser(FileContent);
+			const auto& Rows = Parser.GetRows();
+			if (Rows.Num() > 0)
+			{
+				bool bFirstLine = true;
+				Columns.Empty();
+				int32 LineIndex = 0;
+				for (const auto& Row : Rows)
+				{
+					for (const auto& Entry : Row)
+					{
+						if (bFirstLine)
+						{
+							Columns.Add(FCSVColumn(Entry));
+						}
+						else
+						{
+							if (Columns.IsValidIndex(LineIndex))
+							{
+								Columns[LineIndex].Values.Add(Entry);
+							}
+							else
+							{
+								OutMessage = TEXT("ERROR: Invalid CSV!");
+								return false;
+							}
+							LineIndex++;
+						}
+					}
+					bFirstLine = false;
+					LineIndex = 0;
+				}
+				return true;
+			}
+			else
+			{
+				OutMessage = TEXT("ERROR: Invalid CSV!");
+				return false;
+			}
+		}
+		OutMessage = TEXT("ERROR: CSV file not found!");
+		return false;
+	}
+};
+
+#else // ELT_USE_UNREAL_CSV_PARSER
+
+/**
+ * A version of csv reader which doesn't use any 3rd party parsers.
+ * For now it seems to be more suitable solution, as the ue4 parser doesn't
+ * handle all possible exceptions.
+ */
+class FCSVReader
+{
+public:
+	TArray<FCSVColumn> Columns;
+
 	bool LoadFromFile(const FString& FilePath, FString& OutMessage)
 	{
 		FString FileContent;
@@ -32,7 +108,7 @@ public:
 			FString CurrentWord = TEXT("");
 			int32 LineIndex = 0;
 
-			auto AddWord = [this, &LineIndex , &bFirstLine, &CurrentWord]() -> bool
+			auto AddWord = [this, &LineIndex, &bFirstLine, &CurrentWord]() -> bool
 			{
 				if (bFirstLine)
 				{
@@ -65,7 +141,7 @@ public:
 					}
 				}
 				else if (Ch == '"')
-				{	
+				{
 					const TCHAR& Ch2 = Chars.IsValidIndex(i + 1) ? Chars[i + 1] : TCHAR(' ');
 					if (Ch2 == '"')
 					{
@@ -125,3 +201,5 @@ public:
 		}
 	}
 };
+
+#endif // ELT_USE_UNREAL_CSV_PARSER

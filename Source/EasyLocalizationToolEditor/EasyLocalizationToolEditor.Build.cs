@@ -34,5 +34,7 @@ public class EasyLocalizationToolEditor : ModuleRules
                 "UMGEditor"
             }
 		);
+
+		PublicDefinitions.Add("ELT_USE_UNREAL_CSV_PARSER=0");
 	}
 }

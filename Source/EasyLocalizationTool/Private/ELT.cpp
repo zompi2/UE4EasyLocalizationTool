@@ -36,7 +36,7 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 		}
 		else
 		{
-			// Current language was available in save file - set it at startup.
+			// Current language was available in a save file - set it at startup.
 			SetLanguage(LanguageToSet);
 		}
 	}

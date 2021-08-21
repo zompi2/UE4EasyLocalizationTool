@@ -17,6 +17,7 @@
 
 #include "CSVReader.h"
 #include "LevelEditor.h"
+#include "Serialization/Csv/CsvParser.h"
 
 void UELTEditor::Init()
 {
@@ -322,6 +323,16 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 
 		if (Columns.Num() > 1)
 		{
+			const int32 NumOfValues = Columns[0].Values.Num();
+			for (const FCSVColumn& Column : Columns)
+			{
+				if (Column.Values.Num() != NumOfValues)
+				{
+					OutMessage = TEXT("ERROR: Number of values is not the same for every key! Probably invalid CSV!");
+					return false;
+				}
+			}
+
 			// Potential place for namespaces
 			const FCSVColumn& Namespaces = Columns[0];
 

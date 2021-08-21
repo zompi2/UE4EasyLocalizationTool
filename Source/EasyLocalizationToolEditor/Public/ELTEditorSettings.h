@@ -24,20 +24,32 @@ public:
 	static void SetLocalizationPath(const FString& NewLocalizationPath);
 
 	/**
-	 * Get/Set a path where CSV files corresponded to
+	 * Get/Set paths where CSV files corresponded to a localization files paths.
 	 */
 	static TMap<FString, FString> GetCSVPaths();
 	static void SetCSVPaths(const TMap<FString, FString>& NewCSVPaths);
 
+	/**
+	 * Get/Set global namespaces corresponded to a localization files path.
+	 */
 	static TMap<FString, FString> GetGlobalNamespaces();
 	static void SetGlobalNamespace(const TMap<FString, FString>& NewGlobalNamespaces);
 
+	/**
+	 * Get/Set if the localization preview is on.
+	 */
 	static bool GetLocalizationPreview();
 	static void SetLocalizationPreview(bool bNewPreview);
 
+	/**
+	 * Get/Set lang code to preview in editor.
+	 */
 	static FString GetLocalizationPreviewLang();
 	static void SetLocalizationPreiewLang(const FString& NewLocalizationPreviewLang);
 
+	/**
+	 * Get/Set if the localizations should be reimported at the editor startup.
+	 */
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
 

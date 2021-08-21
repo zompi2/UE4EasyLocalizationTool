@@ -31,6 +31,8 @@ int32 UELTCommandlet::Main(const FString& Params)
 
 	const FString LocName = FPaths::GetBaseFilename(LocPath);
 
+	// Run generation of loc files implementation. Get the output message and display it the localization
+	// fails.
 	FString OutMessage;
 	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, OutMessage) == false)
 	{
