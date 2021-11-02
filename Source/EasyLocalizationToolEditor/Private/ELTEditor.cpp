@@ -57,6 +57,11 @@ TSharedRef<SWidget> UELTEditor::CreateEditorUI()
 	return CreateEditorWidget();
 }
 
+void UELTEditor::SetEditorTab(const TSharedRef<SDockTab>& NewEditorTab)
+{
+	EditorTab = NewEditorTab;
+}
+
 TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 {
 	TSharedRef<SWidget> CreatedWidget = SNullWidget::NullWidget;

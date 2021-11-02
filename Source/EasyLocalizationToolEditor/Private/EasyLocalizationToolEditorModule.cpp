@@ -56,7 +56,7 @@ TSharedRef<SDockTab> FEasyLocalizationToolEditorModule::SpawnEditor(const FSpawn
 
 		// Tell the Editor Object about newly spawned DockTab, as it will 
 		// need it to handle various editor actions.
-		Editor->EditorTab = NewTab;
+		Editor->SetEditorTab(NewTab);
 
 		// Return the DockTab to the Global Tab Manager.
 		return NewTab;

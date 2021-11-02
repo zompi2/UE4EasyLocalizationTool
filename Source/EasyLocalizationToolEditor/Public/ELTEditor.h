@@ -37,16 +37,17 @@ public:
 	 * It is called from the Editor Module in a moment of Tab Creation.
 	 */
 	TSharedRef<class SWidget> CreateEditorUI();
+
+	/**
+	 * Sets up the EditorTab. Used by Editor Module right after a Tab is created.
+	 */
+	void SetEditorTab(const TSharedRef<class SDockTab>& NewEditorTab);
 	
 	/**
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
 	static bool GenerateLocFilesImpl(const FString& CSVPath, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage);
-
-	// A pointer to the EditorTab in which the editor widget should be docked. 
-	// It is passed by an Editor Module right after the dock is created.
-	TWeakPtr<class SDockTab> EditorTab;
 
 private:
 
@@ -99,6 +100,10 @@ private:
 	// Is created in CreateEditorWidget().
 	UPROPERTY()
 	class UELTEditorWidget* EditorWidget;
+
+	// A pointer to the EditorTab in which the editor widget should be docked. 
+	// It is set by an Editor Module by SetEditorTab() right after the dock is created.
+	TWeakPtr<class SDockTab> EditorTab;
 
 	// 
 	FString CurrentLocPath;
