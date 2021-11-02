@@ -35,13 +35,13 @@ public:
 	static TArray<FString> GetAvailableLanguages();
 
 	/**
-	 * Checks if a language of given code can be set.
+	 * Checks if the language of given code can be set.
 	 */
 	static bool CanSetLanguage(const FString& Lang);
 
 	/**
-	 * Sets a language represented by a given code.
-	 * Returns true if a language was set with success.
+	 * Sets the language represented by a given code.
+	 * Returns true if the language was set with success.
 	 */
 	static bool SetLanguage(const FString& Lang);
 
@@ -51,5 +51,5 @@ private:
 	static FString ELTSaveName;
 
 	// Code of currently used language.
-	static FString CurrentLanguage;
+	static FString ELTCurrentLanguage;
 };

@@ -17,5 +17,5 @@ class EASYLOCALIZATIONTOOL_API UELTSave : public USaveGame
 public:
 
 	UPROPERTY()
-	FString CurrentLanguage;
+	FString SavedCurrentLanguage;
 };

@@ -7,12 +7,12 @@
 #include "Serialization/Csv/CsvParser.h"
 
 /**
- * A class for parsing CSV files. Because it is easier to us to handle localizations
- * with datas in columns it will store localization data in a column fashin struct.
+ * A class for parsing CSV files. Because it is easier for us to handle localizations
+ * with data in columns it will store localization data in a column fashion struct.
  */
 
  /**
-  * A struct which keeps csv data in columns.
+  * A struct which keeps CSV data in columns.
   */
 struct FCSVColumn
 {
@@ -26,7 +26,7 @@ struct FCSVColumn
 #if ELT_USE_UNREAL_CSV_PARSER
 
 /**
- * A version of csv reader which uses an UE4 built in parser.
+ * A version of CSV reader which uses an UE4 built in parser.
  */
 class FCSVReader
 {
@@ -86,7 +86,7 @@ public:
 #else // ELT_USE_UNREAL_CSV_PARSER
 
 /**
- * A version of csv reader which doesn't use any 3rd party parsers.
+ * A version of CSV reader which doesn't use any 3rd party parsers.
  * For now it seems to be more suitable solution, as the ue4 parser doesn't
  * handle all possible exceptions.
  */

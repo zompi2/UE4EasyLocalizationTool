@@ -37,6 +37,7 @@ void UELTEditor::Init()
 
 UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 {
+	// Get the Editor Utility Widget Blueprint from the content directory
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
 	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
 	return Cast<UEditorUtilityWidgetBlueprint>(AssetData.GetAsset());
@@ -63,7 +64,10 @@ TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 	{
 		CreatedWidget = UtilityWidgetBP->CreateUtilityWidget();
 		EditorWidget = Cast<UELTEditorWidget>(UtilityWidgetBP->GetCreatedWidget());
-		InitializeTheWidget();
+		if (EditorWidget)
+		{
+			InitializeTheWidget();
+		}
 	}
 	return CreatedWidget;
 }
@@ -82,7 +86,7 @@ void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 			EditorWidget = nullptr;
 		}
 	}
-	else if (MapChangeType != EMapChangeType::SaveMap)
+	else if (MapChangeType == EMapChangeType::NewMap || MapChangeType == EMapChangeType::LoadMap)
 	{
 		if (EditorTab.IsValid())
 		{

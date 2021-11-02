@@ -11,7 +11,7 @@
 FString UELT::ELTSaveName = TEXT("ELTSave");
 
 // Definition of static current language value.
-FString UELT::CurrentLanguage = TEXT("");
+FString UELT::ELTCurrentLanguage = TEXT("");
 
 void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -59,17 +59,17 @@ void UELT::Deinitialize()
 FString UELT::GetCurrentLanguage()
 {
 	// If Current Language is not cached - try to load it from a save file.
-	if (CurrentLanguage.IsEmpty())
+	if (ELTCurrentLanguage.IsEmpty())
 	{
 		if (UGameplayStatics::DoesSaveGameExist(ELTSaveName, 0))
 		{
 			if (UELTSave* LoadedSave = Cast<UELTSave>(UGameplayStatics::LoadGameFromSlot(ELTSaveName, 0)))
 			{
-				CurrentLanguage = LoadedSave->CurrentLanguage;
+				ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage;
 			}
 		}
 	}
-	return CurrentLanguage;
+	return ELTCurrentLanguage;
 }
 
 TArray<FString> UELT::GetAvailableLanguages()
@@ -102,12 +102,12 @@ bool UELT::SetLanguage(const FString& Lang)
 		{
 			// If the desired language is different than current language - save it.
 			// Do not save if they are the same to avoid frequent writes to disk.
-			if (CurrentLanguage != Lang)
+			if (ELTCurrentLanguage != Lang)
 			{
-				CurrentLanguage = Lang;
+				ELTCurrentLanguage = Lang;
 
 				UELTSave* Save = NewObject<UELTSave>(GetTransientPackage(), UELTSave::StaticClass());
-				Save->CurrentLanguage = Lang;
+				Save->SavedCurrentLanguage = Lang;
 				UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
 			}
 			

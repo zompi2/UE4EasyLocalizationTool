@@ -1,6 +1,6 @@
 // Copyright (c) 2021 Damian Nowakowski. All rights reserved.
 
-#include "EasyLocalizationToolEditor.h"
+#include "EasyLocalizationToolEditorModule.h"
 #include "WorkspaceMenuStructureModule.h"
 #include "WorkspaceMenuStructure.h"
 #include "Widgets/Docking/SDockTab.h"

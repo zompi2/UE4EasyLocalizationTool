@@ -7,7 +7,7 @@
 #include "ELTEditorWidget.generated.h"
 
 /**
- * Widget code used to comunicate between code and BP widget.
+ * Widget code used to communicate between code and BP widget.
  */
 
 /**

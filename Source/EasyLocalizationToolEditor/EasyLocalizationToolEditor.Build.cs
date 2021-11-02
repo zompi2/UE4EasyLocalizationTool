@@ -7,6 +7,7 @@ public class EasyLocalizationToolEditor : ModuleRules
 	public EasyLocalizationToolEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PrivateIncludePaths.Add("EasyLocalizationToolEditor/Private");
 		PrivateIncludePaths.Add("EasyLocalizationTool/Private");
 
