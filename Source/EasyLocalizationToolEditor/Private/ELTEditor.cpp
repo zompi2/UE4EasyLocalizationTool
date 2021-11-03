@@ -142,7 +142,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
 	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
-	// Load current value of localizaiton override language at first run option
+	// Load current value of localization override language at first run option
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
@@ -418,7 +418,7 @@ const FString& UELTEditor::GetCurrentCSVPath()
 	}
 }
 
-const FString UELTEditor::GetCurrentLocName()
+FString UELTEditor::GetCurrentLocName()
 {
 	if (CurrentLocPath.IsEmpty() == false)
 	{
@@ -426,12 +426,11 @@ const FString UELTEditor::GetCurrentLocName()
 	}
 	else
 	{
-		static FString Dummy = TEXT("");
-		return Dummy;
+		return TEXT("");
 	}
 }
 
-const FString UELTEditor::GetCurrentGlobalNamespace()
+const FString& UELTEditor::GetCurrentGlobalNamespace()
 {
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))

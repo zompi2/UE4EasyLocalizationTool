@@ -7,7 +7,7 @@
 
 /**
  * Editor object handles all of the logic of the Easy Localization Tool.
- * It's tasks are to create a widget which can be put into the dock, it also 
+ * It's tasks are to create a widget which is put into the dock, it also 
  * reacts to the user's interaction with created widget.
  * It sets up values like CSV path and global namespace and it actually
  * parses given CSV into the Unreal localization data.
@@ -78,23 +78,89 @@ private:
 	 */
 	void InitializeTheWidget();
 
+
+	// ~~~~~~~~~ Events received from the Widget
+
+	/**
+	 * Called when Localization path has changed in the Widget.
+	 */
 	void OnLocalizationPathChanged(const FString& NewPath);
+
+	/**
+	 * Called when CSV path has changed in the Widget.
+	 */
 	void OnCSVPathChanged(const FString& NewPath);
+
+	/**
+	 * Called when the generate Loc Files request has been received from the Widget.
+	 */
 	void OnGenerateLocFiles();
+
+	/**
+	 * Called when "ReimportAtEditorStartup" option has been changed in the widget.
+	 */
 	void OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStartup);
+
+	/**
+	 * Called when "PreviewLocalization" option has been changed in the Widget.
+	 */
 	void OnLocalizationPreviewChanged(bool bNewLocalizationPreview);
+
+	/**
+	 * Called when "PreviewLanguage" option has been changed in the Widget.
+	 */
 	void OnLocalizationPreviewLangChanged(const FString& LangPreview);
-	void OnLocalizationFirstRunChanged(bool bNewLocalizationPreview);
-	void OnLocalizationFirstRunLangChanged(const FString& LangPreview);
+
+	/**
+	 * Called when "OverrideLanguageOnFirstRun" option has been changed in the Widget.
+	 */
+	void OnLocalizationFirstRunChanged(bool bOnFirstRun);
+
+	/**
+	 * Called when "LanguageToOverrideAtFirstLaunch" option has been changed in the Widget.
+	 */
+	void OnLocalizationFirstRunLangChanged(const FString& LangOnFirstRun);
+
+	/**
+	 * Called when "GlobalNamespace" option has been changed in the Widget.
+	 */
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
+	// ~~~~~~~~~ End of events received from the Widget
+
+
+	/**
+	 * Enables or disabled language preview in the editor based on the current settings.
+	 */
 	void SetLanguagePreview();
+
+	/**
+	 * Refresh the list of available languages based on the files that exists in Localization directory.
+	 * It can optionally RefreshUI.
+	 */
 	void RefreshAvailableLangs(bool bRefreshUI);
+
+	/**
+	 * Generates Localization Files based on the given CSV path and Global Namespace.
+	 * Returns false if the generation fails. OutMessage will contain a descriptive failure reason.
+	 */
 	bool GenerateLocFiles(FString& OutMessage);
 
+
+	/**
+	 * Returns the path to the CSV file for this Localization directory.
+	 */
 	const FString& GetCurrentCSVPath();
-	const FString GetCurrentLocName();
-	const FString GetCurrentGlobalNamespace();
+
+	/**
+	 * Returns the currently selected Localization name (the Localization directory).
+	 */
+	FString GetCurrentLocName();
+
+	/**
+	 * Returns the Global Namespace set for this Localization directory.
+	 */
+	const FString& GetCurrentGlobalNamespace();
 
 	// Handler of the created Editor Utility Widget. 
 	// Is created in CreateEditorWidget().
@@ -105,11 +171,15 @@ private:
 	// It is set by an Editor Module by SetEditorTab() right after the dock is created.
 	TWeakPtr<class SDockTab> EditorTab;
 
-	// 
+	// Currently selected Localization directory path.
 	FString CurrentLocPath;
+
+	// List of overall available languages.
 	TArray<FString> CurrentAvailableLangs;
+
+	// List of languages available for currently selected Localization directory.
 	TArray<FString> CurrentAvailableLangsForLocFile;
+
+	// Cache of the CSV Paths defined for each Localization directory.
 	TMap<FString, FString> CSVPaths;
-
-
 };
