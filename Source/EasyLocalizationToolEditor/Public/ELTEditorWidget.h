@@ -74,56 +74,107 @@ public:
 	void FillCSVPath(const FString& CSVPath);
 
 
-
+	/**
+	 * User pressed "Select CSV" button.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void SelectNewCSVPath();
 
+	/**
+	 * User pressed "Generate" button.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void GenerateLocFiles();
 
 
+	// [TODO] Set* should be callable and On* should be implementable event.
+	/**
+	 * Set "Localization Preview" option to the Widget.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetLocalizationPreview(bool LocalizationPreview);
 
+	/**
+	 * "Localization Preview" option has been changed on the Widget.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnLocalizationPreviewChanged(bool LocalizationPreview);
 
 
+
+	/**
+	 * Set "Localization Preview Language" to the Widget.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetLocalizationPreviewLang(const FString& PreviewLang);
 
+	/**
+	 * "Localization Preview Language" has been changed on the Widget.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnLocalizationPreviewLangChanged(const FString& PreviewLang);
 
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnSetReimportAtEditorStartupChanged(bool bReimportAtEditorStartup);
 
-	UFUNCTION(BlueprintCallable)
+	/**
+	 * Set "Reimport At Editor Startup" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
 	void SetReimportAtEditorStartup(bool bReimportAtEditorStartup);
 
+	/**
+	 * "Reimport At Editor Startup" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void OnReimportAtEditorStartupChanged(bool bReimportAtEditorStartup);
+	
 
+
+	/**
+	 * Set "Localization On First Run" option to the Widget.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
+	/**
+	 * "Localization On First Run" option has been changed on the Widget.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
 
+
+	/**
+	 * Set "Localization On First Run Language" option to the Widget.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetLocalizationOnFirstRunLang(const FString& OnFirstRunLang);
 	
+	/**
+	 * "Localization On First Run Language" option has been changed on the Widget.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnLocalizationOnFirstRunLangChanged(const FString& OnFirstRunLang);
 
 
+
+	/**
+	 * Set "Global Namespace" option to the Widget.
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetGlobalNamespace(const FString& GlobalNamespace);
 
+	/**
+	 * "Global Namespace" option has been changed on the Widget.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
 
+
+	/**
+	 * Callbacks to be binded to the ELTEditor methods.
+	 */
 	FOnLocalizationPathSelected OnLocalizationPathSelectedDelegate;
 	FOnCSVPathChanged OnCSVPathChangedDelegate;
 	FOnGenerateLocFiles OnGenerateLocFilesDelegate;

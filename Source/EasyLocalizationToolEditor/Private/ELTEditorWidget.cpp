@@ -28,7 +28,7 @@ void UELTEditorWidget::GenerateLocFiles()
 	OnGenerateLocFilesDelegate.ExecuteIfBound();
 }
 
-void UELTEditorWidget::SetReimportAtEditorStartup(bool bReimportAtEditorStartup)
+void UELTEditorWidget::OnReimportAtEditorStartupChanged(bool bReimportAtEditorStartup)
 {
 	OnReimportAtEditorStartupChangedDelegate.ExecuteIfBound(bReimportAtEditorStartup);
 }

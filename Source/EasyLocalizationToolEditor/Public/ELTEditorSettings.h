@@ -45,7 +45,7 @@ public:
 	 * Get/Set lang code to preview in editor.
 	 */
 	static FString GetLocalizationPreviewLang();
-	static void SetLocalizationPreiewLang(const FString& NewLocalizationPreviewLang);
+	static void SetLocalizationPreviewLang(const FString& NewLocalizationPreviewLang);
 
 	/**
 	 * Get/Set if the localizations should be reimported at the editor startup.

@@ -28,6 +28,11 @@ public:
 	void Init();
 
 	/**
+	 * Sets up the EditorTab. Used by Editor Module right after a Tab is created.
+	 */
+	void SetEditorTab(const TSharedRef<class SDockTab>& NewEditorTab);
+
+	/**
 	 * Returns true if the Editor UI widget can be created.
 	 */
 	bool CanCreateEditorUI();
@@ -38,11 +43,6 @@ public:
 	 */
 	TSharedRef<class SWidget> CreateEditorUI();
 
-	/**
-	 * Sets up the EditorTab. Used by Editor Module right after a Tab is created.
-	 */
-	void SetEditorTab(const TSharedRef<class SDockTab>& NewEditorTab);
-	
 	/**
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.

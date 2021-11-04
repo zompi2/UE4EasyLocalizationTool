@@ -48,7 +48,7 @@ FString UELTEditorSettings::GetLocalizationPreviewLang()
 	ELTE_GET_SETTING(LocalizationPreviewLang);
 }
 
-void UELTEditorSettings::SetLocalizationPreiewLang(const FString& NewLocalizationPreviewLang)
+void UELTEditorSettings::SetLocalizationPreviewLang(const FString& NewLocalizationPreviewLang)
 {
 	ELTE_SET_SETTING(LocalizationPreviewLang, NewLocalizationPreviewLang);
 }

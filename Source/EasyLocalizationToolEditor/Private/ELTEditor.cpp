@@ -17,27 +17,35 @@
 
 #include "CSVReader.h"
 #include "LevelEditor.h"
-#include "Serialization/Csv/CsvParser.h"
 
 void UELTEditor::Init()
 {
+	// Load and cache paths for localization directories and CSVs.
 	CSVPaths		= UELTEditorSettings::GetCSVPaths();
 	CurrentLocPath	= UELTEditorSettings::GetLocalizationPath();
 
+	// Reimport localizations (if this option is enabled).
 	if (UELTEditorSettings::GetReimportAtEditorStartup())
 	{
 		FString OutMessage;
 		GenerateLocFiles(OutMessage);
 	}
 
+	// Refresh information about available localizations.
 	RefreshAvailableLangs(false);
+
+	// Set preview language (if the option is enabled).
 	SetLanguagePreview();
 }
 
+void UELTEditor::SetEditorTab(const TSharedRef<SDockTab>& NewEditorTab)
+{
+	EditorTab = NewEditorTab;
+}
 
 UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 {
-	// Get the Editor Utility Widget Blueprint from the content directory
+	// Get the Editor Utility Widget Blueprint from the content directory.
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
 	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
 	return Cast<UEditorUtilityWidgetBlueprint>(AssetData.GetAsset());
@@ -51,15 +59,12 @@ bool UELTEditor::CanCreateEditorUI()
 
 TSharedRef<SWidget> UELTEditor::CreateEditorUI()
 {
+	// Register OnMapChanged event so we can properly handle Tab and Widget when changing levels.
 	FLevelEditorModule& LevelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	LevelEditor.OnMapChanged().AddUObject(this, &UELTEditor::ChangeTabWorld);
 
+	// Create the Widget
 	return CreateEditorWidget();
-}
-
-void UELTEditor::SetEditorTab(const TSharedRef<SDockTab>& NewEditorTab)
-{
-	EditorTab = NewEditorTab;
 }
 
 TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
@@ -67,20 +72,27 @@ TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 	TSharedRef<SWidget> CreatedWidget = SNullWidget::NullWidget;
 	if (UEditorUtilityWidgetBlueprint* UtilityWidgetBP = GetUtilityWidgetBlueprint())
 	{
+		// Create Widget from the Editor Utility Widget BP.
 		CreatedWidget = UtilityWidgetBP->CreateUtilityWidget();
+
+		// Save the pointer to the created Widget and initialize it.
 		EditorWidget = Cast<UELTEditorWidget>(UtilityWidgetBP->GetCreatedWidget());
 		if (EditorWidget)
 		{
 			InitializeTheWidget();
 		}
 	}
+
+	// Returned Widget will be docked into the Editor Tab.
 	return CreatedWidget;
 }
 
 void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 {
+	// Handle the event when editor map changes.
 	if (MapChangeType == EMapChangeType::TearDownWorld)
 	{
+		// If the world is destroyed - set the Tab content to null and null the Widget.
 		if (EditorTab.IsValid())
 		{
 			EditorTab.Pin()->SetContent(SNullWidget::NullWidget);
@@ -93,6 +105,7 @@ void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 	}
 	else if (MapChangeType == EMapChangeType::NewMap || MapChangeType == EMapChangeType::LoadMap)
 	{
+		// If the map has been created or loaded and the Tab is valid - put a new Widget into this Tab.
 		if (EditorTab.IsValid())
 		{
 			EditorTab.Pin()->SetContent(CreateEditorWidget());
@@ -105,7 +118,7 @@ void UELTEditor::InitializeTheWidget()
 	// Check available languages (based on files in Localization directory)
 	RefreshAvailableLangs(true);
 
-	// Bind all required delegates
+	// Bind all required delegates to the Widget.
 	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
 	EditorWidget->OnCSVPathChangedDelegate.BindUObject(this, &UELTEditor::OnCSVPathChanged);
 	EditorWidget->OnGenerateLocFilesDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
@@ -116,7 +129,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 
-	// Fill Localization paths list on the widget
+	// Fill Localization paths list on the Widget.
 	TArray<FString> GameLocPaths = FPaths::GetGameLocalizationPaths();
 	for (FString& GameLocPath : GameLocPaths)
 	{
@@ -135,18 +148,18 @@ void UELTEditor::InitializeTheWidget()
 		}
 	}
 
-	// Load current value of re import on editor startup option
-	EditorWidget->OnSetReimportAtEditorStartupChanged(UELTEditorSettings::GetReimportAtEditorStartup());
+	// Set the ReimportAtEditorStartup current value to the Widget.
+	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
 
-	// Load current value of localization preview option
+	// Set the Localization Preview current values to the Widget.
 	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
 	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
-	// Load current value of localization override language at first run option
+	// Set the Localization Override At First Run current values to the Widget.
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
-	// Load current namespace
+	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
 	{
@@ -159,23 +172,29 @@ void UELTEditor::InitializeTheWidget()
 }
 
 
+// ~~~~~~~~~ Events received from the Widget
 
 void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 {
+	// Localization directory path has been changed in the Widget. Update it in settings.
 	CurrentLocPath = NewPath;
 	UELTEditorSettings::SetLocalizationPath(CurrentLocPath);
 
+	// Update Localization directory name and path to CSV to the Widget.
 	EditorWidget->FillLocalizationName(GetCurrentLocName());
 	EditorWidget->FillCSVPath(GetCurrentCSVPath());
 
+	// Refresh available languages for this Localization directory and set them to the Widget.
 	RefreshAvailableLangs(false);
 	EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
+	// Set Global Namespace for this Localization directory to the Widget.
 	EditorWidget->SetGlobalNamespace(GetCurrentGlobalNamespace());
 }
 
 void UELTEditor::OnCSVPathChanged(const FString& NewPath)
 {
+	// CSV Path has been changed in the Widget. Cache it, save it in settings and update Widget.
 	if (CSVPaths.Contains(GetCurrentLocName()))
 	{
 		CSVPaths[GetCurrentLocName()] = FPaths::ConvertRelativePathToFull(NewPath);
@@ -190,6 +209,8 @@ void UELTEditor::OnCSVPathChanged(const FString& NewPath)
 
 void UELTEditor::OnGenerateLocFiles()
 {
+	// Generate Loc Files button has been pressed. 
+	// Generate Loc Files and if succeeded refresh available languages and preview.
 	FString ReturnMessage;
 	if (GenerateLocFiles(ReturnMessage))
 	{
@@ -197,38 +218,48 @@ void UELTEditor::OnGenerateLocFiles()
 		SetLanguagePreview();
 	}
 	
+	// Display a Dialog Window to inform user that the localization generation has been finished.
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
 }
 
 void UELTEditor::OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStartup)
 {
+	// "Reimport At Editor Startup" option has been changed in the Widget. Save this setting.
 	UELTEditorSettings::SetReimportAtEditorStartup(bNewReimportAtEditorStartup);
 }
 
 void UELTEditor::OnLocalizationPreviewChanged(bool bNewLocalizationPreview)
 {
+	// "Localization Preview" option has been changed in the Widget. 
+	// Save this setting, set proper preview.
 	UELTEditorSettings::SetLocalizationPreview(bNewLocalizationPreview);
 	SetLanguagePreview();
 }
 
 void UELTEditor::OnLocalizationPreviewLangChanged(const FString& LangPreview)
 {
-	UELTEditorSettings::SetLocalizationPreiewLang(LangPreview);
+	// "Localization Preview Language" option has been changed in the Widget. 
+	// Save this setting, set proper preview.
+	UELTEditorSettings::SetLocalizationPreviewLang(LangPreview);
 	SetLanguagePreview();
 }
 
 void UELTEditor::OnLocalizationFirstRunChanged(bool bOnFirstRun)
 {
+	// "Override Language At First Launch" option has been changed in the Widget. Save this setting.
 	UELTSettings::SetOverrideLanguageAtFirstLaunch(bOnFirstRun);
 }
 
 void UELTEditor::OnLocalizationFirstRunLangChanged(const FString& LangOnFirstRun)
 {
+	// "Language To Override At First Launch" option has been changed in the Widget. Save this setting.
 	UELTSettings::SetLanguageToOverrideAtFirstLaunch(LangOnFirstRun);
 }
 
 void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 {
+	// "Global Namespace" has been changed in the Widget. Save this setting 
+	// for current Localization directory.
 	TMap<FString, FString> GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()) == false)
 	{
@@ -241,10 +272,15 @@ void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 	UELTEditorSettings::SetGlobalNamespace(GlobalNamespaces);
 }
 
+// ~~~~~~~~~ End of events received from the Widget
+
 
 void UELTEditor::SetLanguagePreview()
 {
+	// Before enabling the preview for editor - disable it first in order to have a clear start.
 	FTextLocalizationManager::Get().DisableGameLocalizationPreview();
+
+	// Enable the preview for editor with a selected language, if this language is available.
 	const FString& CurrentLang = UELTEditorSettings::GetLocalizationPreviewLang();
 	if (UELTEditorSettings::GetLocalizationPreview() && CurrentAvailableLangs.Contains(CurrentLang))
 	{
@@ -254,6 +290,8 @@ void UELTEditor::SetLanguagePreview()
 
 void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 {
+	// Get all available languages by reading the localization directory.
+	// Languages in current localization directory put into the separate array too.
 	CurrentAvailableLangs.Empty();
 	CurrentAvailableLangsForLocFile.Empty();
 	const TArray<FString>& GameLocPaths = FPaths::GetGameLocalizationPaths();
@@ -280,14 +318,19 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 
 	if (bRefreshUI)
 	{
-		FString LangPreview = UELTEditorSettings::GetLocalizationPreviewLang();
-		FString LangAtFirstLaunch = UELTSettings::GetLanguageToOverrideAtFirstLaunch();
+		// If the RefreshUI has been requested - set the available languages on the Widget.
 		EditorWidget->FillAvailableLangs(CurrentAvailableLangs);
 		EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
-
+		
+		// If the Preview or OverrideAtFirstLaunch languages are not available after refreshing
+		// available languages - set them to empty. If they are available - ensure they are properly displayed.
+		// [TODO]: Shouldn't we disable them if they are not available? Test how it will behave.
+		const FString LangPreview = UELTEditorSettings::GetLocalizationPreviewLang();
+		const FString LangAtFirstLaunch = UELTSettings::GetLanguageToOverrideAtFirstLaunch();
+		
 		if (CurrentAvailableLangs.Contains(LangPreview) == false)
 		{
-			UELTEditorSettings::SetLocalizationPreiewLang(TEXT(""));
+			UELTEditorSettings::SetLocalizationPreviewLang(TEXT(""));
 		}
 		else
 		{
@@ -304,6 +347,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 	}
 
+	// Set available languages to the game settings.
 	UELTSettings::SetAvailableLanguages(CurrentAvailableLangs);
 }
 
@@ -342,10 +386,10 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 				}
 			}
 
-			// Potential place for namespaces
+			// Potential place for namespaces.
 			const FCSVColumn& Namespaces = Columns[0];
 
-			// Check if we have namespaces defined for every key or to use global value
+			// Check if we have namespaces defined for every key or to use global value.
 			const bool bHasNamespaces = Columns[0].Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase);
 			const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
 
@@ -357,7 +401,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 
 			IFileManager::Get().DeleteDirectory(*LocPath, false, true);
 
-			// Keys will be in first row if not having namespaces
+			// Keys will be in first row if not having namespaces.
 			const FCSVColumn& Keys = Columns[bHasNamespaces ? 1 : 0];
 
 			for (int32 Column = (bHasNamespaces ? 2 : 1); Column < Columns.Num(); Column++)
@@ -385,6 +429,8 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 					LocRes.SaveToFile(LocPath / Lang / LocName + TEXT(".locres"));
 				}
 			}
+
+			// LocMeta must be created for every localization path.
 			FTextLocalizationMetaDataResource LocMeta;
 			LocMeta.NativeCulture = TEXT("en");
 			LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
@@ -407,6 +453,8 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 
 const FString& UELTEditor::GetCurrentCSVPath()
 {
+	// Get the CSV path associated with current Localization directory.
+	// If there is no such file - return empty value.
 	if (CSVPaths.Contains(GetCurrentLocName()))
 	{
 		return CSVPaths[GetCurrentLocName()];
@@ -420,6 +468,7 @@ const FString& UELTEditor::GetCurrentCSVPath()
 
 FString UELTEditor::GetCurrentLocName()
 {
+	// Get the base file name of current Localization directory name.
 	if (CurrentLocPath.IsEmpty() == false)
 	{
 		return FPaths::GetBaseFilename(CurrentLocPath);
@@ -432,6 +481,8 @@ FString UELTEditor::GetCurrentLocName()
 
 const FString& UELTEditor::GetCurrentGlobalNamespace()
 {
+	// Get the Global Namespace associated with current Localization directory.
+	// If there is no such Global Namespace - return empty value.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
 	{
