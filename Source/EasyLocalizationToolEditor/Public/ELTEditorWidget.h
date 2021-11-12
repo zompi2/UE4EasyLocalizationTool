@@ -87,7 +87,6 @@ public:
 	void GenerateLocFiles();
 
 
-	// [TODO] Set* should be callable and On* should be implementable event.
 	/**
 	 * Set "Localization Preview" option to the Widget.
 	 */
