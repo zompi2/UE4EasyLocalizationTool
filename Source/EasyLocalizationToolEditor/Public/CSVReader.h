@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Misc/FileHelper.h"
+
+#if ELT_USE_UNREAL_CSV_PARSER
 #include "Serialization/Csv/CsvParser.h"
+#endif
 
 /**
  * A class for parsing CSV files. Because it is easier for us to handle localizations

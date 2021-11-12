@@ -447,7 +447,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 		return false;
 	}
 
-	OutMessage = TEXT("SUCCESS: Loc import complete!");
+	OutMessage = TEXT("SUCCESS: Localization import complete!");
 	return true;
 }
 

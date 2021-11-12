@@ -19,7 +19,7 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	// Register Tab Spawner in the Tools menu.
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FName(TEXT("ELT")), FOnSpawnTab::CreateRaw(this, &FEasyLocalizationToolEditorModule::SpawnEditor), FCanSpawnTab::CreateRaw(this, &FEasyLocalizationToolEditorModule::CanSpawnEditor))
 		.SetDisplayName(FText::FromString(TEXT("Easy Localization Tool")))
-		.SetTooltipText(FText::FromString(TEXT("Open Easy Localization Tool Editor")))
+		.SetTooltipText(FText::FromString(TEXT("Open Easy Localization Tool Window")))
 		.SetGroup(WorkspaceMenu::GetMenuStructure().GetToolsCategory());
 }
 
