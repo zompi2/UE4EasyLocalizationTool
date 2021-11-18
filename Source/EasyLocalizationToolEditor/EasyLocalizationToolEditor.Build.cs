@@ -14,7 +14,8 @@ public class EasyLocalizationToolEditor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core"
+				"Core",
+				"InputCore"
 			}
 		);
 			
@@ -25,15 +26,16 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"EasyLocalizationTool",
                 "Engine",
 				"CoreUObject",
-				"Slate",
+                "Slate",
                 "SlateCore",
                 "UnrealEd",
 				"WorkspaceMenuStructure",
 				"DesktopPlatform",
                 "Blutility",
                 "UMG",
-                "UMGEditor"
-            }
+                "UMGEditor",
+				"EditorStyle"
+			}
 		);
 
 		PublicDefinitions.Add("ELT_USE_UNREAL_CSV_PARSER=0");

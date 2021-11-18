@@ -21,18 +21,35 @@ public:
 	// FGCObject implementation
 	void AddReferencedObjects(FReferenceCollector& Collector) override;
 
+protected:
+
+	/**
+	 * Run some initializations after the Engine has been initialized.
+	 */
+	void OnPostEngineInit();
+
 private:
 
 	/**
 	 * Returns true if the editor can be spawned.
 	 */
-	bool CanSpawnEditor(const FSpawnTabArgs& Args);
+	bool CanSpawnEditor();
 
 	/**
 	 * Spawns editor and returns a ref of the DockTab to which the editor
 	 * has been pinned.
 	 */
 	TSharedRef<class SDockTab> SpawnEditor(const FSpawnTabArgs& Args);
+
+	/**
+	 * Checks if the editor is spawned.
+	 */
+	bool IsEditorSpawned();
+
+	/**
+	 * Invokes spawning editor from the command.
+	 */
+	void InvokeEditorSpawn();
 	
 	// Editor object.
 	class UELTEditor* Editor;

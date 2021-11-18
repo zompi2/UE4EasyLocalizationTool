@@ -1,5 +1,8 @@
 # Easy Localization Tool for Unreal Engine 4
 
+This plugin introduces a way simplier method of localizing game made in Unreal Engine 4. 
+
+
 This is a preview entry of Easy Localization Tool for UE4, which goal is to simplify the way a simple localizations are handled.
 
 The project contains an example map with example csv with localizations.
