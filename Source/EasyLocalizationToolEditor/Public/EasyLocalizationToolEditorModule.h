@@ -17,6 +17,7 @@ public:
 
 	// IModuleInterface implementation
 	void StartupModule() override;
+	void ShutdownModule() override;
 
 	// FGCObject implementation
 	void AddReferencedObjects(FReferenceCollector& Collector) override;
@@ -56,4 +57,7 @@ private:
 
 	// DockTab reference with the editor.
 	TWeakPtr<class SDockTab> EditorTab;
+
+	// Handler for an OnPOstEngineInit delegate.
+	FDelegateHandle OnPostEngineInitDelegateHandle;
 };

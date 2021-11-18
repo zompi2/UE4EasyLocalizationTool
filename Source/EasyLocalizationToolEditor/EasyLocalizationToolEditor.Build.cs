@@ -34,7 +34,8 @@ public class EasyLocalizationToolEditor : ModuleRules
                 "Blutility",
                 "UMG",
                 "UMGEditor",
-				"EditorStyle"
+				"EditorStyle",
+				"Projects"
 			}
 		);
 

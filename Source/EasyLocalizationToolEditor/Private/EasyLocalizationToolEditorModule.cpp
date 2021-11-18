@@ -3,6 +3,7 @@
 #include "EasyLocalizationToolEditorModule.h"
 #include "ELTEditor.h"
 #include "ELTEditorCommands.h"
+#include "ELTEditorStyle.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Docking/TabManager.h"
@@ -17,11 +18,15 @@ const FName ELTTabId = FName(TEXT("ELT"));
 
 void FEasyLocalizationToolEditorModule::StartupModule()
 {
+	// Register Styles.
+	FELTEditorStyle::Initialize();
+	FELTEditorStyle::ReloadTextures();
+
 	// Register UICommands.
 	FELTEditorCommands::Register();
 
 	// Register OnPostEngineInit delegate.
-	FCoreDelegates::OnPostEngineInit.AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
+	OnPostEngineInitDelegateHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
 
 	// Create and initialize Editor object.
 	Editor = NewObject<UELTEditor>();
@@ -32,7 +37,27 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 		ELTTabId,
 		FOnSpawnTab::CreateRaw(this, &FEasyLocalizationToolEditorModule::SpawnEditor),
 		FCanSpawnTab::CreateLambda([this](const FSpawnTabArgs& Args) -> bool { return CanSpawnEditor(); })
-	).SetMenuType(ETabSpawnerMenuType::Hidden);
+	)
+	.SetMenuType(ETabSpawnerMenuType::Hidden)
+	.SetIcon(FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon"));
+}
+
+void FEasyLocalizationToolEditorModule::ShutdownModule()
+{
+	// Unregister Tab Spawner
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
+
+	// Cleanup the Editor object.
+	Editor = nullptr;
+
+	// Remove OnPostEngineInit delegate
+	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitDelegateHandle);
+
+	// Unregister UICommands.
+	FELTEditorCommands::Unregister();
+
+	// Unregister Styles.
+	FELTEditorStyle::Shutdown();
 }
 
 void FEasyLocalizationToolEditorModule::OnPostEngineInit()
@@ -72,7 +97,7 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 						NAME_None,
 						FText::FromString(TEXT("Easy Localization Tool")),
 						FText::FromString(TEXT("Opens Easy Localization Tool Window")),
-						FSlateIcon()
+						FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon")
 					);
 				})
 			);
