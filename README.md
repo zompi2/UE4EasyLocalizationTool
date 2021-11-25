@@ -8,11 +8,11 @@ It simply allow to import CSV file with localization.
 
 The tool accepts a CSV file of a defined format:
 
-**[IMG]**
+![csvtesteg](https://user-images.githubusercontent.com/7863125/143495161-338a59b2-a41f-43a2-85cb-6a3b28078ab1.png)
 
 ``` csv
 Namespace,Key,lang-en,lang-pl,lang-de,Comments
-GAME,TEST_EXAMPLE,"Hello, world!",Witaj œwiecie!,Hallo Welt!,Anything you wish to type
+GAME,TEST_EXAMPLE,"Hello, world!",Witaj Å“wiecie!,Hallo Welt!,Anything you wish to type
 ```
 
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
@@ -28,11 +28,11 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj œwiecie!,Hallo Welt!,Anything you wish t
 
 To open the tool select `Windows -> Easy Localization Tool` or use a shortcut `Alt + Shift + L`
 
-**[IMG]**
+![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)
 
 The following window should appear:
 
-**[IMG]**
+![elttoolwindow](https://user-images.githubusercontent.com/7863125/143495192-da02d1ac-cee3-4792-8a63-db6e4f748fda.png)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
