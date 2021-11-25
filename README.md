@@ -26,7 +26,7 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj œwiecie!,Hallo Welt!,Anything you wish 
 
 ## Using the tool
 
-To open the tool select `Windows -> Easy Localization Tool` or use a shortcut `Alt + Shift + L`
+To open the tool select `Window -> Easy Localization Tool` or use a shortcut `Alt + Shift + L`
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)
 
