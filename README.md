@@ -79,3 +79,13 @@ Easy Localization Tools comes with few handy functions to control localization i
 ### Get Available Languages
 
 Returns a list of available language codes
+
+![preview](https://user-images.githubusercontent.com/7863125/144485817-09998bdb-a27b-4d10-b139-4db271880996.png)
+![open](https://user-images.githubusercontent.com/7863125/144485820-f855edc9-3def-4d5e-bf7c-42f4dcb458f4.png)
+![elttoolwindow](https://user-images.githubusercontent.com/7863125/144485822-78bce0e4-094a-4189-a8df-50f9fad8aa9e.png)
+![testex](https://user-images.githubusercontent.com/7863125/144485825-09cc1e5e-408d-48c4-adab-9fda9d7e51d7.png)
+![testex2](https://user-images.githubusercontent.com/7863125/144485826-ede6dd9f-c7d8-42b5-a615-6f2d67f21816.png)
+![elt1](https://user-images.githubusercontent.com/7863125/144485828-52dabe7a-ecc9-48db-a39b-a65a2f877987.png)
+![elt2](https://user-images.githubusercontent.com/7863125/144485830-87f4cbe1-97f8-46cc-b740-40aad0e5c00e.png)
+![elt3](https://user-images.githubusercontent.com/7863125/144485831-2e02ea40-96d5-4304-ba4d-ce1eeccd2825.png)
+![elt4](https://user-images.githubusercontent.com/7863125/144485832-8c3c42e5-3e28-402c-a695-f2af39b9628e.png)
