@@ -22,7 +22,7 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj œwiecie!,Hallo Welt!,Anything you wish 
 
 > !!! IMPORTANT !!!  
 > **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.  
-> Any column that isn't **Namespace**, **Key** and **lang-x** is ignored by a tool.
+> Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
 
 ## Using the tool
 
@@ -44,4 +44,38 @@ The following window should appear:
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 
 
-**TODO** this documentation is not finished.
+### Import
+
+In order to import localization from CSV simply select the CSV file in the tool's window and click **Import**.  
+If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** property. That's it!
+
+## Using localizations
+
+In order to use a localized phrase type a key into the Text value:
+
+[Image]
+
+Then, set a Namespace and Key values for this Text:
+
+[Image]
+
+To use it in code use the following macro:
+
+``` cpp
+NSLOCTEXT("GAME", "TEST_EXAMPLE", "Hello, world!")
+```
+
+
+## Previewing localization
+
+You can use **Localization Preview** option in the tool, or use the Preview option inside UMG Designer
+
+[Image]
+
+## Controlling localization
+
+Easy Localization Tools comes with few handy functions to control localization in game:
+
+### Get Available Languages
+
+Returns a list of available language codes
