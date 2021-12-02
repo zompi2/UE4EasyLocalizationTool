@@ -173,7 +173,7 @@ Where:
 
 # Special Thanks
 
-I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](@cziter15) for the idea of how it should work and to everyone that contributed to this project.  
+I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work and to everyone that contributed to this project.  
 Also, I want to thank You for using this plugin! It is very important for me that my work is useful for someone!  
 Happy coding!
 
