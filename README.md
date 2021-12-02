@@ -88,7 +88,7 @@ NSLOCTEXT("GAME", "TEST_EXAMPLE", "Hello, world!")
 
 [Back to top](#table-of-content)
 
-## Previewing Localization
+## Previewing Localizations
 
 You can use **Localization Preview** option in the tool, or use the Preview option inside UMG Designer
 
@@ -96,7 +96,7 @@ You can use **Localization Preview** option in the tool, or use the Preview opti
 
 [Back to top](#table-of-content)
 
-## Controlling Localization
+## Controlling Localizations
 
 Easy Localization Tool comes with few handy functions to control localization in game:
 
