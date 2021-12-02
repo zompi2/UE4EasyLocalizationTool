@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "0.9.0",
+	"VersionName": "1.0.0",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "Tool to simplify the way a simple localizations are handled.",
 	"Category": "Localization",
@@ -12,7 +12,7 @@
 	"EngineVersion": "4.26.0",
 	"SupportURL": "mailto:zompi2@gmail.com",
 	"CanContainContent": true,
-	"IsBetaVersion": true,
+	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": true,
 	"Modules": [

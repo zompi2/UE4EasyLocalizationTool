@@ -8,6 +8,10 @@ It simply allow to import CSV file with localization.
 
 If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project or write an e-mail to me: **zompi2@gmail.com** I will try my best to answer it quickly :)
 
+# Example Project
+
+The example project wich uses this plugin can be found in **[this repository](https://github.com/zompi2/UE4EasyLocalizationToolExample)**.
+
 # Table of content
 
 - [CSV Format](#csv-format)
@@ -132,12 +136,12 @@ bool UELT::CanSetLanguage(const FString& Language);
 
 #### Set Language
 
-Sets a language with the given language code.
+Sets a language with the given language code. Returns false if the language couldn't be set.
 
 ![elt4](https://user-images.githubusercontent.com/7863125/144485832-8c3c42e5-3e28-402c-a695-f2af39b9628e.png)
 
 ``` cpp
-void UELT::SetLanguage(const FString& Language);
+bool UELT::SetLanguage(const FString& Language);
 ```
 
 [Back to top](#table-of-content)
