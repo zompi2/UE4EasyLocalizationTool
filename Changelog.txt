@@ -1,0 +1,2 @@
+###### 1.0.1 
+* Fixed version number display in the editor widget

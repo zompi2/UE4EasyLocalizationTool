@@ -32,6 +32,12 @@ class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWid
 public:
 
 	/**
+	 * Returns a version of the plugin.
+	 */
+	UFUNCTION(BlueprintPure)
+	FString GetPluginVersion();
+
+	/**
 	 * Call BP to fill up the list of localization paths.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)

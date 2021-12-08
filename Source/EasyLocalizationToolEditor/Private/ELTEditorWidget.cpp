@@ -2,6 +2,18 @@
 
 #include "ELTEditorWidget.h"
 #include "DesktopPlatformModule.h"
+#include "Interfaces/IPluginManager.h"
+
+FString UELTEditorWidget::GetPluginVersion()
+{
+	TArray<TSharedRef<IPlugin>> Plugins = IPluginManager::Get().GetDiscoveredPlugins();
+	for (const TSharedRef<IPlugin>& Plugin : Plugins) {
+		if (Plugin->GetName() == "EasyLocalizationTool") {
+			return Plugin->GetDescriptor().VersionName;
+		}
+	}
+	return TEXT("");
+}
 
 void UELTEditorWidget::OnLocalizationPathSelected(const FString& Path)
 {
