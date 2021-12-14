@@ -1,2 +1,5 @@
+###### 1.0.2 
+* Fixed a crash, which could occur when generating lockits with global namespace.
+
 ###### 1.0.1 
-* Fixed version number display in the editor widget
+* Fixed version number display in the editor widget.
