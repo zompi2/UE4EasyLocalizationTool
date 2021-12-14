@@ -160,7 +160,7 @@ private:
 	/**
 	 * Returns the Global Namespace set for this Localization directory.
 	 */
-	const FString& GetCurrentGlobalNamespace();
+	FString GetCurrentGlobalNamespace();
 
 	// Handler of the created Editor Utility Widget. 
 	// Is created in CreateEditorWidget().

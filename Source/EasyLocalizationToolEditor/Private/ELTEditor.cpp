@@ -479,7 +479,7 @@ FString UELTEditor::GetCurrentLocName()
 	}
 }
 
-const FString& UELTEditor::GetCurrentGlobalNamespace()
+FString UELTEditor::GetCurrentGlobalNamespace()
 {
 	// Get the Global Namespace associated with current Localization directory.
 	// If there is no such Global Namespace - return empty value.
@@ -490,7 +490,6 @@ const FString& UELTEditor::GetCurrentGlobalNamespace()
 	}
 	else
 	{
-		static FString Dummy = TEXT("");
-		return Dummy;
+		return TEXT("");
 	}
 }
