@@ -1,3 +1,6 @@
+###### 1.1.1
+* Caching FLocText result.
+
 ###### 1.1.0
 * FLocText structure added. It is needed, because FText doesn't work properly in inherited blueprints.
 

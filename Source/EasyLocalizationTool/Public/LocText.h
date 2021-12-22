@@ -4,7 +4,7 @@
 
 /**
  * Structure for storing Namespace and Key which will be used
- * to get localized FText. 
+ * to get localized FText.
  * We need this, because FText doesn't work properly in inherited blueprints.
  */
 
@@ -33,15 +33,20 @@ struct FLocText
 	UPROPERTY(EditAnywhere)
 	FString Key;
 
+	/** A result text, cached for future uses */
+	FText ValueCache;
+
 	/**
 	 * Get localized FText based on Namespace and Key.
 	 */
 	FText GetText()
 	{
-		const FTextId TextId(*Namespace, *Key);
-		FText OutText;
-		FText::FindText(TextId.GetNamespace(), TextId.GetKey(), OutText, &Key);
-		return OutText;
+		if (ValueCache.IsEmpty())
+		{
+			const FTextId TextId(*Namespace, *Key);
+			FText::FindText(TextId.GetNamespace(), TextId.GetKey(), ValueCache, &Key);
+		}
+		return ValueCache;
 	}
 
 	/**
