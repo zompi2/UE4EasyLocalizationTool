@@ -159,6 +159,8 @@ FLocText LocalizedStruct("GAME", "TEST_EXAMPLE");
 FText LocalizedText = LocalizedStruct.GetText();
 FString LocalizedString = LocalizedStruct.ToString();
 ```
+![locstructimg](https://user-images.githubusercontent.com/7863125/147063762-8501121a-50f9-4dca-bfd4-fad096b63437.png)
+![locstructbpcast](https://user-images.githubusercontent.com/7863125/147063770-e669c169-273b-4b09-97df-14ba834cf8c8.png)
 
 [Back to top](#table-of-content)
 
