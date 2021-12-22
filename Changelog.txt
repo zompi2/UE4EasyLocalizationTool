@@ -1,3 +1,6 @@
+###### 1.1.0
+* FlocText structure added. It is needed, because FText doesn't work properly in inherited blueprints.
+
 ###### 1.0.2 
 * Fixed a crash, which could occur when generating lockits with global namespace.
 

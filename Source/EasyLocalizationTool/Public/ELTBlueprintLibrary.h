@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "LocText.h"
 #include "ELTBlueprintLibrary.generated.h"
 
 /**
@@ -41,4 +42,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
 	static bool SetLanguage(const FString& Language);
+
+	/**
+	 * Casts FLocText to FText.
+	 */
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToText (LocText)", CompactNodeTitle = "->", BlueprintAutocast), Category = "Utilities|Text")
+	static FText Conv_LocTextToText(FLocText InLocText);
+
+	/**
+	 * Casts FLocText to FString.
+	 */
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToString (LocText)", CompactNodeTitle = "->", BlueprintAutocast), Category = "Utilities|Text")
+	static FString Conv_LocTextToString(FLocText InLocText);
 };

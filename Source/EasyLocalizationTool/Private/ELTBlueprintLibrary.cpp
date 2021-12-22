@@ -22,3 +22,13 @@ bool UELTBlueprintLibrary::SetLanguage(const FString& Language)
 {
 	return UELT::SetLanguage(Language);
 }
+
+FText UELTBlueprintLibrary::Conv_LocTextToText(FLocText InLocText)
+{
+	return InLocText.GetText();
+}
+
+FString UELTBlueprintLibrary::Conv_LocTextToString(FLocText InLocText)
+{
+	return InLocText.ToString();
+}

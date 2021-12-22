@@ -4,11 +4,13 @@
 #include "ELTEditor.h"
 #include "ELTEditorCommands.h"
 #include "ELTEditorStyle.h"
+#include "LocTextDetails.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Docking/TabManager.h"
 #include "Interfaces/IMainFrameModule.h"
 
+#include "PropertyEditorModule.h"
 #include "LevelEditor.h"
 
 IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)
@@ -40,10 +42,18 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	)
 	.SetMenuType(ETabSpawnerMenuType::Hidden)
 	.SetIcon(FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon"));
+
+	// Register LocText custom details panel.
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+	PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
 }
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
 {
+	// Unregister LocText custom details panel.
+	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropertyModule.UnregisterCustomPropertyTypeLayout("LocText");
+
 	// Unregister Tab Spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
 
