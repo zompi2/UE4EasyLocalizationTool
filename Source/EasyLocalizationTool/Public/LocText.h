@@ -17,7 +17,7 @@ struct FLocText
 {
 	GENERATED_BODY()
 
-	FLocText() {}
+	FLocText() = default;
 	FLocText(const FString& InNamespace, const FString& InKey) :
 		Namespace(InNamespace),
 		Key(InKey)
