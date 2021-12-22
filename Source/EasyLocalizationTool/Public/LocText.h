@@ -17,6 +17,16 @@ struct FLocText
 {
 	GENERATED_BODY()
 
+	FLocText() {}
+	FLocText(const FString& InNamespace, const FString& InKey) :
+		Namespace(InNamespace),
+		Key(InKey)
+	{}
+	FLocText(FString&& InNamespace, FString&& InKey) :
+		Namespace(MoveTemp(InNamespace)),
+		Key(MoveTemp(InKey))
+	{}
+
 	UPROPERTY(EditAnywhere)
 	FString Namespace;
 

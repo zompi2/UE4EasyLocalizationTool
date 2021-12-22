@@ -20,6 +20,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 - [Using Localizations](#using-localizations)
 - [Previewing Localizations](#previewing-localizations)
 - [Controlling Localizations](#controlling-localizations)
+- [LocText Struct](#loctext-struct)
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
 - [Special Thanks](#special-thanks)
@@ -142,6 +143,21 @@ Sets a language with the given language code. Returns false if the language coul
 
 ``` cpp
 bool UELT::SetLanguage(const FString& Language);
+```
+
+[Back to top](#table-of-content)
+
+## LocText Struct
+
+There is an unwanted behaviour of `FText` - it keeps creating a new Key for every child Blueprint it's in.  
+It means that if there is a `FText` in a Blueprint, this `FText` will not be valid in this Blueprints's children.  
+
+In order to workaround this issue the `FLocText` has been introduce. It is a structure that holds Namespace and Key and it can give a corresponding to it `FText`. The structrue is immune to the inheritence problems.  
+
+``` cpp
+FLocText LocalizedStruct("GAME", "TEST_EXAMPLE");
+FText LocalizedText = LocalizedStruct.GetText();
+FString LocalizedString = LocalizedStruct.ToString();
 ```
 
 [Back to top](#table-of-content)
