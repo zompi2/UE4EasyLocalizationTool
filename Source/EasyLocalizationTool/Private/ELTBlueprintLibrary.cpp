@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2022 Damian Nowakowski. All rights reserved.
 
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
@@ -31,4 +31,10 @@ FText UELTBlueprintLibrary::Conv_LocTextToText(FLocText InLocText)
 FString UELTBlueprintLibrary::Conv_LocTextToString(FLocText InLocText)
 {
 	return InLocText.ToString();
+}
+
+void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey)
+{
+	FTextInspector::GetNamespace(InText).GetValue().Split(TEXT(" "), &OutNamespace, &OutPackage);
+	OutKey = FTextInspector::GetKey(InText).GetValue();
 }

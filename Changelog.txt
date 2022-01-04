@@ -1,3 +1,6 @@
+###### 1.1.2
+* Utility function for getting FText's Package, Namespace and Key info added.
+
 ###### 1.1.1
 * Caching FLocText result.
 

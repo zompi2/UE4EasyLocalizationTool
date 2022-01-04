@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2022 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -54,4 +54,10 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToString (LocText)", CompactNodeTitle = "->", BlueprintAutocast), Category = "Utilities|Text")
 	static FString Conv_LocTextToString(FLocText InLocText);
+
+	/**
+	 * Gets Package, Namespace and Key from a FText.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
+	static void GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey);
 };

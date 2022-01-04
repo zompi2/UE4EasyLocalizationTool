@@ -23,6 +23,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 - [Controlling Localizations](#controlling-localizations)
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
+- [Utilities](#utilities)
 - [Special Thanks](#special-thanks)
 
 ## CSV Format
@@ -192,6 +193,14 @@ Where:
 * **-CSVPath** - is a path to the csv file to import.
 * **-LocPath** - is a directory where localization files should be stored.
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
+
+[Back to top](#table-of-content)
+
+## Utilities
+
+#### Get Text Data
+
+Gets a Package, Namespace and Key info from FText.
 
 [Back to top](#table-of-content)
 
