@@ -202,6 +202,8 @@ Where:
 
 Gets a Package, Namespace and Key info from FText.
 
+![intext](https://user-images.githubusercontent.com/7863125/148031512-bc9325ce-d970-4e5a-a9d6-4322350422af.png)
+
 [Back to top](#table-of-content)
 
 # Special Thanks
