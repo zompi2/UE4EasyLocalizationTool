@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2022 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -45,6 +45,10 @@ struct FLocText
 		{
 			const FTextId TextId(*Namespace, *Key);
 			FText::FindText(TextId.GetNamespace(), TextId.GetKey(), ValueCache, &Key);
+			if (ValueCache.IsEmpty())
+			{
+				ValueCache = FText::FromString(Key);
+			}
 		}
 		return ValueCache;
 	}

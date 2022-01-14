@@ -1,3 +1,6 @@
+###### 1.1.3
+* FLocText will return a Key if no localization is found.
+
 ###### 1.1.2
 * Utility function for getting FText's Package, Namespace and Key info added.
 
