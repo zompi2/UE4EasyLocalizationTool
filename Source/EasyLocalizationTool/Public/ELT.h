@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2022 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -9,6 +9,9 @@
 /**
  * A subsystem which handles localizations in game.
  */
+
+// Event launched when text localizations has changed due to the change of culture
+DECLARE_EVENT(UELT, FOnTextLocalizationChanged)
 
 UCLASS()
 class EASYLOCALIZATIONTOOL_API UELT : public UGameInstanceSubsystem
@@ -45,6 +48,12 @@ public:
 	 */
 	static bool SetLanguage(const FString& Lang);
 
+	/**
+	 * Gets an event which runs when text localizations has changed.
+	 * Use it to bind functions to it.
+	 */
+	static FOnTextLocalizationChanged& GetOnTextLocalizationChanged();
+
 private:
 
 	// Name of a save file.
@@ -52,4 +61,18 @@ private:
 
 	// Code of currently used language.
 	static FString ELTCurrentLanguage;
+
+	// Static instance of the Text Localization Changed event.
+	static FOnTextLocalizationChanged OnTextLocalizationChangedEvent;
+
+	// Handle for a delegate from TextLocalizationManager.
+	FDelegateHandle OnTextRevisionChangedEventHandle;
+
+	/**
+	 * Broadcast event about text localization change.
+	 */
+	void BroadcastOnTextLocalizationChanged();
+
+	// Flag to prevent changing languages in callbacks.
+	static bool LanguageChangeLock;
 };

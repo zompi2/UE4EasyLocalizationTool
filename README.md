@@ -165,6 +165,17 @@ Sets a language with the given language code. Returns false if the language coul
 bool UELT::SetLanguage(const FString& Language);
 ```
 
+#### On Language Change Event
+
+Allow to bind delegate which will run every time a Text Localization has been changed.
+
+``` cpp
+UELT::GetOnTextLocalizationChanged().AddLambda([this]()
+{
+    // Code to run when localization has changed.
+});
+```
+
 [Back to top](#table-of-content)
 
 ## Save File

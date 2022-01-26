@@ -11,6 +11,8 @@
  * Blueprint Function Library which exposes core Easy Localization Tool functionalities.
  */
 
+DECLARE_DYNAMIC_DELEGATE(FELTTestDelegate);
+
 UCLASS()
 class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionLibrary
 {

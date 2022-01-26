@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2022 Damian Nowakowski. All rights reserved.
 
 #include "ELT.h"
 #include "ELTSettings.h"
@@ -13,12 +13,21 @@ FString UELT::ELTSaveName = TEXT("ELTSave");
 // Definition of static current language value.
 FString UELT::ELTCurrentLanguage = TEXT("");
 
+// Definition of static OnTextLocalizationChanged event.
+FOnTextLocalizationChanged UELT::OnTextLocalizationChangedEvent = {};
+
+// Definition of static Language Change Lock.
+bool UELT::LanguageChangeLock = false;
+
 void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
 	{
-		// Ensure all culture data is loaded at this point
+		// Ensure all culture data is loaded at this point.
 		FInternationalization::Get().LoadAllCultureData();
+
+		// Ensure the change lock is off.
+		LanguageChangeLock = false;
 
 		const FString& LanguageToSet = GetCurrentLanguage();
 		if (LanguageToSet.IsEmpty())
@@ -30,7 +39,7 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 			}
 			else
 			{
-				// Otherwise remember the current local language
+				// Otherwise remember the current local language.
 				SetLanguage(FInternationalization::Get().GetCurrentLanguage()->GetName());
 			}
 		}
@@ -39,6 +48,9 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 			// Current language was available in a save file - set it at startup.
 			SetLanguage(LanguageToSet);
 		}
+
+		// Bind an event to the text localization change.
+		OnTextRevisionChangedEventHandle = FTextLocalizationManager::Get().OnTextRevisionChangedEvent.AddUObject(this, &UELT::BroadcastOnTextLocalizationChanged);
 	}
 }
 
@@ -46,6 +58,9 @@ void UELT::Deinitialize()
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
 	{
+		// Cleanup the binding to the text localization change event.
+		FTextLocalizationManager::Get().OnTextRevisionChangedEvent.Remove(OnTextRevisionChangedEventHandle);
+
 		// For editor - ensure the localization preview is disabled.
 #if WITH_EDITOR
 		if (GIsEditor)
@@ -80,14 +95,19 @@ TArray<FString> UELT::GetAvailableLanguages()
 
 bool UELT::CanSetLanguage(const FString& Lang)
 {
-	// Language can be set only if it is available in a list of available languages.
-	if (Lang.IsEmpty() == false)
-	{
-		if (UELTSettings::GetAvailableLanguages().Contains(Lang))
+	// Allow to change language if there is no lock set up.
+	if (LanguageChangeLock == false)
+	{ 
+		// Language can be set only if it is available in a list of available languages.
+		if (Lang.IsEmpty() == false)
 		{
-			return true;
+			if (UELTSettings::GetAvailableLanguages().Contains(Lang))
+			{
+				return true;
+			}
 		}
 	}
+	
 	return false;
 }
 
@@ -96,18 +116,25 @@ bool UELT::SetLanguage(const FString& Lang)
 	// Check if the language can be set
 	if (CanSetLanguage(Lang))
 	{
+		// Set up change lock. It will prevent changing languages in on localization change events.
+		LanguageChangeLock = true;
+
+		// Because setting language might trigger on text localization change event set the current language
+		// to a desired language right away. Save the old language in order to fall back if the setting language
+		// fails.
+		FString OldLanguage = ELTCurrentLanguage;
+		ELTCurrentLanguage = Lang;
+
 		// Always set the language, even if the desired language is the same as Current Language.
 		// Current Language is received from save file, but it doesn't mean it has already been applied!
-		if (FInternationalization::Get().SetCurrentLanguage(Lang))
+		if (FInternationalization::Get().SetCurrentLanguage(ELTCurrentLanguage))
 		{
-			// If the desired language is different than current language - save it.
+			// If the desired language is different than current old language - save it.
 			// Do not save if they are the same to avoid frequent writes to disk.
-			if (ELTCurrentLanguage != Lang)
+			if (OldLanguage != ELTCurrentLanguage)
 			{
-				ELTCurrentLanguage = Lang;
-
 				UELTSave* Save = NewObject<UELTSave>(GetTransientPackage(), UELTSave::StaticClass());
-				Save->SavedCurrentLanguage = Lang;
+				Save->SavedCurrentLanguage = ELTCurrentLanguage;
 				UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
 			}
 			
@@ -119,8 +146,29 @@ bool UELT::SetLanguage(const FString& Lang)
 				FTextLocalizationManager::Get().EnableGameLocalizationPreview(Lang);
 			}
 #endif
+
+			// Release the change lock.
+			LanguageChangeLock = false;
 			return true;
 		}
+		else
+		{
+			// Localization change failed - set back to the previous language.
+			ELTCurrentLanguage = OldLanguage;
+		}
+
+		// Release the change lock.
+		LanguageChangeLock = false;
 	}
 	return false;
+}
+
+FOnTextLocalizationChanged& UELT::GetOnTextLocalizationChanged()
+{
+	return OnTextLocalizationChangedEvent;
+}
+
+void UELT::BroadcastOnTextLocalizationChanged()
+{
+	OnTextLocalizationChangedEvent.Broadcast();
 }
