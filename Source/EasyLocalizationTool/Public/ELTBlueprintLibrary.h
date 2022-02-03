@@ -23,27 +23,27 @@ public:
 	/**
 	 * Returns code for currently used language.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
-	static FString GetCurrentLanguage();
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
+	static FString GetCurrentLanguage(const UObject* WorldContextObject);
 
 	/**
 	 * Returns a list of codes of all available languages.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
-	static TArray<FString> GetAvailableLanguages();
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
+	static TArray<FString> GetAvailableLanguages(const UObject* WorldContextObject);
 
 	/**
 	 * Checks if a language of given code can be set.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
-	static bool CanSetLanguage(const FString& Language);
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
+	static bool CanSetLanguage(const UObject* WorldContextObject, const FString& Language);
 
 	/**
 	 * Sets a language represented by a given code.
 	 * Returns true if language was set with success.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
-	static bool SetLanguage(const FString& Language);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
+	static bool SetLanguage(const UObject* WorldContextObject, const FString& Language);
 
 	/**
 	 * Casts FLocText to FText.

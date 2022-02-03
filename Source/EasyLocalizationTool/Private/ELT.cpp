@@ -7,22 +7,28 @@
 #include "Internationalization/Culture.h"
 #include "Kismet/GameplayStatics.h"
 
-// Definition of static save file name value.
-FString UELT::ELTSaveName = TEXT("ELTSave");
+const FString ELTSaveName = TEXT("ELTSave");
 
-// Definition of static current language value.
-FString UELT::ELTCurrentLanguage = TEXT("");
-
-// Definition of static OnTextLocalizationChanged event.
-FOnTextLocalizationChanged UELT::OnTextLocalizationChangedEvent = {};
-
-// Definition of static Language Change Lock.
-bool UELT::LanguageChangeLock = false;
+UELT* UELT::Get(const UWorld* World)
+{
+	if (World)
+	{
+		if (UGameInstance* GI = World->GetGameInstance())
+		{
+			return GI->GetSubsystem<UELT>();
+		}
+	}
+	return nullptr;
+}
 
 void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
 	{
+		// Setup all default values
+		ELTCurrentLanguage = TEXT("");
+		LanguageChangeLock = false;
+
 		// Ensure all culture data is loaded at this point.
 		FInternationalization::Get().LoadAllCultureData();
 
@@ -143,7 +149,7 @@ bool UELT::SetLanguage(const FString& Lang)
 #if WITH_EDITOR
 			if (GIsEditor)
 			{
-				FTextLocalizationManager::Get().EnableGameLocalizationPreview(Lang);
+				FTextLocalizationManager::Get().EnableGameLocalizationPreview(ELTCurrentLanguage);
 			}
 #endif
 
@@ -163,12 +169,7 @@ bool UELT::SetLanguage(const FString& Lang)
 	return false;
 }
 
-FOnTextLocalizationChanged& UELT::GetOnTextLocalizationChanged()
-{
-	return OnTextLocalizationChangedEvent;
-}
-
 void UELT::BroadcastOnTextLocalizationChanged()
 {
-	OnTextLocalizationChangedEvent.Broadcast();
+	OnTextLocalizationChanged.Broadcast();
 }

@@ -3,24 +3,32 @@
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
 
-FString UELTBlueprintLibrary::GetCurrentLanguage()
+FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)
 {
-	return UELT::GetCurrentLanguage();
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+		return UELT::Get(ThisWorld)->GetCurrentLanguage();
+	return TEXT("");
 }
 
-TArray<FString> UELTBlueprintLibrary::GetAvailableLanguages()
+TArray<FString> UELTBlueprintLibrary::GetAvailableLanguages(const UObject* WorldContextObject)
 {
-	return UELT::GetAvailableLanguages();
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+		return UELT::Get(ThisWorld)->GetAvailableLanguages();
+	return {};
 }
 
-bool UELTBlueprintLibrary::CanSetLanguage(const FString& Language)
+bool UELTBlueprintLibrary::CanSetLanguage(const UObject* WorldContextObject, const FString& Language)
 {
-	return UELT::CanSetLanguage(Language);
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+		return UELT::Get(ThisWorld)->CanSetLanguage(Language);
+	return false;
 }
 
-bool UELTBlueprintLibrary::SetLanguage(const FString& Language)
+bool UELTBlueprintLibrary::SetLanguage(const UObject* WorldContextObject, const FString& Language)
 {
-	return UELT::SetLanguage(Language);
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+		return UELT::Get(ThisWorld)->SetLanguage(Language);
+	return false;
 }
 
 FText UELTBlueprintLibrary::Conv_LocTextToText(FLocText InLocText)
