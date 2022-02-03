@@ -169,6 +169,8 @@ bool UELT::SetLanguage(const FString& Language);
 
 Allow to bind delegate which will run every time a Text Localization has been changed.
 
+![locchange](https://user-images.githubusercontent.com/7863125/152312310-7beafb2b-616b-4cfe-b757-305519985721.png)
+
 ``` cpp
 UELT::GetOnTextLocalizationChanged().AddLambda([this]()
 {
