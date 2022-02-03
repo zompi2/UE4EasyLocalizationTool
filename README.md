@@ -132,7 +132,7 @@ Returns a list of available language codes.
 ![elt1](https://user-images.githubusercontent.com/7863125/144485828-52dabe7a-ecc9-48db-a39b-a65a2f877987.png)
 
 ``` cpp
-TArray<FString> UELT::GetAvailableLanguages();
+GetELT()->GetAvailableLanguages();
 ```
 
 #### Get Current Language
@@ -142,7 +142,7 @@ Returns a code of the language which is currently in use.
 ![elt2](https://user-images.githubusercontent.com/7863125/144485830-87f4cbe1-97f8-46cc-b740-40aad0e5c00e.png)
 
 ``` cpp
-FString UELT::GetCurrentLanguage();
+GetELT()->GetCurrentLanguage();
 ```
 
 #### Can Set Language
@@ -152,7 +152,7 @@ Checks if a language with the given language code can be set.
 ![elt3](https://user-images.githubusercontent.com/7863125/144485831-2e02ea40-96d5-4304-ba4d-ce1eeccd2825.png)
 
 ``` cpp
-bool UELT::CanSetLanguage(const FString& Language);
+GetELT()->CanSetLanguage("en");
 ```
 
 #### Set Language
@@ -162,19 +162,23 @@ Sets a language with the given language code. Returns false if the language coul
 ![elt4](https://user-images.githubusercontent.com/7863125/144485832-8c3c42e5-3e28-402c-a695-f2af39b9628e.png)
 
 ``` cpp
-bool UELT::SetLanguage(const FString& Language);
+GetELT()->SetLanguage("en");
 ```
 
-#### On Language Change Event
+#### On Text Localization Changed Event
 
 Allow to bind delegate which will run every time a Text Localization has been changed.
 
 ![locchange](https://user-images.githubusercontent.com/7863125/152312310-7beafb2b-616b-4cfe-b757-305519985721.png)
 
 ``` cpp
-UELT::GetOnTextLocalizationChanged().AddLambda([this]()
+GetELT()->OnTextLocalizationChanged.AddDynamic(this, &UMyObject::OnTextLocalizationChangedUFunc);
+```
+or
+``` cpp
+GetELT()->OnTextLocalizationChangedStatic.AddLambda([this]()
 {
-    // Code to run when localization has changed.
+    // Stuff to do when localization has changed.
 });
 ```
 

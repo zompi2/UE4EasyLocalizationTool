@@ -171,5 +171,6 @@ bool UELT::SetLanguage(const FString& Lang)
 
 void UELT::BroadcastOnTextLocalizationChanged()
 {
+	OnTextLocalizationChangedStatic.Broadcast();
 	OnTextLocalizationChanged.Broadcast();
 }

@@ -1,3 +1,8 @@
+###### 1.2.0
+* Major refactor. Functions are no longer static. Yo get ELT module use GetELT() macro, or UELT::Get(GetWorld()) function.
+* FOnTextLocalizationChanged has been renamed to FOnTextLocalizationChangedStatic, as it can be used only via C++.
+* FOnTextLocalizationChanged is a dynamic event now, which means it can be assigned via BP.
+
 ###### 1.1.4
 * FOnTextLocalizationChanged event added, which runs every time the text localization changes.
 

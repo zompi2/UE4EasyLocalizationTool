@@ -11,7 +11,12 @@
  */
 
 // Event launched when text localizations has changed due to the change of culture.
+// This is a dynamic version, that can be binded via BP and to UFUNCTIONs in C++.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTextLocalizationChanged);
+
+// Event launched when text localizations has changed due to the change of culture.
+// This is a static version, that can be binded via C++ only.
+DECLARE_EVENT(UELT, FOnTextLocalizationChangedStatic);
 
 // A convenience macro for getting an ELT subsystem.
 #define GetELT() UELT::Get(GetWorld())
@@ -61,10 +66,15 @@ public:
 	bool SetLanguage(const FString& Lang);
 
 	/**
-	 * An event which runs when text localizations has changed.
+	 * An event which runs when text localizations has changed (dynamic version).
 	 */
 	UPROPERTY(BlueprintAssignable)
 	FOnTextLocalizationChanged OnTextLocalizationChanged;
+
+	/**
+	 * An event which runs when text localizations has changed (static version).
+	 */
+	FOnTextLocalizationChangedStatic OnTextLocalizationChangedStatic;
 
 private:
 
