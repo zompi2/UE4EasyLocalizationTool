@@ -221,16 +221,12 @@ Gets a Package, Namespace, Key and Source info from FText.
 
 ![getinfo](https://user-images.githubusercontent.com/7863125/168045473-d05f9138-736d-4c3c-96d8-1b5b8ade2556.png)
 
-[Back to top](#table-of-content)
-
 #### Validate Text
 
 *This is Editor Scripting only utility.*  
 It checks if the given FText is properly localized - it means it checks if Source and Key are the same. It will return false if given FText is empty.
 
 ![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
-
-[Back to top](#table-of-content)
 
 #### Validate Text
 
