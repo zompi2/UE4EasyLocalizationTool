@@ -89,7 +89,7 @@ Then, set a Namespace and Key values for this Text:
 To use it in a c++ code use the following macro:
 
 ``` cpp
-NSLOCTEXT("GAME", "TEST_EXAMPLE", "Hello, world!")
+NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
 
 [Back to top](#table-of-content)
