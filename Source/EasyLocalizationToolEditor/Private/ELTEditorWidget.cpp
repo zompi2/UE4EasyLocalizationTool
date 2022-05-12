@@ -69,3 +69,11 @@ void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespac
 {
 	OnGlobalNamespaceChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
+
+
+
+void UELTEditorWidget::FixupLoc(FString SourceString, FString Value, FString Namespace, FString Key)
+{
+	FTextDisplayStringRef DisplayStringRef = FTextLocalizationManager::Get().GetDisplayString(FTextKey(Namespace), FTextKey(Key), &SourceString);
+	FTextLocalizationManager::Get().UpdateDisplayString(DisplayStringRef, Value, FTextKey(Namespace), FTextKey(Key));
+}

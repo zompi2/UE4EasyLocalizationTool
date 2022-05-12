@@ -6,28 +6,32 @@
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		return UELT::Get(ThisWorld)->GetCurrentLanguage();
+		if (UELT* ELT = UELT::Get(ThisWorld))
+			return ELT->GetCurrentLanguage();
 	return TEXT("");
 }
 
 TArray<FString> UELTBlueprintLibrary::GetAvailableLanguages(const UObject* WorldContextObject)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		return UELT::Get(ThisWorld)->GetAvailableLanguages();
+		if (UELT* ELT = UELT::Get(ThisWorld))
+			return ELT->GetAvailableLanguages();
 	return {};
 }
 
 bool UELTBlueprintLibrary::CanSetLanguage(const UObject* WorldContextObject, const FString& Language)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		return UELT::Get(ThisWorld)->CanSetLanguage(Language);
+		if (UELT* ELT = UELT::Get(ThisWorld))
+			return ELT->CanSetLanguage(Language);
 	return false;
 }
 
 bool UELTBlueprintLibrary::SetLanguage(const UObject* WorldContextObject, const FString& Language)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		return UELT::Get(ThisWorld)->SetLanguage(Language);
+		if (UELT* ELT = UELT::Get(ThisWorld))
+			return ELT->SetLanguage(Language);
 	return false;
 }
 
@@ -41,8 +45,15 @@ FString UELTBlueprintLibrary::Conv_LocTextToString(FLocText InLocText)
 	return InLocText.ToString();
 }
 
-void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey)
+void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey, FString& OutSource)
 {
-	FTextInspector::GetNamespace(InText).GetValue().Split(TEXT(" "), &OutNamespace, &OutPackage);
-	OutKey = FTextInspector::GetKey(InText).GetValue();
+	if (InText.IsEmpty() == false)
+	{
+		FTextInspector::GetNamespace(InText).GetValue().Split(TEXT(" "), &OutNamespace, &OutPackage);
+		OutKey = FTextInspector::GetKey(InText).GetValue();
+		if (const FString* Source = FTextInspector::GetSourceString(InText))
+			OutSource = *Source;
+		else
+			OutSource = TEXT("");
+	}
 }

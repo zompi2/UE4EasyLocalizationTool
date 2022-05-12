@@ -189,4 +189,9 @@ public:
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void FixupLoc(FString DisplayString, FString Value, FString Namespace, FString Key);
 };

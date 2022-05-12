@@ -61,5 +61,5 @@ public:
 	 * Gets Package, Namespace and Key from a FText.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
-	static void GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey);
+	static void GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey, FString& OutSource);
 };

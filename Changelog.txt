@@ -1,5 +1,13 @@
+###### 1.3.0
+* Stability improvements. Performing extra nullptr checks when accessing the tool.
+* GetTextData function returns FText's source value too.
+* ValidateText function has been added to the editor scripting utility in order to write scripts that can validate
+  if the FText is properly localized.
+* FixText function has been added to the editor scripting utility in order to write scripts that can fix incorrectly
+  localized FTexts.
+
 ###### 1.2.0
-* Major refactor. Functions are no longer static. Yo get ELT module use GetELT() macro, or UELT::Get(GetWorld()) function.
+* Major refactor. Functions are no longer static. To get ELT module use GetELT() macro, or UELT::Get(GetWorld()) function.
 * FOnTextLocalizationChanged has been renamed to FOnTextLocalizationChangedStatic, as it can be used only via C++.
 * FOnTextLocalizationChanged is a dynamic event now, which means it can be assigned via BP.
 
