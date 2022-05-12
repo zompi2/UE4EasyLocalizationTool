@@ -91,6 +91,8 @@ To use it in a c++ code use the following macro:
 ``` cpp
 NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
+> Sometimes Blueprint editor doesn't allow to change Text's Source value to the Key value. Without this localization won't work.
+> In order to fix this issue - read about [FixText](#fix-text) Editor Scripting node.   
 
 [Back to top](#table-of-content)
 
@@ -228,7 +230,7 @@ It checks if the given FText is properly localized - it means it checks if Sourc
 
 ![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
 
-#### Validate Text
+#### Fix Text
 
 *This is Editor Scripting only utility.*  
 It fixes the given FText if it's not properly localized. It will return the fixed FText via OutText parameter. It will return false if the InText is empty or it doesn't have to be fixed.
