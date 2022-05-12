@@ -225,8 +225,7 @@ Gets a Package, Namespace, Key and Source info from FText.
 
 #### Validate Text
 
-This is Editor Scripting only utility. 
-
+*This is Editor Scripting only utility.*  
 It checks if the given FText is properly localized - it means it checks if Source and Key are the same. It will return false if given FText is empty.
 
 ![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
@@ -235,8 +234,7 @@ It checks if the given FText is properly localized - it means it checks if Sourc
 
 #### Validate Text
 
-This is Editor Scripting only utility. 
-
+*This is Editor Scripting only utility.*  
 It fixes the given FText if it's not properly localized. It will return the fixed FText via OutText parameter. It will return false if the InText is empty or it doesn't have to be fixed.
 
 ![fixttxt](https://user-images.githubusercontent.com/7863125/168045994-91f0499a-63c4-440e-be29-cdd8bacca087.png)
