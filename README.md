@@ -91,7 +91,7 @@ To use it in a c++ code use the following macro:
 ``` cpp
 NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
-> Sometimes Blueprint editor doesn't allow to change Text's Source value to the Key value. Without this localization won't work.
+> Sometimes Blueprint editor doesn't allow to change Text's Source value to the Key value. Without this localization won't work.  
 > In order to fix this issue - read about [FixText](#fix-text) Editor Scripting node.   
 
 [Back to top](#table-of-content)
