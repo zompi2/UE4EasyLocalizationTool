@@ -217,9 +217,29 @@ Where:
 
 #### Get Text Data
 
-Gets a Package, Namespace and Key info from FText.
+Gets a Package, Namespace, Key and Source info from FText.
 
-![intext](https://user-images.githubusercontent.com/7863125/148031512-bc9325ce-d970-4e5a-a9d6-4322350422af.png)
+![getinfo](https://user-images.githubusercontent.com/7863125/168045473-d05f9138-736d-4c3c-96d8-1b5b8ade2556.png)
+
+[Back to top](#table-of-content)
+
+#### Validate Text
+
+This is Editor Scripting only utility. 
+
+It checks if the given FText is properly localized - it means it checks if Source and Key are the same. It will return false if given FText is empty.
+
+![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
+
+[Back to top](#table-of-content)
+
+#### Validate Text
+
+This is Editor Scripting only utility. 
+
+It fixes the given FText if it's not properly localized. It will return the fixed FText via OutText parameter. It will return false if the InText is empty or it doesn't have to be fixed.
+
+![fixttxt](https://user-images.githubusercontent.com/7863125/168045994-91f0499a-63c4-440e-be29-cdd8bacca087.png)
 
 [Back to top](#table-of-content)
 
