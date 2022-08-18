@@ -1,3 +1,9 @@
+###### 1.3.1
+* Fixed crash when using GetTextData function on invalid text
+* ValidateText will return false if the text is set to be non localizable
+* Removed FixText function, as it was not working properly
+* Added note about the endline format required to readme.
+
 ###### 1.3.0
 * Stability improvements. Performing extra nullptr checks when accessing the tool.
 * GetTextData function returns FText's source value too.

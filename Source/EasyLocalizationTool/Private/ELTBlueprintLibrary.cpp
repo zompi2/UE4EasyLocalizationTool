@@ -49,11 +49,25 @@ void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FStrin
 {
 	if (InText.IsEmpty() == false)
 	{
-		FTextInspector::GetNamespace(InText).GetValue().Split(TEXT(" "), &OutNamespace, &OutPackage);
-		OutKey = FTextInspector::GetKey(InText).GetValue();
+		TOptional<FString> Namespace = FTextInspector::GetNamespace(InText);
+		if (Namespace.IsSet())
+		{
+			Namespace.GetValue().Split(TEXT(" "), &OutNamespace, &OutPackage);
+		}
+
+		TOptional<FString> Key = FTextInspector::GetKey(InText);
+		if (Key.IsSet())
+		{
+			OutKey = Key.GetValue();
+		}
+
 		if (const FString* Source = FTextInspector::GetSourceString(InText))
+		{
 			OutSource = *Source;
+		}
 		else
+		{
 			OutSource = TEXT("");
+		}
 	}
 }
