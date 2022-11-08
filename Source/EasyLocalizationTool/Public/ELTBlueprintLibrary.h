@@ -62,4 +62,10 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
 	static void GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey, FString& OutSource);
+
+	/**
+	 * Checks if two FTexts keys are the same. If at least one of them has invalid key it will return false.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
+	static bool AreTextKeysEqual(const FText& A, const FText& B);
 };

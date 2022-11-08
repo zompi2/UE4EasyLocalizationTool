@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.3.1",
+	"VersionName": "1.3.2",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "Tool to simplify the way a simple localizations are handled.",
 	"Category": "Localization",
@@ -9,7 +9,6 @@
 	"CreatedByURL": "https://zompidev.blogspot.com",
 	"DocsURL": "https://github.com/zompi2/UE4EasyLocalizationTool",
 	"MarketplaceURL": "",
-	"EngineVersion": "4.27.0",
 	"SupportURL": "mailto:zompi2@gmail.com",
 	"CanContainContent": true,
 	"IsBetaVersion": false,

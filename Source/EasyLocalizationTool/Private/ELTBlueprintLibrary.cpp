@@ -71,3 +71,16 @@ void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FStrin
 		}
 	}
 }
+
+bool UELTBlueprintLibrary::AreTextKeysEqual(const FText& A, const FText& B)
+{
+	TOptional<FString> KeyA = FTextInspector::GetKey(A);
+	TOptional<FString> KeyB = FTextInspector::GetKey(B);
+
+	if (KeyA.IsSet() && KeyB.IsSet())
+	{
+		return (KeyA.GetValue() == KeyB.GetValue());
+	}
+
+	return false;
+}

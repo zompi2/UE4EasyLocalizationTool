@@ -225,6 +225,12 @@ Gets a Package, Namespace, Key and Source info from FText.
 
 ![getinfo](https://user-images.githubusercontent.com/7863125/168045473-d05f9138-736d-4c3c-96d8-1b5b8ade2556.png)
 
+#### Are Text Keys Equal
+
+Checks if two FTexts' keys are the same. If at least one of them has invalid key it will return false.
+
+![arete](https://user-images.githubusercontent.com/7863125/200557176-c3acdf6b-e1c4-433d-a28d-aafefd336527.png)
+
 #### Validate Text
 
 *This is Editor Scripting only utility.*  
