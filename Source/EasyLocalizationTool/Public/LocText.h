@@ -27,10 +27,10 @@ struct FLocText
 		Key(MoveTemp(InKey))
 	{}
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Namespace;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Key;
 
 	/** A result text, cached for future uses */
