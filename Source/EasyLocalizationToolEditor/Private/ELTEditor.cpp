@@ -122,6 +122,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
 	EditorWidget->OnCSVPathChangedDelegate.BindUObject(this, &UELTEditor::OnCSVPathChanged);
 	EditorWidget->OnGenerateLocFilesDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
+	EditorWidget->OnManualLastLanguageLoadChangedDelegate.BindUObject(this, &UELTEditor::OnManualLastLanguageLoadChanged);
 	EditorWidget->OnReimportAtEditorStartupChangedDelegate.BindUObject(this, &UELTEditor::OnReimportAtEditorStartupChanged);
 	EditorWidget->OnLocalizationPreviewChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewChanged);
 	EditorWidget->OnLocalizationPreviewLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewLangChanged);
@@ -148,12 +149,15 @@ void UELTEditor::InitializeTheWidget()
 		}
 	}
 
-	// Set the ReimportAtEditorStartup current value to the Widget.
-	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
-
 	// Set the Localization Preview current values to the Widget.
 	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
 	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
+
+	// Set the ManualLastLanguageLoad current value to the Widget.
+	EditorWidget->SetManualLastLanguageLoad(UELTSettings::GetManualLastLanguageLoad());
+
+	// Set the ReimportAtEditorStartup current value to the Widget.
+	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
 
 	// Set the Localization Override At First Run current values to the Widget.
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
@@ -242,6 +246,12 @@ void UELTEditor::OnLocalizationPreviewLangChanged(const FString& LangPreview)
 	// Save this setting, set proper preview.
 	UELTEditorSettings::SetLocalizationPreviewLang(LangPreview);
 	SetLanguagePreview();
+}
+
+void UELTEditor::OnManualLastLanguageLoadChanged(bool bNewManualLastLanguageLoad)
+{
+	// "Reimport At Editor Startup" option has been changed in the Widget. Save this setting.
+	UELTSettings::SetManualLastLanguageLoad(bNewManualLastLanguageLoad);
 }
 
 void UELTEditor::OnLocalizationFirstRunChanged(bool bOnFirstRun)

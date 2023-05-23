@@ -21,6 +21,42 @@ UELT* UELT::Get(const UWorld* World)
 	return nullptr;
 }
 
+void UELT::LoadLastUsedLanguage()
+{
+	// Allow the user to call it only when we expect the manual load.
+	if (UELTSettings::GetManualLastLanguageLoad())
+	{
+		LoadLastUsedLanguage_Internal();
+	}
+}
+
+void UELT::LoadLastUsedLanguage_Internal()
+{
+	// This function unlocks the language save file system
+	AllowToUseSaveFiles =  true;
+
+	const FString& LanguageToSet = GetCurrentLanguage();
+	if (LanguageToSet.IsEmpty())
+	{
+		if (UELTSettings::GetOverrideLanguageAtFirstLaunch() && CanSetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch()))
+		{
+			// If no current language is set in save file and the "override language at first launch" is set to an available language - set this language.
+			SetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
+		}
+		else
+		{
+			// Otherwise remember the current local language.
+			SetLanguage(FInternationalization::Get().GetCurrentLanguage()->GetName());
+		}
+	}
+	else
+	{
+		// Current language was available in a save file - set it at startup.
+		SetLanguage(LanguageToSet);
+	}
+}
+
+
 void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
@@ -28,35 +64,19 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 		// Setup all default values
 		ELTCurrentLanguage = TEXT("");
 		LanguageChangeLock = false;
+		AllowToUseSaveFiles = false;
 
 		// Ensure all culture data is loaded at this point.
 		FInternationalization::Get().LoadAllCultureData();
 
-		// Ensure the change lock is off.
-		LanguageChangeLock = false;
-
-		const FString& LanguageToSet = GetCurrentLanguage();
-		if (LanguageToSet.IsEmpty())
-		{
-			if (UELTSettings::GetOverrideLanguageAtFirstLaunch() && CanSetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch()))
-			{
-				// If no current language is set in save file and the "override language at first launch" is set to an available language - set this language.
-				SetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
-			}
-			else
-			{
-				// Otherwise remember the current local language.
-				SetLanguage(FInternationalization::Get().GetCurrentLanguage()->GetName());
-			}
-		}
-		else
-		{
-			// Current language was available in a save file - set it at startup.
-			SetLanguage(LanguageToSet);
-		}
-
 		// Bind an event to the text localization change.
 		OnTextRevisionChangedEventHandle = FTextLocalizationManager::Get().OnTextRevisionChangedEvent.AddUObject(this, &UELT::BroadcastOnTextLocalizationChanged);
+
+		// Load lastly used language from a save file if the settings are not set to do it manually.
+		if (UELTSettings::GetManualLastLanguageLoad() == false)
+		{
+			LoadLastUsedLanguage_Internal();
+		}
 	}
 }
 
@@ -82,11 +102,15 @@ FString UELT::GetCurrentLanguage()
 	// If Current Language is not cached - try to load it from a save file.
 	if (ELTCurrentLanguage.IsEmpty())
 	{
-		if (UGameplayStatics::DoesSaveGameExist(ELTSaveName, 0))
+		ensureAlwaysMsgf(AllowToUseSaveFiles, TEXT("ELT is not allowed to load a file! If the ManualLastLanguageLoad is ON you must call LoadLastUsedLanguage() function!"));
+		if (AllowToUseSaveFiles)
 		{
-			if (UELTSave* LoadedSave = Cast<UELTSave>(UGameplayStatics::LoadGameFromSlot(ELTSaveName, 0)))
+			if (UGameplayStatics::DoesSaveGameExist(ELTSaveName, 0))
 			{
-				ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage;
+				if (UELTSave* LoadedSave = Cast<UELTSave>(UGameplayStatics::LoadGameFromSlot(ELTSaveName, 0)))
+				{
+					ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage;
+				}
 			}
 		}
 	}
@@ -141,7 +165,11 @@ bool UELT::SetLanguage(const FString& Lang)
 			{
 				UELTSave* Save = NewObject<UELTSave>(GetTransientPackage(), UELTSave::StaticClass());
 				Save->SavedCurrentLanguage = ELTCurrentLanguage;
-				UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
+				ensureAlwaysMsgf(AllowToUseSaveFiles, TEXT("ELT is not allowed to save a file! If the ManualLastLanguageLoad is ON you must call LoadLastUsedLanguage() function!"));
+				if (AllowToUseSaveFiles)
+				{
+					UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
+				}
 			}
 			
 			// If this is an editor (also play in editor) - enable game localization preview, so the 

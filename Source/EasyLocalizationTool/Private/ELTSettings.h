@@ -18,6 +18,18 @@ class EASYLOCALIZATIONTOOL_API UELTSettings : public UObject
 public:
 
 	/**
+	 * Get/Set an option, which indicates if the last used language should be loaded manually.
+	 * Lastly used language is saved in a save file and sometimes you might want to decide when
+	 * it can be loaded.
+	 * If true - use LoadLastUsedLanguage manually, for example in Game Instance.
+	 * If false - it will run automatically while module initialization.
+	 * REMEMBER that if you set it to true you need to run LoadLastUsedLanguage otherwise the language
+	 * will not be saved!
+	 */
+	static bool GetManualLastLanguageLoad();
+	static void SetManualLastLanguageLoad(bool bNewManualLastLanguageLoad);
+
+	/**
 	 * Get/Set an option, which indicates if the language should be overridden 
 	 * on a first game launch. Otherwise the local machine language will be used.
 	 */
@@ -38,6 +50,9 @@ public:
 	static void SetAvailableLanguages(const TArray<FString>& NewAvailableLanguages);
 
 private:
+
+	UPROPERTY(config)
+	bool bManualLastLanguageLoad = false;
 
 	UPROPERTY(config)
 	bool bOverrideLanguageAtFirstLaunch = false;

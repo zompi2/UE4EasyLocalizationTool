@@ -112,6 +112,11 @@ private:
 	void OnLocalizationPreviewLangChanged(const FString& LangPreview);
 
 	/**
+	 * Called when "ManualLastLanguageLoad" option has been changed in the widget.
+	 */
+	void OnManualLastLanguageLoadChanged(bool bNewManualLastLanguageLoad);
+
+	/**
 	 * Called when "OverrideLanguageOnFirstRun" option has been changed in the Widget.
 	 */
 	void OnLocalizationFirstRunChanged(bool bOnFirstRun);

@@ -20,6 +20,7 @@ DECLARE_DELEGATE(FOnGenerateLocFiles);
 DECLARE_DELEGATE_OneParam(FOnReimportAtEditorStartupChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewLangChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FManualLastLanguageLoadChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
@@ -136,6 +137,20 @@ public:
 
 
 	/**
+	 * Set "Manual Last Language Load" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetManualLastLanguageLoad(bool bManualLastLanguageLoad);
+
+	/**
+	 * "Manual Last Language Load" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void OnManualLastLanguageLoadChanged(bool bManualLastLanguageLoad);
+
+
+
+	/**
 	 * Set "Localization On First Run" option to the Widget.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -186,6 +201,7 @@ public:
 	FOnReimportAtEditorStartupChanged OnReimportAtEditorStartupChangedDelegate;
 	FOnLocalizationPreviewChanged OnLocalizationPreviewChangedDelegate;
 	FOnLocalizationPreviewLangChanged OnLocalizationPreviewLangChangedDelegate;
+	FManualLastLanguageLoadChanged OnManualLastLanguageLoadChangedDelegate;
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;

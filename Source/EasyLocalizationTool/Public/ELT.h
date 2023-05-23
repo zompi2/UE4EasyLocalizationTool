@@ -41,6 +41,15 @@ public:
 	static UELT* Get(const UWorld* World);
 
 	/**
+	 * Loads and sets lastly used language. The last used language is saved in a save file.
+	 * Run it only if ManualLastLanguageLoad is set to true, otherwise it will be called
+	 * in the plugin initialization.
+	 * Run it only when you are sure you can use the save file system.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
+	void LoadLastUsedLanguage();
+
+	/**
 	 * Returns code for currently used language.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
@@ -87,8 +96,16 @@ private:
 	// Flag to prevent changing languages in callbacks.
 	bool LanguageChangeLock;
 
+	// Flag to prevent from getting and setting language from save file while it is not available yet.
+	bool AllowToUseSaveFiles;
+
 	/**
 	 * Broadcast event about text localization change.
 	 */
 	void BroadcastOnTextLocalizationChanged();
+
+	/**
+	 * Internal implementation of LoadLastUsedLanguage.
+	 */
+	void LoadLastUsedLanguage_Internal();
 };
