@@ -21,12 +21,6 @@ class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionL
 public:
 
 	/**
-	 * Sets the last used language (works only with ManualLastLanguageLoad set to true).
-	 */
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
-	static void LoadLastUsedLanguage(const UObject* WorldContextObject);
-
-	/**
 	 * Returns code for currently used language.
 	 */
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")

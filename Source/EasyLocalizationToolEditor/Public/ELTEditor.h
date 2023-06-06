@@ -114,7 +114,7 @@ private:
 	/**
 	 * Called when "ManualLastLanguageLoad" option has been changed in the widget.
 	 */
-	void OnManualLastLanguageLoadChanged(bool bNewManualLastLanguageLoad);
+	void OnManuallySetLastLanguageChanged(bool bNewManuallySetLastLanguageLoad);
 
 	/**
 	 * Called when "OverrideLanguageOnFirstRun" option has been changed in the Widget.

@@ -21,42 +21,6 @@ UELT* UELT::Get(const UWorld* World)
 	return nullptr;
 }
 
-void UELT::LoadLastUsedLanguage()
-{
-	// Allow the user to call it only when we expect the manual load.
-	if (UELTSettings::GetManualLastLanguageLoad())
-	{
-		LoadLastUsedLanguage_Internal();
-	}
-}
-
-void UELT::LoadLastUsedLanguage_Internal()
-{
-	// This function unlocks the language save file system
-	AllowToUseSaveFiles =  true;
-
-	const FString& LanguageToSet = GetCurrentLanguage();
-	if (LanguageToSet.IsEmpty())
-	{
-		if (UELTSettings::GetOverrideLanguageAtFirstLaunch() && CanSetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch()))
-		{
-			// If no current language is set in save file and the "override language at first launch" is set to an available language - set this language.
-			SetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
-		}
-		else
-		{
-			// Otherwise remember the current local language.
-			SetLanguage(FInternationalization::Get().GetCurrentLanguage()->GetName());
-		}
-	}
-	else
-	{
-		// Current language was available in a save file - set it at startup.
-		SetLanguage(LanguageToSet);
-	}
-}
-
-
 void UELT::Initialize(FSubsystemCollectionBase& Collection)
 {
 	if (HasAnyFlags(EObjectFlags::RF_ClassDefaultObject) == false)
@@ -72,11 +36,8 @@ void UELT::Initialize(FSubsystemCollectionBase& Collection)
 		// Bind an event to the text localization change.
 		OnTextRevisionChangedEventHandle = FTextLocalizationManager::Get().OnTextRevisionChangedEvent.AddUObject(this, &UELT::BroadcastOnTextLocalizationChanged);
 
-		// Load lastly used language from a save file if the settings are not set to do it manually.
-		if (UELTSettings::GetManualLastLanguageLoad() == false)
-		{
-			LoadLastUsedLanguage_Internal();
-		}
+		// Set lastly used language. If will get a lastly used language from a save file or a default one if manual set last language is on.
+		SetLastUsedLanguage();
 	}
 }
 
@@ -102,8 +63,8 @@ FString UELT::GetCurrentLanguage()
 	// If Current Language is not cached - try to load it from a save file.
 	if (ELTCurrentLanguage.IsEmpty())
 	{
-		ensureAlwaysMsgf(AllowToUseSaveFiles, TEXT("ELT is not allowed to load a file! If the ManualLastLanguageLoad is ON you must call LoadLastUsedLanguage() function!"));
-		if (AllowToUseSaveFiles)
+		// Load lastly used language from a save file only when the settings are not set to do it manually.
+		if (UELTSettings::GetManuallySetLastUsedLanguage() == false)
 		{
 			if (UGameplayStatics::DoesSaveGameExist(ELTSaveName, 0))
 			{
@@ -160,14 +121,13 @@ bool UELT::SetLanguage(const FString& Lang)
 		if (FInternationalization::Get().SetCurrentLanguage(ELTCurrentLanguage))
 		{
 			// If the desired language is different than current old language - save it.
-			// Do not save if they are the same to avoid frequent writes to disk.
-			if (OldLanguage != ELTCurrentLanguage)
+			// Do not save it if manual set last used language is enabled.
+			if (UELTSettings::GetManuallySetLastUsedLanguage() == false)
 			{
-				UELTSave* Save = NewObject<UELTSave>(GetTransientPackage(), UELTSave::StaticClass());
-				Save->SavedCurrentLanguage = ELTCurrentLanguage;
-				ensureAlwaysMsgf(AllowToUseSaveFiles, TEXT("ELT is not allowed to save a file! If the ManualLastLanguageLoad is ON you must call LoadLastUsedLanguage() function!"));
-				if (AllowToUseSaveFiles)
+				if (OldLanguage != ELTCurrentLanguage)
 				{
+					UELTSave* Save = NewObject<UELTSave>(GetTransientPackage(), UELTSave::StaticClass());
+					Save->SavedCurrentLanguage = ELTCurrentLanguage;
 					UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
 				}
 			}
@@ -195,6 +155,29 @@ bool UELT::SetLanguage(const FString& Lang)
 		LanguageChangeLock = false;
 	}
 	return false;
+}
+
+void UELT::SetLastUsedLanguage()
+{
+	const FString& LanguageToSet = GetCurrentLanguage();
+	if (LanguageToSet.IsEmpty())
+	{
+		if (UELTSettings::GetOverrideLanguageAtFirstLaunch() && CanSetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch()))
+		{
+			// If no current language is set in save file and the "override language at first launch" is set to an available language - set this language.
+			SetLanguage(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
+		}
+		else
+		{
+			// Otherwise remember the current local language.
+			SetLanguage(FInternationalization::Get().GetCurrentLanguage()->GetName());
+		}
+	}
+	else
+	{
+		// Current language was available in a save file - set it at startup.
+		SetLanguage(LanguageToSet);
+	}
 }
 
 void UELT::BroadcastOnTextLocalizationChanged()

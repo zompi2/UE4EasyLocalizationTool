@@ -3,13 +3,6 @@
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
 
-void UELTBlueprintLibrary::LoadLastUsedLanguage(const UObject* WorldContextObject)
-{
-	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		if (UELT* ELT = UELT::Get(ThisWorld))
-			ELT->LoadLastUsedLanguage();
-}
-
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))

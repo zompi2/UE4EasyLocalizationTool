@@ -18,16 +18,11 @@ class EASYLOCALIZATIONTOOL_API UELTSettings : public UObject
 public:
 
 	/**
-	 * Get/Set an option, which indicates if the last used language should be loaded manually.
-	 * Lastly used language is saved in a save file and sometimes you might want to decide when
-	 * it can be loaded.
-	 * If true - use LoadLastUsedLanguage manually, for example in Game Instance.
-	 * If false - it will run automatically while module initialization.
-	 * REMEMBER that if you set it to true you need to run LoadLastUsedLanguage otherwise the language
-	 * will not be saved!
+	 * Get/Set an option, which indicates if the last used language should be saved and loaded manually.
+	 * Use it in a situation where you want to control the saving of the last used language.
 	 */
-	static bool GetManualLastLanguageLoad();
-	static void SetManualLastLanguageLoad(bool bNewManualLastLanguageLoad);
+	static bool GetManuallySetLastUsedLanguage();
+	static void SetManuallySetLastUsedLanguage(bool bNewManuallySetLastUsageLanguage);
 
 	/**
 	 * Get/Set an option, which indicates if the language should be overridden 
@@ -52,7 +47,7 @@ public:
 private:
 
 	UPROPERTY(config)
-	bool bManualLastLanguageLoad = false;
+	bool bManuallySetLastUsedLanguage = false;
 
 	UPROPERTY(config)
 	bool bOverrideLanguageAtFirstLaunch = false;

@@ -9,14 +9,14 @@
 Settings->_SettingName = _SettingValue; \
 Settings->UpdateDefaultConfigFile();
 
-bool UELTSettings::GetManualLastLanguageLoad()
+bool UELTSettings::GetManuallySetLastUsedLanguage()
 {
-	ELT_GET_SETTING(bManualLastLanguageLoad);
+	ELT_GET_SETTING(bManuallySetLastUsedLanguage);
 }
 
-void UELTSettings::SetManualLastLanguageLoad(bool bNewManualLastLanguageLoad)
+void UELTSettings::SetManuallySetLastUsedLanguage(bool bNewManuallySetLastUsageLanguage)
 {
-	ELT_SET_SETTING(bManualLastLanguageLoad, bNewManualLastLanguageLoad);
+	ELT_SET_SETTING(bManuallySetLastUsedLanguage, bNewManuallySetLastUsageLanguage);
 }
 
 bool UELTSettings::GetOverrideLanguageAtFirstLaunch()

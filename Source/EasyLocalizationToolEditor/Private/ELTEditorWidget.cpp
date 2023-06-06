@@ -55,9 +55,9 @@ void UELTEditorWidget::OnLocalizationPreviewLangChanged(const FString& NewPrevie
 	OnLocalizationPreviewLangChangedDelegate.ExecuteIfBound(NewPreviewLang);
 }
 
-void UELTEditorWidget::OnManualLastLanguageLoadChanged(bool bManualLastLanguageLoad)
+void UELTEditorWidget::OnManuallySetLastUsedLanguageChanged(bool bManuallySetLastUsedLanguage)
 {
-	OnManualLastLanguageLoadChangedDelegate.ExecuteIfBound(bManualLastLanguageLoad);
+	OnManuallySetLastLanguageChangedDelegate.ExecuteIfBound(bManuallySetLastUsedLanguage);
 }
 
 void UELTEditorWidget::OnLocalizationOnFirstRun(bool LocalizationOnFirstRun)
