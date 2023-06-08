@@ -1,5 +1,6 @@
 ###### 1.4.0
 * "Manually Set Last Language" option added.
+* Better error messages when importing CSV fails.
 * Added option to disable plugin optimizations for easier debugging.
 * Copyrights update.
 

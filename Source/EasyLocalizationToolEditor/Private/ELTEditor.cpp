@@ -389,11 +389,11 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 		if (Columns.Num() > 1)
 		{
 			const int32 NumOfValues = Columns[0].Values.Num();
-			for (const FCSVColumn& Column : Columns)
+			for (int32 CIdx = 1; CIdx < Columns.Num(); CIdx++)
 			{
-				if (Column.Values.Num() != NumOfValues)
+				if (Columns[CIdx].Values.Num() != NumOfValues)
 				{
-					OutMessage = TEXT("ERROR: Number of values is not the same for every key! Probably invalid CSV!");
+					OutMessage = FString::Printf(TEXT("ERROR: Invalid CSV! Column %i (counting from 1) has %i values while Column 1 has %i values. Every Column must have the same amount of values!"), CIdx+1, Columns[CIdx].Values.Num(), NumOfValues);
 					return false;
 				}
 			}
@@ -407,7 +407,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 
 			if (bUseGlobalNamespace == false && bHasNamespaces == false)
 			{
-				OutMessage = TEXT("ERROR: Namespaces in csv not found!");
+				OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
 				return false;
 			}
 
@@ -428,7 +428,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 						const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
 						if (Namespace.IsEmpty())
 						{
-							OutMessage = TEXT("ERROR: Namespace is empty!");
+							OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) is empty!"), Key);
 							return false;
 						}
 						LocRes.AddEntry(
@@ -450,7 +450,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 		}
 		else
 		{
-			OutMessage = TEXT("ERROR: Not enought rows in csv!");
+			OutMessage = TEXT("ERROR: CSV has not enough Columns!");
 			return false;
 		}
 	}

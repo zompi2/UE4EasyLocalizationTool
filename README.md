@@ -24,6 +24,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
 - [Utilities](#utilities)
+- [Troubleshooting Errors](#troubleshooting-errors)
 - [Special Thanks](#special-thanks)
 
 ## CSV Format
@@ -242,6 +243,15 @@ It checks if the given FText is properly localized - it means it checks if Sourc
 ![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
 
 [Back to top](#table-of-content)
+
+# Troubleshooting Errors
+CSV must have the same amount of entries in every row (entries can be empty, but they must exist). There also should be a Namespace column if global namespace is not set. When importing CSV you might encounter such errors:
+* `ERROR: Failed loading CSV! Trying to add a word: 'Dies, ist ein Beispiel, mit Interpunktionen!' to a row 3, column 5 (counting from 1) while there are 4 columns.` - this error might encounter when a row has more entries than the first "header" row. Check if the first row has every entry required and if any other row has no more entries than the "header" row.
+*  `ERROR: Invalid CSV! Column 5 (counting from 1) has 6 values while Column 1 has 7 values. Every Column must have the same amount of values!` - this error might encounter when there are less entries in a row than in a "header" row.
+* `ERROR: CSV file not found!` - this error will encounter when the given CSV file does not exist.
+* `ERROR: Namespaces in CSV not found!` - this error will encounter when CSV has no `Namespace` Column and the `Global Namespace` is not set.
+* `ERROR: Namespace in row 2 (counting from 1) is empty!` - this error will encounter when CSV has `Namespace` Column, but there is an empty entry under it and the `Global Namespace` is not set.
+* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.
 
 # Special Thanks
 

@@ -24,7 +24,7 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 		{
 			bool bFirstLine = true;
 			Columns.Empty();
-			int32 LineIndex = 0;
+			int32 ColumnIndex = 0;
 			for (const auto& Row : Rows)
 			{
 				for (const auto& Entry : Row)
@@ -35,20 +35,20 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 					}
 					else
 					{
-						if (Columns.IsValidIndex(LineIndex))
+						if (Columns.IsValidIndex(ColumnIndex))
 						{
-							Columns[LineIndex].Values.Add(Entry);
+							Columns[ColumnIndex].Values.Add(Entry);
 						}
 						else
 						{
 							OutMessage = TEXT("ERROR: Invalid CSV!");
 							return false;
 						}
-						LineIndex++;
+						ColumnIndex++;
 					}
 				}
 				bFirstLine = false;
-				LineIndex = 0;
+				ColumnIndex = 0;
 			}
 			return true;
 		}
@@ -72,25 +72,26 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 		Columns.Empty();
 		TArray<TCHAR> Chars = FileContent.GetCharArray();
 
-		bool bFirstLine = true;
 		bool bInQuote = false;
 		FString CurrentWord = TEXT("");
-		int32 LineIndex = 0;
+		int32 ColumnIndex = 0;
+		int32 RowIndex = 0;
 
-		auto AddWord = [this, &LineIndex, &bFirstLine, &CurrentWord]() -> bool
+		auto AddWord = [this, &ColumnIndex, &RowIndex, &CurrentWord, &OutMessage]() -> bool
 		{
-			if (bFirstLine)
+			if (RowIndex == 0)
 			{
 				Columns.Add(FCSVColumn(CurrentWord));
 			}
 			else
 			{
-				if (Columns.IsValidIndex(LineIndex))
+				if (Columns.IsValidIndex(ColumnIndex))
 				{
-					Columns[LineIndex].Values.Add(CurrentWord);
+					Columns[ColumnIndex].Values.Add(CurrentWord);
 				}
 				else
 				{
+					OutMessage = FString::Printf(TEXT("ERROR: Failed loading CSV! Trying to add a word: '%s' to a row %i, column %i (counting from 1) while there are %i columns."), *CurrentWord, RowIndex+1, ColumnIndex+1, Columns.Num());
 					return false;
 				}
 			}
@@ -109,7 +110,6 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 				}
 				if (AddWord() == false)
 				{
-					OutMessage = TEXT("ERROR: Invalid CSV!");
 					return false;
 				}
 			}
@@ -134,28 +134,23 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 					{
 						if (AddWord() == false)
 						{
-							OutMessage = TEXT("ERROR: Invalid CSV!");
 							return false;
 						}
-						LineIndex++;
+						ColumnIndex++;
 						CurrentWord.Empty();
 					}
 					else if (Ch == '\n')
 					{
-						if (CurrentWord.IsEmpty() && LineIndex == 0)
+						if (CurrentWord.IsEmpty() && ColumnIndex == 0)
 						{
 							return true;
 						}
 						if (AddWord() == false)
 						{
-							OutMessage = TEXT("ERROR: Invalid CSV!");
 							return false;
 						}
-						if (bFirstLine)
-						{
-							bFirstLine = false;
-						}
-						LineIndex = 0;
+						ColumnIndex = 0;
+						RowIndex++;
 						CurrentWord.Empty();
 					}
 					else
