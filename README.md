@@ -58,13 +58,14 @@ To open the tool select `Window -> Easy Localization Tool` or use a shortcut `Al
 
 The following window should appear:
 
-![elttoolwindow](https://user-images.githubusercontent.com/7863125/143495192-da02d1ac-cee3-4792-8a63-db6e4f748fda.png)
+![eltimg](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/dd0e7a61-34ca-42f8-811b-5b30bf4d7a15)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
 * **Available Languages** - list of language codes that are implemented by every localization directory.
 * **Reimport on editor startup** - reimports the lastly selected localization with the last used CSV file when editor starts.
 * **Localization Preview** - enabled the preview of the localization in the editor.
+* **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
 * **CSV File** - CSV file to import.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
@@ -191,7 +192,9 @@ GetELT()->OnTextLocalizationChangedStatic.AddLambda([this]()
 ## Save File
 
 Easy Localization Tool saves lastly used language and sets it when starting a game.  
-The save file is located in `MyGame\Saved\SaveGames\ELTSave.sav`
+The save file is located in `MyGame\Saved\SaveGames\ELTSave.sav`  
+
+> The lastly used language will not be saved and loaded when `Manually Set Last Language` is enabled! This option might be needed if the game is not allowed to read save files on startup (i.e.: in console builds). In such situations use `SetLanguage` to setup desired lanugage when you can.
 
 [Back to top](#table-of-content)
 

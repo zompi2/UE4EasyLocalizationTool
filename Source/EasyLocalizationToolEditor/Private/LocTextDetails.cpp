@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "LocTextDetails.h"
 #include "DetailLayoutBuilder.h"
@@ -7,6 +7,8 @@
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 TSharedRef<IPropertyTypeCustomization> FLocTextDetails::MakeInstance()
 {
@@ -67,3 +69,6 @@ FText FLocTextDetails::GetText() const
 	
 	return FText::GetEmpty();
 }
+
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

@@ -3,6 +3,8 @@
 #include "ELTEditorUtils.h"
 #include "ELTBlueprintLibrary.h"
 
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
+
 bool UELTEditorUtils::ValidateText(FText InText)
 {
 	if (InText.IsEmpty())
@@ -19,3 +21,5 @@ bool UELTEditorUtils::ValidateText(FText InText)
 	UELTBlueprintLibrary::GetTextData(InText, Package, Namespace, Key, Source);
 	return Key.Equals(Source, ESearchCase::CaseSensitive);
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

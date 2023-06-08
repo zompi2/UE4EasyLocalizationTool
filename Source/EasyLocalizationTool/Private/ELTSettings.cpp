@@ -1,8 +1,10 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
 #include "ELTSettings.h"
+
+ELT_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELT_GET_SETTING(_SettingName) return GetDefault<UELTSettings>()->_SettingName;
 #define ELT_SET_SETTING(_SettingName, _SettingValue) UELTSettings* Settings = GetMutableDefault<UELTSettings>(); \
@@ -48,3 +50,5 @@ void UELTSettings::SetAvailableLanguages(const TArray<FString>& NewAvailableLang
 {
 	ELT_SET_SETTING(AvailableLangs, NewAvailableLanguages);
 }
+
+ELT_PRAGMA_ENABLE_OPTIMIZATION

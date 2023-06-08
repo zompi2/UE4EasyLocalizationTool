@@ -3,6 +3,8 @@
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
 
+ELT_PRAGMA_DISABLE_OPTIMIZATION
+
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
@@ -84,3 +86,5 @@ bool UELTBlueprintLibrary::AreTextKeysEqual(const FText& A, const FText& B)
 
 	return false;
 }
+
+ELT_PRAGMA_ENABLE_OPTIMIZATION

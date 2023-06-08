@@ -1,3 +1,8 @@
+###### 1.4.0
+* "Manually Set Last Language" option added.
+* Added option to disable plugin optimizations for easier debugging.
+* Copyrights update.
+
 ###### 1.3.4
 * Fixed an issue, which didn't allow to import csv file with empty lines at the end.
 

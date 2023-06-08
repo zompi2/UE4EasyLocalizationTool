@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditor.h"
 #include "Internationalization/TextLocalizationResource.h"
@@ -17,6 +17,8 @@
 
 #include "CSVReader.h"
 #include "LevelEditor.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 void UELTEditor::Init()
 {
@@ -503,3 +505,5 @@ FString UELTEditor::GetCurrentGlobalNamespace()
 		return TEXT("");
 	}
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

@@ -7,6 +7,8 @@
 #include "Internationalization/Culture.h"
 #include "Kismet/GameplayStatics.h"
 
+ELT_PRAGMA_DISABLE_OPTIMIZATION
+
 const FString ELTSaveName = TEXT("ELTSave");
 
 UELT* UELT::Get(const UWorld* World)
@@ -185,3 +187,5 @@ void UELT::BroadcastOnTextLocalizationChanged()
 	OnTextLocalizationChangedStatic.Broadcast();
 	OnTextLocalizationChanged.Broadcast();
 }
+
+ELT_PRAGMA_ENABLE_OPTIMIZATION
