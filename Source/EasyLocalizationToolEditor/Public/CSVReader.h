@@ -137,6 +137,10 @@ public:
 
 				if (Ch == '\0' || i == Chars.Num() - 1)
 				{
+					if (CurrentWord.IsEmpty())
+					{
+						return true;
+					}
 					if (AddWord() == false)
 					{
 						OutMessage = TEXT("ERROR: Invalid CSV!");
@@ -172,6 +176,10 @@ public:
 						}
 						else if (Ch == '\n')
 						{
+							if (CurrentWord.IsEmpty() && LineIndex == 0)
+							{
+								return true;
+							}
 							if (AddWord() == false)
 							{
 								OutMessage = TEXT("ERROR: Invalid CSV!");
