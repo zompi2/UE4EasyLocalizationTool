@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -16,6 +16,13 @@ class EASYLOCALIZATIONTOOL_API UELTSettings : public UObject
     GENERATED_BODY()
 
 public:
+
+	/**
+	 * Get/Set an option, which indicates if the last used language should be saved and loaded manually.
+	 * Use it in a situation where you want to control the saving of the last used language.
+	 */
+	static bool GetManuallySetLastUsedLanguage();
+	static void SetManuallySetLastUsedLanguage(bool bNewManuallySetLastUsageLanguage);
 
 	/**
 	 * Get/Set an option, which indicates if the language should be overridden 
@@ -38,6 +45,9 @@ public:
 	static void SetAvailableLanguages(const TArray<FString>& NewAvailableLanguages);
 
 private:
+
+	UPROPERTY(config)
+	bool bManuallySetLastUsedLanguage = false;
 
 	UPROPERTY(config)
 	bool bOverrideLanguageAtFirstLaunch = false;

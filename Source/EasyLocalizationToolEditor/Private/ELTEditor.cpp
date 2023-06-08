@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditor.h"
 #include "Internationalization/TextLocalizationResource.h"
@@ -17,6 +17,8 @@
 
 #include "CSVReader.h"
 #include "LevelEditor.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 void UELTEditor::Init()
 {
@@ -122,6 +124,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
 	EditorWidget->OnCSVPathChangedDelegate.BindUObject(this, &UELTEditor::OnCSVPathChanged);
 	EditorWidget->OnGenerateLocFilesDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
+	EditorWidget->OnManuallySetLastLanguageChangedDelegate.BindUObject(this, &UELTEditor::OnManuallySetLastLanguageChanged);
 	EditorWidget->OnReimportAtEditorStartupChangedDelegate.BindUObject(this, &UELTEditor::OnReimportAtEditorStartupChanged);
 	EditorWidget->OnLocalizationPreviewChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewChanged);
 	EditorWidget->OnLocalizationPreviewLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPreviewLangChanged);
@@ -148,12 +151,15 @@ void UELTEditor::InitializeTheWidget()
 		}
 	}
 
-	// Set the ReimportAtEditorStartup current value to the Widget.
-	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
-
 	// Set the Localization Preview current values to the Widget.
 	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
 	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
+
+	// Set the ManualLastLanguageLoad current value to the Widget.
+	EditorWidget->SetManuallySetLastUsedLanguage(UELTSettings::GetManuallySetLastUsedLanguage());
+
+	// Set the ReimportAtEditorStartup current value to the Widget.
+	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
 
 	// Set the Localization Override At First Run current values to the Widget.
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
@@ -242,6 +248,12 @@ void UELTEditor::OnLocalizationPreviewLangChanged(const FString& LangPreview)
 	// Save this setting, set proper preview.
 	UELTEditorSettings::SetLocalizationPreviewLang(LangPreview);
 	SetLanguagePreview();
+}
+
+void UELTEditor::OnManuallySetLastLanguageChanged(bool bNewManuallySetLastLanguageLoad)
+{
+	// "Reimport At Editor Startup" option has been changed in the Widget. Save this setting.
+	UELTSettings::SetManuallySetLastUsedLanguage(bNewManuallySetLastLanguageLoad);
 }
 
 void UELTEditor::OnLocalizationFirstRunChanged(bool bOnFirstRun)
@@ -377,11 +389,11 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 		if (Columns.Num() > 1)
 		{
 			const int32 NumOfValues = Columns[0].Values.Num();
-			for (const FCSVColumn& Column : Columns)
+			for (int32 CIdx = 1; CIdx < Columns.Num(); CIdx++)
 			{
-				if (Column.Values.Num() != NumOfValues)
+				if (Columns[CIdx].Values.Num() != NumOfValues)
 				{
-					OutMessage = TEXT("ERROR: Number of values is not the same for every key! Probably invalid CSV!");
+					OutMessage = FString::Printf(TEXT("ERROR: Invalid CSV! Column %i (counting from 1) has %i values while Column 1 has %i values. Every Column must have the same amount of values!"), CIdx+1, Columns[CIdx].Values.Num(), NumOfValues);
 					return false;
 				}
 			}
@@ -395,7 +407,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 
 			if (bUseGlobalNamespace == false && bHasNamespaces == false)
 			{
-				OutMessage = TEXT("ERROR: Namespaces in csv not found!");
+				OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
 				return false;
 			}
 
@@ -416,7 +428,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 						const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
 						if (Namespace.IsEmpty())
 						{
-							OutMessage = TEXT("ERROR: Namespace is empty!");
+							OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) is empty!"), Key);
 							return false;
 						}
 						LocRes.AddEntry(
@@ -438,7 +450,7 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& Loc
 		}
 		else
 		{
-			OutMessage = TEXT("ERROR: Not enought rows in csv!");
+			OutMessage = TEXT("ERROR: CSV has not enough Columns!");
 			return false;
 		}
 	}
@@ -493,3 +505,5 @@ FString UELTEditor::GetCurrentGlobalNamespace()
 		return TEXT("");
 	}
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

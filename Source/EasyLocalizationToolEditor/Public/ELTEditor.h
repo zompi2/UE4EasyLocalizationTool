@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -110,6 +110,11 @@ private:
 	 * Called when "PreviewLanguage" option has been changed in the Widget.
 	 */
 	void OnLocalizationPreviewLangChanged(const FString& LangPreview);
+
+	/**
+	 * Called when "ManualLastLanguageLoad" option has been changed in the widget.
+	 */
+	void OnManuallySetLastLanguageChanged(bool bNewManuallySetLastLanguageLoad);
 
 	/**
 	 * Called when "OverrideLanguageOnFirstRun" option has been changed in the Widget.

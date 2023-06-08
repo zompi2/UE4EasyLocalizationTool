@@ -1,10 +1,12 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditorStyle.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Slate/SlateGameResources.h"
 #include "Interfaces/IPluginManager.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 // Null declaration of static variable (for linker needs)
 TSharedPtr<FSlateStyleSet> FELTEditorStyle::StyleInstance = nullptr;
@@ -54,3 +56,5 @@ TSharedRef<FSlateStyleSet> FELTEditorStyle::Create()
 	// Result is a Style Set with menu icon in it.
 	return Style;
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

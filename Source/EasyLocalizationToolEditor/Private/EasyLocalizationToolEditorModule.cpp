@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "EasyLocalizationToolEditorModule.h"
 #include "ELTEditor.h"
@@ -14,6 +14,8 @@
 #include "LevelEditor.h"
 
 IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 // Id of the ELT Tab used to spawn and observe this tab.
 const FName ELTTabId = FName(TEXT("ELT"));
@@ -170,3 +172,5 @@ void FEasyLocalizationToolEditorModule::InvokeEditorSpawn()
 {
 	FGlobalTabmanager::Get()->TryInvokeTab(ELTTabId);
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

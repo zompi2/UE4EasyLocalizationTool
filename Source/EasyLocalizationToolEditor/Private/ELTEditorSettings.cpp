@@ -1,8 +1,10 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
 #include "ELTEditorSettings.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELTE_GET_SETTING(_SettingName) return GetDefault<UELTEditorSettings>()->_SettingName;
 #define ELTE_SET_SETTING(_SettingName, _SettingValue) UELTEditorSettings* Settings = GetMutableDefault<UELTEditorSettings>(); \
@@ -73,3 +75,5 @@ void UELTEditorSettings::SetGlobalNamespace(const TMap<FString, FString>& NewGlo
 {
 	ELTE_SET_SETTING(GlobalNamespaces, NewGlobalNamespaces);
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

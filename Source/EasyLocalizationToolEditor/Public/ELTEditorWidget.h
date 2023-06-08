@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -20,6 +20,7 @@ DECLARE_DELEGATE(FOnGenerateLocFiles);
 DECLARE_DELEGATE_OneParam(FOnReimportAtEditorStartupChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewLangChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FManuallySetLastLanguageChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
@@ -136,6 +137,20 @@ public:
 
 
 	/**
+	 * Set "Manually Set Last Used Language" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetManuallySetLastUsedLanguage(bool bManuallySetLastUsedLanguage);
+
+	/**
+	 * "Manually Set Last Used Language" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void OnManuallySetLastUsedLanguageChanged(bool bManuallySetLastUsedLanguage);
+
+
+
+	/**
 	 * Set "Localization On First Run" option to the Widget.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -186,6 +201,7 @@ public:
 	FOnReimportAtEditorStartupChanged OnReimportAtEditorStartupChangedDelegate;
 	FOnLocalizationPreviewChanged OnLocalizationPreviewChangedDelegate;
 	FOnLocalizationPreviewLangChanged OnLocalizationPreviewLangChangedDelegate;
+	FManuallySetLastLanguageChanged OnManuallySetLastLanguageChangedDelegate;
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;

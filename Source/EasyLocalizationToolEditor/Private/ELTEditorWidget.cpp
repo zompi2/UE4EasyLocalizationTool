@@ -1,8 +1,10 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditorWidget.h"
 #include "DesktopPlatformModule.h"
 #include "Interfaces/IPluginManager.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 FString UELTEditorWidget::GetPluginVersion()
 {
@@ -55,6 +57,11 @@ void UELTEditorWidget::OnLocalizationPreviewLangChanged(const FString& NewPrevie
 	OnLocalizationPreviewLangChangedDelegate.ExecuteIfBound(NewPreviewLang);
 }
 
+void UELTEditorWidget::OnManuallySetLastUsedLanguageChanged(bool bManuallySetLastUsedLanguage)
+{
+	OnManuallySetLastLanguageChangedDelegate.ExecuteIfBound(bManuallySetLastUsedLanguage);
+}
+
 void UELTEditorWidget::OnLocalizationOnFirstRun(bool LocalizationOnFirstRun)
 {
 	OnLocalizationOnFirstRunChangedDelegate.ExecuteIfBound(LocalizationOnFirstRun);
@@ -70,10 +77,10 @@ void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespac
 	OnGlobalNamespaceChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
 
-
-
 void UELTEditorWidget::FixupLoc(FString SourceString, FString Value, FString Namespace, FString Key)
 {
 	FTextDisplayStringRef DisplayStringRef = FTextLocalizationManager::Get().GetDisplayString(FTextKey(Namespace), FTextKey(Key), &SourceString);
 	FTextLocalizationManager::Get().UpdateDisplayString(DisplayStringRef, Value, FTextKey(Namespace), FTextKey(Key));
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

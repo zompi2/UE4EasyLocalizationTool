@@ -1,10 +1,12 @@
-// Copyright (c) 2021 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
 
 #include "ELTCommandlet.h"
 #include "ELTEditor.h"
 #include "Misc/Parse.h"
 
 DEFINE_LOG_CATEGORY_STATIC(ELTCommandletLog, Log, All);
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 // Usage:
 // -run=ELTCommandlet -CSVPath="C:\MyProject\Lockit.csv" -LocPath="C:\MyProject\Content\Localization\Game" -Namespace="GAME"
@@ -42,3 +44,5 @@ int32 UELTCommandlet::Main(const FString& Params)
 
 	return 0;
 }
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

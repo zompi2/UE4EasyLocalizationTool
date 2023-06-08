@@ -87,8 +87,16 @@ private:
 	// Flag to prevent changing languages in callbacks.
 	bool LanguageChangeLock;
 
+	// Flag to prevent from getting and setting language from save file while it is not available yet.
+	bool AllowToUseSaveFiles;
+
 	/**
 	 * Broadcast event about text localization change.
 	 */
 	void BroadcastOnTextLocalizationChanged();
+
+	/**
+	 * Internal implementation of LoadLastUsedLanguage.
+	 */
+	void SetLastUsedLanguage();
 };
