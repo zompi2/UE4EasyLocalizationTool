@@ -253,6 +253,11 @@ CSV must have the same amount of entries in every row (entries can be empty, but
 * `ERROR: Namespace in row 2 (counting from 1) is empty!` - this error will encounter when CSV has `Namespace` Column, but there is an empty entry under it and the `Global Namespace` is not set.
 * `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.
 
+# Extra Links
+* [Blog Entry](https://zompidev.blogspot.com/2022/02/easy-localization-tool-for-ue4.html)  
+
+[Back to top](#table-of-content)
+
 # Special Thanks
 
 I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work and to everyone that contributed to this project.  
