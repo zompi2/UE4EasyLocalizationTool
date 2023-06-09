@@ -255,6 +255,7 @@ CSV must have the same amount of entries in every row (entries can be empty, but
 
 # Extra Links
 * [Blog Entry](https://zompidev.blogspot.com/2022/02/easy-localization-tool-for-ue4.html)  
+* [Reddit Post](https://www.reddit.com/r/unrealengine/comments/ymg86r/easy_localization_tool)
 
 [Back to top](#table-of-content)
 
