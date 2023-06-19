@@ -79,8 +79,10 @@ void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespac
 
 void UELTEditorWidget::FixupLoc(FString SourceString, FString Value, FString Namespace, FString Key)
 {
+#if (ENGINE_MAJOR_VERSION == 4)
 	FTextDisplayStringRef DisplayStringRef = FTextLocalizationManager::Get().GetDisplayString(FTextKey(Namespace), FTextKey(Key), &SourceString);
 	FTextLocalizationManager::Get().UpdateDisplayString(DisplayStringRef, Value, FTextKey(Namespace), FTextKey(Key));
+#endif
 }
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION
