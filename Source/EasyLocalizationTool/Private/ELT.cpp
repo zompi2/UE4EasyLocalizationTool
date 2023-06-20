@@ -133,15 +133,9 @@ bool UELT::SetLanguage(const FString& Lang)
 					UGameplayStatics::SaveGameToSlot(Save, ELTSaveName, 0);
 				}
 			}
-			
-			// If this is an editor (also play in editor) - enable game localization preview, so the 
-			// localization set will have a visible effect.
-#if WITH_EDITOR
-			if (GIsEditor)
-			{
-				FTextLocalizationManager::Get().EnableGameLocalizationPreview(ELTCurrentLanguage);
-			}
-#endif
+
+			// Ensure all localization resources are properly loaded for this language.
+			RefreshLanguageResources();
 
 			// Release the change lock.
 			LanguageChangeLock = false;
@@ -157,6 +151,22 @@ bool UELT::SetLanguage(const FString& Lang)
 		LanguageChangeLock = false;
 	}
 	return false;
+}
+
+void UELT::RefreshLanguageResources()
+{
+	// Refresh resources.
+	FTextLocalizationManager::Get().RefreshResources();
+
+	// If this is an editor (also play in editor) - enable game localization preview, so the 
+	// localization set/refresh will have a visible effect.
+	// (Also, because RefreshResources disables localization preview)
+#if WITH_EDITOR
+	if (GIsEditor)
+	{
+		FTextLocalizationManager::Get().EnableGameLocalizationPreview(ELTCurrentLanguage);
+	}
+#endif
 }
 
 void UELT::SetLastUsedLanguage()
