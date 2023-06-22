@@ -7,9 +7,16 @@
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELT_GET_SETTING(_SettingName) return GetDefault<UELTSettings>()->_SettingName;
+
+#if (ENGINE_MAJOR_VERSION == 5)
+#define ELT_SET_SETTING(_SettingName, _SettingValue) UELTSettings* Settings = GetMutableDefault<UELTSettings>(); \
+Settings->_SettingName = _SettingValue; \
+Settings->TryUpdateDefaultConfigFile();
+#else
 #define ELT_SET_SETTING(_SettingName, _SettingValue) UELTSettings* Settings = GetMutableDefault<UELTSettings>(); \
 Settings->_SettingName = _SettingValue; \
 Settings->UpdateDefaultConfigFile();
+#endif
 
 bool UELTSettings::GetManuallySetLastUsedLanguage()
 {

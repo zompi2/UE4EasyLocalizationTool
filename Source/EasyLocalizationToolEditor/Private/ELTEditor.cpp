@@ -10,7 +10,12 @@
 #include "ELTEditorWidget.h"
 #include "ELTSettings.h"
 
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
+#include "AssetRegistry/AssetRegistryModule.h"
+#else
 #include "AssetRegistryModule.h"
+#endif
+
 #include "EditorUtilityWidget.h"
 #include "EditorUtilitySubsystem.h"
 #include "EditorUtilityWidgetBlueprint.h"
@@ -49,7 +54,11 @@ UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 {
 	// Get the Editor Utility Widget Blueprint from the content directory.
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
+	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath(FSoftObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP"));
+#else
 	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
+#endif
 	return Cast<UEditorUtilityWidgetBlueprint>(AssetData.GetAsset());
 }
 

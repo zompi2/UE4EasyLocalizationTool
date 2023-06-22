@@ -21,6 +21,9 @@ public:
 
 	// FGCObject implementation
 	void AddReferencedObjects(FReferenceCollector& Collector) override;
+#if (ENGINE_MAJOR_VERSION == 5)
+	FString GetReferencerName() const override;
+#endif
 
 protected:
 

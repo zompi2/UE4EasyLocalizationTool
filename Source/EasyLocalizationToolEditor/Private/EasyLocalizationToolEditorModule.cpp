@@ -99,7 +99,11 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			// Create a Menu Extender, which adds a button that executes the UICommandList of opening ELT Window.
 			TSharedPtr<FExtender> MainMenuExtender = MakeShareable(new FExtender);
 			MainMenuExtender->AddMenuExtension(
+#if (ENGINE_MAJOR_VERSION == 5)
+				FName(TEXT("Tools")),
+#else
 				FName(TEXT("General")),
+#endif
 				EExtensionHook::After, 
 				Commands,
 				FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
@@ -128,6 +132,13 @@ void FEasyLocalizationToolEditorModule::AddReferencedObjects(FReferenceCollector
 		Collector.AddReferencedObject(Editor);
 	}
 }
+
+#if (ENGINE_MAJOR_VERSION == 5)
+FString FEasyLocalizationToolEditorModule::GetReferencerName() const
+{
+	return TEXT("ELTEditorModuleGCObject");
+}
+#endif
 
 bool FEasyLocalizationToolEditorModule::CanSpawnEditor()
 {
