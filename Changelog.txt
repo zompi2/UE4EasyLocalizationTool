@@ -1,6 +1,7 @@
 ###### 1.4.1
 * Fixed a rare issue where some texts weren't displayed as localized texts.
 * "RefreshLanguageResources" function added to manually refresh current language resources if needed.
+* Old, unused "FixupLoc" function has been removed.
 
 ###### 1.4.0
 * "Manually Set Last Language" option added.

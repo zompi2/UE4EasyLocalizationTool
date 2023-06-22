@@ -37,6 +37,13 @@ bool UELTBlueprintLibrary::SetLanguage(const UObject* WorldContextObject, const 
 	return false;
 }
 
+void UELTBlueprintLibrary::RefreshLanguageResources(const UObject* WorldContextObject)
+{
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+		if (UELT* ELT = UELT::Get(ThisWorld))
+			ELT->RefreshLanguageResources();
+}
+
 FText UELTBlueprintLibrary::Conv_LocTextToText(FLocText InLocText)
 {
 	return InLocText.GetText();

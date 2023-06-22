@@ -46,6 +46,13 @@ public:
 	static bool SetLanguage(const UObject* WorldContextObject, const FString& Language);
 
 	/**
+	 * Refreshes current language resources.
+	 * Might be needed when some texts are not displayed properly.
+	 */
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Easy Localization Tool")
+	static void RefreshLanguageResources(const UObject* WorldContextObject);
+
+	/**
 	 * Casts FLocText to FText.
 	 */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "ToText (LocText)", CompactNodeTitle = "->", BlueprintAutocast), Category = "Utilities|Text")

@@ -66,7 +66,7 @@ public:
 	bool SetLanguage(const FString& Lang);
 
 	/**
-	 * Refresh current language resources.
+	 * Refreshes current language resources.
 	 * Might be needed when some texts are not displayed properly.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
