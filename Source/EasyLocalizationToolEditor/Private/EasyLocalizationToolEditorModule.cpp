@@ -133,6 +133,13 @@ void FEasyLocalizationToolEditorModule::AddReferencedObjects(FReferenceCollector
 	}
 }
 
+#if (ENGINE_MAJOR_VERSION == 5)
+FString FEasyLocalizationToolEditorModule::GetReferencerName() const
+{
+	return TEXT("ELTEditorModuleGCObject");
+}
+#endif
+
 bool FEasyLocalizationToolEditorModule::CanSpawnEditor()
 {
 	// Editor can be spawned only when the Editor object say that UI can be created.
