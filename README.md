@@ -18,6 +18,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 - [Using the Tool](#using-the-tool)
 - [Import](#import)
 - [Using Localizations](#using-localizations)
+- [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
 - [Controlling Localizations](#controlling-localizations)
@@ -41,6 +42,7 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
+> Unreal Engine uses ICU codes. The full list of them can be found here: https://www.localeplanet.com/icu/
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  
@@ -82,21 +84,24 @@ If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** proper
 
 ## Using Localizations
 
-In order to use a localized phrase type a key into the Text value:
+In order to use a localized phrase type a **KEY** into the Text form and then set a Namespace and Key values for this Text:
 
-![testex](https://user-images.githubusercontent.com/7863125/144485825-09cc1e5e-408d-48c4-adab-9fda9d7e51d7.png)
-
-Then, set a Namespace and Key values for this Text:
-
-![testex2](https://user-images.githubusercontent.com/7863125/144485826-ede6dd9f-c7d8-42b5-a615-6f2d67f21816.png)
+![testexampleloc](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67)
 
 To use it in a c++ code use the following macro:
 
 ``` cpp
 NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
-> Sometimes Blueprint editor doesn't allow to change Text's Source value to the Key value. Without this localization won't work.  
-> In order to fix this issue - read about [FixText](#fix-text) Editor Scripting node.   
+
+[Back to top](#table-of-content)
+
+## Cooking localizations
+In order to make localization work on standnalone build there are two options in `Project Settings` in  the `Packaging` section (under `Advanced options`!) that need to be set:
+* `Internationalization Support` set to `All`:  
+![int support](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/fbac259c-fec0-4656-b0f1-d830298385b9)
+* Localization directory added to the `Addidiontal Non-Asset Directories to Copy` list:  
+![loccopy](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/0f244d7c-2744-411f-ac77-b85dedc46e0e)
 
 [Back to top](#table-of-content)
 
@@ -186,6 +191,16 @@ GetELT()->OnTextLocalizationChangedStatic.AddLambda([this]()
 {
     // Stuff to do when localization has changed.
 });
+```
+
+#### Refresh Language Resources
+There might be a rare situation when texts won't be displayed in a localized form.  
+There is a high chance running this function will fix this issue.
+
+![ref](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e06b435e-a4bd-4839-8b56-cc5cdc8f4c9a)
+
+``` cpp
+GetELT()->RefreshLanguageResources();
 ```
 
 [Back to top](#table-of-content)
