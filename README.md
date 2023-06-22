@@ -1,8 +1,10 @@
-# Easy Localization Tool for Unreal Engine 4
+# Easy Localization Tool for Unreal Engine
 
-This plugin introduces a way simplier method of localizing game made in Unreal Engine 4. 
+This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
 
 It simply allow to import CSV file with localization.
+
+The plugin has been tested on the Engine's versions: 4.27.2 and 5.2.0.
 
 # Contact
 
