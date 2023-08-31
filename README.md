@@ -255,9 +255,19 @@ Checks if two FTexts' keys are the same. If at least one of them has invalid key
 #### Validate Text
 
 *This is Editor Scripting only utility.*  
-It checks if the given FText is properly localized - it means it checks if Source and Key are the same. It will return false if given FText is empty or if it is Culture Invariant.
+It checks if the given FText is properly localized - it means it checks if Source and Key are the same.  
+It will return false if given FText is empty or if it is Culture Invariant.
 
 ![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
+
+#### Replace Text
+
+*This is Editor Scripting only utility.*  
+It replaces the OriginText with ReplaceWithText while keeping the OriginText's package id.  
+Use this instead of normal FText copy operator when using editor scripts, because it copies the package id which leads to broken FText localizations.  
+OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
+
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/492dc4b7-3e2a-4202-a461-182f08ea226f)
 
 [Back to top](#table-of-content)
 
