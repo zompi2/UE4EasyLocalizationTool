@@ -24,7 +24,7 @@ bool UELTEditorUtils::ValidateText(FText InText)
 	return Key.Equals(Source, ESearchCase::CaseSensitive);
 }
 
-void UELTEditorUtils::ReplaceTexts(UObject* OriginTextOwner, FText& OriginText, const FText& ReplaceWithText)
+void UELTEditorUtils::ReplaceText(UObject* OriginTextOwner, FText& OriginText, const FText& ReplaceWithText)
 {
 	if (ReplaceWithText.IsEmpty())
 	{

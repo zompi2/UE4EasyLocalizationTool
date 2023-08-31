@@ -30,5 +30,5 @@ public:
 	 * OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Editor Scripting | Easy Localization Tool")
-	static void ReplaceTexts(UObject* OriginTextOwner, FText& OriginText, const FText& ReplaceWithText);
+	static void ReplaceText(UObject* OriginTextOwner, FText& OriginText, const FText& ReplaceWithText);
 };
