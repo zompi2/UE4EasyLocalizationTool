@@ -22,4 +22,13 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category = "Editor Scripting | Easy Localization Tool")
 	static bool ValidateText(FText InText);
+
+	/**
+	 * Replaces the OriginText with ReplaceWithText while keeping the OriginText's package id.
+	 * Use this instead of normal FText copy operator when using editor scripts, because it
+	 * copies the package id which leads to broken FText localizations.
+	 * OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Editor Scripting | Easy Localization Tool")
+	static void ReplaceTexts(UObject* OriginTextOwner, FText& OriginText, const FText& ReplaceWithText);
 };
