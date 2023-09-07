@@ -142,7 +142,7 @@ Easy Localization Tool comes with few handy functions to control localization in
 
 Returns a list of available language codes.
 
-![elt1](https://user-images.githubusercontent.com/7863125/144485828-52dabe7a-ecc9-48db-a39b-a65a2f877987.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/acc12392-9879-4306-8c5e-e0ee36bf6283)
 
 ``` cpp
 GetELT()->GetAvailableLanguages();
@@ -152,7 +152,7 @@ GetELT()->GetAvailableLanguages();
 
 Returns a code of the language which is currently in use.
 
-![elt2](https://user-images.githubusercontent.com/7863125/144485830-87f4cbe1-97f8-46cc-b740-40aad0e5c00e.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/b27e6c1b-0683-4f10-bc26-c915b8be732d)
 
 ``` cpp
 GetELT()->GetCurrentLanguage();
@@ -162,7 +162,7 @@ GetELT()->GetCurrentLanguage();
 
 Checks if a language with the given language code can be set.
 
-![elt3](https://user-images.githubusercontent.com/7863125/144485831-2e02ea40-96d5-4304-ba4d-ce1eeccd2825.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/6f051be5-58e0-4171-958f-e24292eaad19)
 
 ``` cpp
 GetELT()->CanSetLanguage("en");
@@ -172,7 +172,7 @@ GetELT()->CanSetLanguage("en");
 
 Sets a language with the given language code. Returns false if the language couldn't be set.
 
-![elt4](https://user-images.githubusercontent.com/7863125/144485832-8c3c42e5-3e28-402c-a695-f2af39b9628e.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/70e6e9a0-0ecc-4fac-b04e-7de390a701f9)
 
 ``` cpp
 GetELT()->SetLanguage("en");
@@ -199,7 +199,7 @@ GetELT()->OnTextLocalizationChangedStatic.AddLambda([this]()
 There might be a rare situation when texts won't be displayed in a localized form.  
 There is a high chance running this function will fix this issue.
 
-![ref](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e06b435e-a4bd-4839-8b56-cc5cdc8f4c9a)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/7aa102b3-dcee-466d-86e8-81b458bac1bb)
 
 ``` cpp
 GetELT()->RefreshLanguageResources();
@@ -244,13 +244,17 @@ Where:
 
 Gets a Package, Namespace, Key and Source info from FText.
 
-![getinfo](https://user-images.githubusercontent.com/7863125/168045473-d05f9138-736d-4c3c-96d8-1b5b8ade2556.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/b9612997-0536-419e-b46b-3b5d8380fd5a)
 
 #### Are Text Keys Equal
 
 Checks if two FTexts' keys are the same. If at least one of them has invalid key it will return false.
 
-![arete](https://user-images.githubusercontent.com/7863125/200557176-c3acdf6b-e1c4-433d-a28d-aafefd336527.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/c72f24f3-026b-4aa2-8de7-cee17052a92a)
+
+``` cpp
+UELTBlueprintLibrary::AreTextKeysEqual(MyTextA, MyTextB);
+```
 
 #### Validate Text
 
@@ -258,7 +262,11 @@ Checks if two FTexts' keys are the same. If at least one of them has invalid key
 It checks if the given FText is properly localized - it means it checks if Source and Key are the same.  
 It will return false if given FText is empty or if it is Culture Invariant.
 
-![validtxt2](https://user-images.githubusercontent.com/7863125/168045759-8fd19a3e-9c39-4363-9664-a76945afa768.png)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/3943435e-436a-409f-9f03-9d83a692ad17)
+
+``` cpp
+UELTEditorUtils::ValidateText(MyText);
+```
 
 #### Replace Text
 
@@ -267,7 +275,11 @@ It replaces the OriginText with ReplaceWithText while keeping the OriginText's p
 Use this instead of normal FText copy operator when using editor scripts, because it copies the package id which leads to broken FText localizations.  
 OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/492dc4b7-3e2a-4202-a461-182f08ea226f)
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/13c83c4f-c4f4-4fa2-8fe8-f6c32fe5cfe0)
+
+``` cpp
+UELTEditorUtils::ReplaceText(this, OriginText, OtherText);
+```
 
 [Back to top](#table-of-content)
 
@@ -278,7 +290,14 @@ CSV must have the same amount of entries in every row (entries can be empty, but
 * `ERROR: CSV file not found!` - this error will encounter when the given CSV file does not exist.
 * `ERROR: Namespaces in CSV not found!` - this error will encounter when CSV has no `Namespace` Column and the `Global Namespace` is not set.
 * `ERROR: Namespace in row 2 (counting from 1) is empty!` - this error will encounter when CSV has `Namespace` Column, but there is an empty entry under it and the `Global Namespace` is not set.
-* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.
+* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.  
+
+If the text displays a Key value instead of the localized value:
+* If this is a child widget blueprint and the Text is defined in it's parent you might need to use a [LocText Struct](#loctext-struct).
+* Otherwise you might need to call [Refresh Language Resources](#refresh-language-resources) function before displaying the text.
+
+If the Text key keeps changing into a new key:
+* Ensure that if the localization value has a new line character it is a CRLF character.
 
 # Extra Links
 * [Blog Entry](https://zompidev.blogspot.com/2022/02/easy-localization-tool-for-ue4.html)  

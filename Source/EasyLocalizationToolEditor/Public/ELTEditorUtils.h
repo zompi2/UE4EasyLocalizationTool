@@ -20,7 +20,7 @@ public:
 	 * Checks if the given FText is properly localized - it means it checks if Source and Key
 	 * are the same. It will return false if given FText is empty or if it is Culture Invariant.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Editor Scripting | Easy Localization Tool")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "ELT - Validate Text"), Category = "Editor Scripting | Easy Localization Tool")
 	static bool ValidateText(FText InText);
 
 	/**
@@ -29,6 +29,6 @@ public:
 	 * copies the package id which leads to broken FText localizations.
 	 * OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Editor Scripting | Easy Localization Tool")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Replace Text"), Category = "Editor Scripting | Easy Localization Tool")
 	static void ReplaceText(UObject* OriginTextOwner, UPARAM(ref) FText& OriginText, const FText& ReplaceWithText);
 };
