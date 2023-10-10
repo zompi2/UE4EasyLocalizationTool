@@ -46,7 +46,7 @@ public class EasyLocalizationToolEditor : ModuleRules
         PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
 
         // Disable optimization for non shipping builds (for easier debugging)
-        bool bDisableOptimization = true;
+        bool bDisableOptimization = false;
         if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
         {
 			if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
