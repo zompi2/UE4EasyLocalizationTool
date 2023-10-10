@@ -4,7 +4,7 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin has been tested on the Engine's versions: 4.27.2 and 5.2.0.
+The plugin has been tested on the Engine's versions: 4.27.2 and 5.3.1.
 
 # Contact
 
