@@ -19,6 +19,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 - [CSV Format](#csv-format)
 - [Using the Tool](#using-the-tool)
 - [Import](#import)
+- [Adding Localization Lirectories](#adding-localization-directories)
 - [Using Localizations](#using-localizations)
 - [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
@@ -81,6 +82,17 @@ The following window should appear:
 
 In order to import localization from CSV simply select the CSV file in the tool's window and click **Import**.  
 If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** property. That's it!
+
+[Back to top](#table-of-content)
+
+## Adding Localization Directories
+
+The **Game** localization is the default one. In order to add another localization directory (and name) add the localization path to the project's `DefaultGame.ini`.
+
+```
+[Internationalization]
++LocalizationPaths=%GAMEDIR%Content/Localization/MyLocalizationName
+```
 
 [Back to top](#table-of-content)
 
