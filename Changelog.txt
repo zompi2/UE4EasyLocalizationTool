@@ -1,5 +1,8 @@
+###### 1.5.3
+* Fixed the issue in UELTBlueprintLibrary::GetTextData because of which it didn't return Package when Namespace was empty.
+
 ###### 1.5.2
-* Deprecation fix for UE5.2 when disabling optimizations
+* Deprecation fix for UE5.2 when disabling optimizations.
 
 ###### 1.5.1
 * More readable blueprint node names.
