@@ -2,6 +2,7 @@
 
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
+#include "Engine/Engine.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 

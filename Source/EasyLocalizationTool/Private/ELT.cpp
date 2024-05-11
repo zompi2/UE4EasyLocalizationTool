@@ -6,6 +6,9 @@
 #include "Internationalization/Internationalization.h"
 #include "Internationalization/Culture.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "UObject/Package.h"
+#include "Engine/GameInstance.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ELTSettings.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 

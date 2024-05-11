@@ -56,7 +56,7 @@ private:
 	void InvokeEditorSpawn();
 	
 	// Editor object.
-	class UELTEditor* Editor;
+	TObjectPtr<class UELTEditor> Editor;
 
 	// DockTab reference with the editor.
 	TWeakPtr<class SDockTab> EditorTab;
