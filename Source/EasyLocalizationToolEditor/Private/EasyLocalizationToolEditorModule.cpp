@@ -13,6 +13,10 @@
 #include "PropertyEditorModule.h"
 #include "LevelEditor.h"
 
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
+#include "ToolMenu.h"
+#endif
+
 IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
@@ -96,6 +100,21 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			IMainFrameModule& MainFrame = FModuleManager::Get().LoadModuleChecked<IMainFrameModule>("MainFrame");
 			MainFrame.GetMainFrameCommandBindings()->Append(Commands.ToSharedRef());
 
+			
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
+			// The Menu Extender doesn't work correctly for new menus in UE5.4 as they don't have proper Hook names as they should...
+			// Attempt to add menu entry with UICommandList of opening ELT Window to the Tools menu.
+			UToolMenu* Menu = UToolMenus::Get()->FindMenu("LevelEditor.MainMenu.Tools");
+			if (Menu)
+			{
+				Menu->AddMenuEntry(NAME_None, FToolMenuEntry::InitMenuEntryWithCommandList(
+					FELTEditorCommands::Get().OpenELTMenu, 
+					Commands,
+					FText::FromString(TEXT("Easy Localization Tool")),
+					FText::FromString(TEXT("Opens Easy Localization Tool Window")),
+					FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon")));
+			}
+#else
 			// Create a Menu Extender, which adds a button that executes the UICommandList of opening ELT Window.
 			TSharedPtr<FExtender> MainMenuExtender = MakeShareable(new FExtender);
 			MainMenuExtender->AddMenuExtension(
@@ -120,6 +139,7 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 
 			// Extend Editors menu with the created Menu Extender.
 			LevelEditor->GetMenuExtensibilityManager()->AddExtender(MainMenuExtender);
+#endif
 		}
 	}
 }
