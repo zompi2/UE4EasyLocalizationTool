@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.5.4",
 	"FriendlyName": "EasyLocalizationTool",
-	"Description": "Tool to simplify the way a simple localizations are handled.",
+	"Description": "A simpler localization pipeline.",
 	"Category": "Localization",
 	"CreatedBy": "Damian Nowakowski",
 	"CreatedByURL": "https://zompidev.blogspot.com",
