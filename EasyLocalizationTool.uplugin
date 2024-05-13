@@ -1,14 +1,14 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.5.3",
+	"VersionName": "1.5.4",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "Tool to simplify the way a simple localizations are handled.",
 	"Category": "Localization",
 	"CreatedBy": "Damian Nowakowski",
 	"CreatedByURL": "https://zompidev.blogspot.com",
 	"DocsURL": "https://github.com/zompi2/UE4EasyLocalizationTool",
-	"MarketplaceURL": "",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/7ffcfa0830e5409991d56f546d5b9cbb",
 	"SupportURL": "mailto:zompi2@gmail.com",
 	"CanContainContent": true,
 	"IsBetaVersion": false,
@@ -19,22 +19,16 @@
 			"Name": "EasyLocalizationTool",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
-			"WhitelistPlatforms": [
-				"Win64",
-				"Linux",
-				"Mac",
-				"IOS",
-				"Android"
+			"PlatformAllowList": [
+				"Win64"
 			]
 		},
 		{
 			"Name": "EasyLocalizationToolEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PreDefault",
-			"WhitelistPlatforms": [
-				"Win64",
-				"Linux",
-				"Mac"
+			"PlatformAllowList": [
+				"Win64"
 			]
 		}
 	]

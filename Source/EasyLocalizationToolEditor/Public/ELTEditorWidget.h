@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -35,75 +35,75 @@ public:
 	/**
 	 * Returns a version of the plugin.
 	 */
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool Editor")
 	FString GetPluginVersion();
 
 	/**
 	 * Call BP to fill up the list of localization paths.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillLocalizationPaths(const TArray<FString>& Paths);
 
 	/**
 	 * Call BP to display a current localization path.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetLocalizationPath(const FString& Path);
 
 	/**
 	 * BP calls the code to inform that the localization path has been selected.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnLocalizationPathSelected(const FString& Path);
 
 	/**
 	 * Call BP to fill up a name of current localization path.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillLocalizationName(const FString& LocName);
 
 	/**
 	 * Call BP to fill up all available languages.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillAvailableLangs(const TArray<FString>& Langs);
 
 	/**
 	 * Call BP to fill up available languages in selected localization path.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillAvailableLangsInLocFile(const TArray<FString>& Langs);
 
 	/**
 	 * Call BP to fill up the path to the CSV file
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillCSVPath(const FString& CSVPath);
 
 
 	/**
 	 * User pressed "Select CSV" button.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void SelectNewCSVPath();
 
 	/**
 	 * User pressed "Generate" button.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void GenerateLocFiles();
 
 
 	/**
 	 * Set "Localization Preview" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetLocalizationPreview(bool LocalizationPreview);
 
 	/**
 	 * "Localization Preview" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor Editor")
 	void OnLocalizationPreviewChanged(bool LocalizationPreview);
 
 
@@ -111,13 +111,13 @@ public:
 	/**
 	 * Set "Localization Preview Language" to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetLocalizationPreviewLang(const FString& PreviewLang);
 
 	/**
 	 * "Localization Preview Language" has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnLocalizationPreviewLangChanged(const FString& PreviewLang);
 
 
@@ -125,13 +125,13 @@ public:
 	/**
 	 * Set "Reimport At Editor Startup" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetReimportAtEditorStartup(bool bReimportAtEditorStartup);
 
 	/**
 	 * "Reimport At Editor Startup" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnReimportAtEditorStartupChanged(bool bReimportAtEditorStartup);
 	
 
@@ -139,13 +139,13 @@ public:
 	/**
 	 * Set "Manually Set Last Used Language" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetManuallySetLastUsedLanguage(bool bManuallySetLastUsedLanguage);
 
 	/**
 	 * "Manually Set Last Used Language" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnManuallySetLastUsedLanguageChanged(bool bManuallySetLastUsedLanguage);
 
 
@@ -153,13 +153,13 @@ public:
 	/**
 	 * Set "Localization On First Run" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
 	/**
 	 * "Localization On First Run" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnLocalizationOnFirstRun(bool LocalizationOnFirstRun);
 
 
@@ -167,13 +167,13 @@ public:
 	/**
 	 * Set "Localization On First Run Language" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetLocalizationOnFirstRunLang(const FString& OnFirstRunLang);
 	
 	/**
 	 * "Localization On First Run Language" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnLocalizationOnFirstRunLangChanged(const FString& OnFirstRunLang);
 
 
@@ -181,13 +181,13 @@ public:
 	/**
 	 * Set "Global Namespace" option to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetGlobalNamespace(const FString& GlobalNamespace);
 
 	/**
 	 * "Global Namespace" option has been changed on the Widget.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
 

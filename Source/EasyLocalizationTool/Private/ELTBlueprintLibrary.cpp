@@ -1,7 +1,8 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
+#include "Engine/Engine.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 

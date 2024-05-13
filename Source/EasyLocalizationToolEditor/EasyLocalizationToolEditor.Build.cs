@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 using UnrealBuildTool;
 
@@ -39,8 +39,13 @@ public class EasyLocalizationToolEditor : ModuleRules
 			}
 		);
 
-		// Enable this option to use build in Unreal Engine CSV Parser instead of the one from this plugin
-		PublicDefinitions.Add("ELT_USE_UNREAL_CSV_PARSER=0");
+		if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4)
+		{
+			PrivateDependencyModuleNames.Add("ToolMenus");
+		}
+
+        // Enable this option to use build in Unreal Engine CSV Parser instead of the one from this plugin
+        PublicDefinitions.Add("ELT_USE_UNREAL_CSV_PARSER=0");
 
         // Ensure there are no duplicated definitions already
         PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));

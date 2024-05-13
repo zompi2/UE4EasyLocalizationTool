@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditorUtils.h"
 #include "ELTBlueprintLibrary.h"

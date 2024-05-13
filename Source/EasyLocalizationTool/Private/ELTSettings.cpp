@@ -1,8 +1,9 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
 #include "ELTSettings.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 

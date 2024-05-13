@@ -1,3 +1,7 @@
+###### 1.5.4
+* Fixed the location of the open ELT window option for UE5.4
+* Fixed few issues related to the marketplace build.
+
 ###### 1.5.3
 * Fixed the issue in UELTBlueprintLibrary::GetTextData because of which it didn't return Package when Namespace was empty.
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -27,10 +27,10 @@ struct FLocText
 		Key(MoveTemp(InKey))
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Easy Localization Tool")
 	FString Namespace;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Easy Localization Tool")
 	FString Key;
 
 	/** A result text, cached for future uses */

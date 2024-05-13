@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #include "ELT.h"
 #include "ELTSettings.h"
@@ -6,6 +6,9 @@
 #include "Internationalization/Internationalization.h"
 #include "Internationalization/Culture.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "Engine/GameInstance.h"
+#include "UObject/Package.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
