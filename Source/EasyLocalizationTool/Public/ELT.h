@@ -106,4 +106,11 @@ private:
 	 * Internal implementation of LoadLastUsedLanguage.
 	 */
 	void SetLastUsedLanguage();
+
+	/**
+	 * Applies ELTCurrentLanguage to the localization. There will be different behaviour
+	 * when playing in the editor and when playing standalone. In the editor only preview
+	 * should be setup, otherwise the whole engine localization will change.
+	 */
+	bool ApplyCurrentLanguage();
 };

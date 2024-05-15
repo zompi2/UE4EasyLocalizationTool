@@ -123,7 +123,7 @@ bool UELT::SetLanguage(const FString& Lang)
 
 		// Always set the language, even if the desired language is the same as Current Language.
 		// Current Language is received from save file, but it doesn't mean it has already been applied!
-		if (FInternationalization::Get().SetCurrentLanguage(ELTCurrentLanguage))
+		if (ApplyCurrentLanguage())
 		{
 			// If the desired language is different than current old language - save it.
 			// Do not save it if manual set last used language is enabled.
@@ -154,6 +154,21 @@ bool UELT::SetLanguage(const FString& Lang)
 		LanguageChangeLock = false;
 	}
 	return false;
+}
+
+bool UELT::ApplyCurrentLanguage()
+{
+#if WITH_EDITOR
+	if (GIsEditor)
+	{
+		// No need to apply langage when playing in the editor. 
+		// Only preview will be used later on.
+		// Otherwise, the whole editor language would change.
+		return true;
+	}
+#endif
+
+	return FInternationalization::Get().SetCurrentLanguage(ELTCurrentLanguage);
 }
 
 void UELT::RefreshLanguageResources()
