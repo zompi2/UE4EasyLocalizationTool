@@ -1,3 +1,6 @@
+###### 1.5.5
+* Fixed the issue which was causing the whole editor localizations to change when changing the language in PIE.
+
 ###### 1.5.4
 * Fixed the location of the open ELT window option for UE5.4
 * Fixed few issues related to the marketplace build.
