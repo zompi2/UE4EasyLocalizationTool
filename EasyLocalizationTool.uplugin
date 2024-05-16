@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.5.4",
+	"VersionName": "1.5.5",
 	"EngineVersion": "4.27.0",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "A simpler localization pipeline.",
