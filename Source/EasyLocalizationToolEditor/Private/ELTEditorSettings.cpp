@@ -7,10 +7,16 @@
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELTE_GET_SETTING(_SettingName) return GetDefault<UELTEditorSettings>()->_SettingName;
+
+#if (ENGINE_MAJOR_VERSION == 5)
 #define ELTE_SET_SETTING(_SettingName, _SettingValue) UELTEditorSettings* Settings = GetMutableDefault<UELTEditorSettings>(); \
 Settings->_SettingName = _SettingValue; \
-Settings->SaveConfig();
-
+Settings->TryUpdateDefaultConfigFile();
+#else
+#define ELTE_SET_SETTING(_SettingName, _SettingValue) UELTEditorSettings* Settings = GetMutableDefault<UELTEditorSettings>(); \
+Settings->_SettingName = _SettingValue; \
+Settings->UpdateDefaultConfigFile();
+#endif
 
 FString UELTEditorSettings::GetLocalizationPath()
 {

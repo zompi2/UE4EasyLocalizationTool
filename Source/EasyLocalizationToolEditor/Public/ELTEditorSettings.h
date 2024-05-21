@@ -7,10 +7,10 @@
 
 /**
  * Localization settings which are available for an editor only.
- * Stored in Editor.ini file.
+ * Stored in DefaultEditor.ini file.
  */
 
-UCLASS(config = Editor)
+UCLASS(config = Editor, defaultconfig)
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorSettings : public UObject
 {
     GENERATED_BODY()
