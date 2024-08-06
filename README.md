@@ -14,6 +14,14 @@ If you have any question or suggestion regardles this plugin simply add an **Iss
 
 The example project wich uses this plugin can be found in **[this repository](https://github.com/zompi2/UE4EasyLocalizationToolExample)**.
 
+# Unreal Engine Marketplace
+
+The plugin is available on the Unreal Engine Marketplace! It is free, of course.  
+You can **[download it from here](https://www.unrealengine.com/marketplace/en-US/product/7ffcfa0830e5409991d56f546d5b9cbb)**.  
+Unreal Engine Marketplace allows to publish the code plugins for new versions of the Unreal Engine only, so currently only 5.4, 5.3 and 5.2 are available.  
+If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/build-4.27/EasyLocalizationTool-4.27-Compiled.zip)**.  
+The plugin's version that's on the Marketplace is **1.5.6**.
+
 # Table of content
 
 - [CSV Format](#csv-format)
