@@ -63,7 +63,7 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 
 > **!!! VERY IMPORTANT !!!**  
 > 
-> The newline character for every entry **MUST** be a **CRLF**, otherwise UE4's Slate will constantly try to replace the given text Source, leading to errors!   
+> The newline character for every entry **MUST** be a **CRLF**, otherwise UE's Slate will constantly try to replace the given text Source, leading to errors!   
 > **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.  
 > Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
 
