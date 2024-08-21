@@ -271,6 +271,11 @@ Gets a Package, Namespace, Key and Source info from FText.
 
 ![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/b9612997-0536-419e-b46b-3b5d8380fd5a)
 
+``` cpp
+FString Package, Namespace, Key, Source;
+UELTBlueprintLibrary::GetTextData(MyText, Package, Namespace, Key, Source);
+```
+
 #### Are Text Keys Equal
 
 Checks if two FTexts' keys are the same. If at least one of them has invalid key it will return false.
