@@ -23,7 +23,9 @@ If you are using 4.27 you can download the precompiled package **[from here](htt
 The plugin's version that's on the Marketplace is **1.5.6**.
 
 # Unrel Engine 5.3 Issue
-TODO  
+UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
+The best solution is to use the newest version of Unreal Engine.  
+If it is not possible, the workaround would be to set the widget text value in PreConstruct event based on the Text variable or [LocText Struct](#loctext-struct).  
 
 # Table of content
 
