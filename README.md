@@ -8,7 +8,7 @@ The plugin has been tested and it works on the Engine's versions: 4.27, 5.2 and 
 
 # Contact
 
-If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project or write an e-mail to me: **zompi2@gmail.com** I will try my best to answer it quickly :)
+If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project. I will try my best to answer it quickly :) You can also write an e-mail to me: **zompi2@gmail.com**, however there is a risk that it will be filtered as spam.
 
 # Example Project
 
