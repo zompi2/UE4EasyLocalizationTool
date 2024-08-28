@@ -71,11 +71,18 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 
 ## Using the Tool
 
-To open the tool select `Window -> Easy Localization Tool` or use a shortcut `Alt + Shift + L`
+To open the tool select:  
+**UE4.27** : `Window -> Easy Localization Tool`  
 
-![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)
+![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-The following window should appear:
+**UE5.2, UE5.4** : `Tools -> Easy Localization Tool`  
+
+![elt_tools_54](https://github.com/user-attachments/assets/3d42ca41-b75d-45c9-963f-c2b6bb8f03b1)  
+
+or use a shortcut : `Alt + Shift + L`  
+
+The following window should appear:  
 
 ![eltimg](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/dd0e7a61-34ca-42f8-811b-5b30bf4d7a15)
 
@@ -267,11 +274,22 @@ It might be useful when building a game via CI platform like Jenkins.
 
 You can use the following script (win64) to generate localization files:
 
+**UE4.27** :  
+
 ```
-set UE4_PATH=C:\E4
+set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
 call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
+```
+
+**UE5.2, UE5.4** :  
+
+```
+set UE5_PATH=C:\UE5
+set PROJECT_PATH=C:\MyGame
+
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
 ```
 
 Where:
