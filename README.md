@@ -96,6 +96,25 @@ The following window should appear:
 In order to import localization from CSV simply select the CSV file in the tool's window and click **Import**.  
 If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** property. That's it!
 
+> After first import ever the editor might need to be restarted for localizations to work correctly.
+
+> If you've been using built-in engine's Localization Dashboard clear the Localization directory first. 
+
+The Localization directory should contain only these files:
+
+```
+Content
+| - Localization
+|   | - Game
+|   |   | - de
+|   |   |   | - Game.locres
+|   |   | - en
+|   |   |   | - Game.locres
+|   |   | - pl
+|   |   |   | - Game.locres
+|   |   | - Game.locmeta
+```
+
 [Back to top](#table-of-content)
 
 ## Adding Localization Directories
