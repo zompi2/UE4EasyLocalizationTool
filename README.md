@@ -42,6 +42,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Commandlet](#commandlet)
 - [Utilities](#utilities)
 - [Troubleshooting Errors](#troubleshooting-errors)
+- [Used In](#used-in)
 - [Special Thanks](#special-thanks)
 
 ## CSV Format
@@ -366,12 +367,6 @@ If the text displays a Key value instead of the localized value:
 If the Text key keeps changing into a new key:
 * Ensure that if the localization value has a new line character it is a CRLF character.
 
-# Extra Links
-* [Blog Entry](https://zompidev.blogspot.com/2022/02/easy-localization-tool-for-ue4.html)  
-* [Reddit Post](https://www.reddit.com/r/unrealengine/comments/ymg86r/easy_localization_tool)
-
-[Back to top](#table-of-content)
-
 # Used In
 
 Easy Localization Tool has been used in:
@@ -380,6 +375,8 @@ Easy Localization Tool has been used in:
 The workflow of importing CSV into localization files has been implemented with success in many other titles, such as:
 * [SUCCUBUS](https://store.steampowered.com/app/985830/SUCCUBUS)
 * [Real Boxing 2](https://play.google.com/store/apps/details?id=com.vividgames.realboxing2)
+
+[Back to top](#table-of-content)
 
 # Special Thanks
 
