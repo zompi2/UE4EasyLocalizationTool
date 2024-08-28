@@ -372,6 +372,15 @@ If the Text key keeps changing into a new key:
 
 [Back to top](#table-of-content)
 
+# Used In
+
+Easy Localization Tool has been used in:
+* [Achilles: Legends Untold](https://store.steampowered.com/app/1314000/Achilles_Legends_Untold)
+
+The workflow of importing CSV into localization files has been implemented with success in many other titles, such as:
+* [SUCCUBUS](https://store.steampowered.com/app/985830/SUCCUBUS)
+* [Real Boxing 2](https://play.google.com/store/apps/details?id=com.vividgames.realboxing2)
+
 # Special Thanks
 
 I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work and to everyone that contributed to this project.  
