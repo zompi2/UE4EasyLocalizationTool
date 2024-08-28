@@ -32,7 +32,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [CSV Format](#csv-format)
 - [Using the Tool](#using-the-tool)
 - [Import](#import)
-- [Adding Localization Lirectories](#adding-localization-directories)
+- [Adding Localization Directories](#adding-localization-directories)
 - [Using Localizations](#using-localizations)
 - [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
