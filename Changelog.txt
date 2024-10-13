@@ -1,3 +1,6 @@
+###### 1.5.7
+* uplugin updates to support FAB
+
 ###### 1.5.6
 * Moved editor config to the default ini file. The project based ini file edition doesn't work for UE5.4.
 
