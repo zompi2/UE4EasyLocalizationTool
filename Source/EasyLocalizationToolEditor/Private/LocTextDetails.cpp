@@ -62,7 +62,11 @@ FText FLocTextDetails::GetText() const
 
 		const FTextId TextId(*NamespaceValue, *KeyValue);
 		FText OutText;
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+		FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), OutText, &KeyValue);
+#else
 		FText::FindText(TextId.GetNamespace(), TextId.GetKey(), OutText, &KeyValue);
+#endif
 
 		return OutText;
 	}
