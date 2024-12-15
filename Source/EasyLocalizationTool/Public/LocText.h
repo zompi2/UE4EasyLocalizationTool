@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "Internationalization/TextKey.h"
+#include "Runtime/Launch/Resources/Version.h"
 #include "LocText.generated.h"
 
 USTRUCT(BlueprintType)

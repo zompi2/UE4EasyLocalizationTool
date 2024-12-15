@@ -7,6 +7,7 @@
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
