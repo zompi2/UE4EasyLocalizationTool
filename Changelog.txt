@@ -1,3 +1,6 @@
+###### 1.5.8
+* fixed deprecation warnings for UE5.5
+
 ###### 1.5.7
 * uplugin updates to support FAB
 

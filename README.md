@@ -14,13 +14,13 @@ If you have any question or suggestion regardles this plugin simply add an **Iss
 
 The example project wich uses this plugin can be found in **[this repository](https://github.com/zompi2/UE4EasyLocalizationToolExample)**.
 
-# Unreal Engine Marketplace
+# Fab
 
-The plugin is available on the Unreal Engine Marketplace! It is free, of course.  
-You can **[download it from here](https://www.unrealengine.com/marketplace/en-US/product/7ffcfa0830e5409991d56f546d5b9cbb)**.  
-Unreal Engine Marketplace allows to publish the code plugins for new versions of the Unreal Engine only, so currently only 5.4 and 5.2 are available (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**.  
+The plugin is available on the Unreal Engine Fab! It is free, of course.  
+You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
+Currently plugin is available for UE version 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**.  
 If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/build-4.27/EasyLocalizationTool-4.27-Compiled.zip)**.  
-The plugin's version that's on the Marketplace is **1.5.6**.
+The plugin's version that's on the Marketplace is **1.5.7**.
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  

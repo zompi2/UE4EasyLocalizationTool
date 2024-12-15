@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "Internationalization/TextKey.h"
+#include "Runtime/Launch/Resources/Version.h"
 #include "LocText.generated.h"
 
 USTRUCT(BlueprintType)
@@ -44,7 +45,11 @@ struct FLocText
 		if (ValueCache.IsEmpty())
 		{
 			const FTextId TextId(*Namespace, *Key);
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+			FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), ValueCache, &Key);
+#else
 			FText::FindText(TextId.GetNamespace(), TextId.GetKey(), ValueCache, &Key);
+#endif
 			if (ValueCache.IsEmpty())
 			{
 				ValueCache = FText::FromString(Key);
@@ -53,7 +58,7 @@ struct FLocText
 		return ValueCache;
 	}
 
-	/**
+	/**--
 	 * Get localized FString based on Namespace and Key.
 	 */
 	FString ToString()
