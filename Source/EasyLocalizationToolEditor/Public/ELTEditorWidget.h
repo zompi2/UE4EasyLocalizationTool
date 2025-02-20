@@ -15,7 +15,7 @@
  * They will be broadcasted to inform the plugin code about changes in UI.
  */
 DECLARE_DELEGATE_OneParam(FOnLocalizationPathSelected, const FString&);
-DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const TArray<FString>&);
 DECLARE_DELEGATE(FOnGenerateLocFiles);
 DECLARE_DELEGATE_OneParam(FOnReimportAtEditorStartupChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewChanged, bool);

@@ -70,5 +70,8 @@ public class EasyLocalizationToolEditor : ModuleRules
             PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=");
             PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=");
         }
+
+        // Enable extra logging for debugging
+        PublicDefinitions.Add("ELTEDITOR_WITH_LOGGING=1");
     }
 }

@@ -17,6 +17,8 @@
 #include "ToolMenu.h"
 #endif
 
+DEFINE_LOG_CATEGORY(ELTEditorLog);
+
 IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
