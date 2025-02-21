@@ -25,6 +25,8 @@
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
+DEFINE_LOG_CATEGORY(ELTEditorLog);
+
 void UELTEditor::Init()
 {
 	// Load and cache paths for localization directories and CSVs.
@@ -140,6 +142,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunChanged);
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
+	EditorWidget->OnLogGebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 
 	// Fill Localization paths list on the Widget.
 	TArray<FString> GameLocPaths = FPaths::GetGameLocalizationPaths();
@@ -174,6 +177,9 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
+	// Set LogDebug value to the Widget.
+	EditorWidget->SetLogDebug(UELTSettings::GetLogDebug());
+
 	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
@@ -197,7 +203,7 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 
 	// Update Localization directory name and path to CSV to the Widget.
 	EditorWidget->FillLocalizationName(GetCurrentLocName());
-	EditorWidget->FillCSVPath(GetCurrentCSVPath());
+	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
 	RefreshAvailableLangs(false);
@@ -207,19 +213,19 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 	EditorWidget->SetGlobalNamespace(GetCurrentGlobalNamespace());
 }
 
-void UELTEditor::OnCSVPathChanged(const FString& NewPath)
+void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
 {
 	// CSV Path has been changed in the Widget. Cache it, save it in settings and update Widget.
 	if (CSVPaths.Contains(GetCurrentLocName()))
 	{
-		CSVPaths[GetCurrentLocName()] = FPaths::ConvertRelativePathToFull(NewPath);
+		CSVPaths[GetCurrentLocName()] = PathsListToString(RelativeToAbsolutePaths(NewPaths));
 	}
 	else
 	{
-		CSVPaths.Add(GetCurrentLocName(), FPaths::ConvertRelativePathToFull(NewPath));
+		CSVPaths.Add(GetCurrentLocName(), PathsListToString(RelativeToAbsolutePaths(NewPaths)));
 	}
 	UELTEditorSettings::SetCSVPaths(CSVPaths);
-	EditorWidget->FillCSVPath(GetCurrentCSVPath());
+	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 }
 
 void UELTEditor::OnGenerateLocFiles()
@@ -291,6 +297,12 @@ void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 		GlobalNamespaces[GetCurrentLocName()] = NewGlobalNamespace;
 	}
 	UELTEditorSettings::SetGlobalNamespace(GlobalNamespaces);
+}
+
+void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
+{
+	// Log Debug flag has been changed in the Widget. Save this setting.
+	UELTSettings::SetLogDebug(bNewLogDebug);
 }
 
 // ~~~~~~~~~ End of events received from the Widget
@@ -382,90 +394,140 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 // Any other key/value will be ignored
 bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
-	const FString CSVFilePath = FPaths::ConvertRelativePathToFull(GetCurrentCSVPath());
+	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePath, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPath, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage)
 {
-	const FString CSVFilePath = FPaths::ConvertRelativePathToFull(CSVPath);
-	FCSVReader Reader;
-	if (Reader.LoadFromFile(CSVFilePath, OutMessage))
-	{
-		const TArray<FCSVColumn> Columns = Reader.Columns;
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, OutMessage);
+}
 
-		if (Columns.Num() > 1)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage)
+{
+	const bool bLogDebug = UELTSettings::GetLogDebug();
+	bool bFirstCSV = true;
+	TMap<FString, FTextLocalizationResource> LocReses;
+	for (const FString& CSVPath : CSVPaths)
+	{
+		const FString CSVFilePath = FPaths::ConvertRelativePathToFull(CSVPath);
+		if (bLogDebug)
 		{
-			const int32 NumOfValues = Columns[0].Values.Num();
-			for (int32 CIdx = 1; CIdx < Columns.Num(); CIdx++)
+			UE_LOG(ELTEditorLog, Log, TEXT("Parsing file: %s"), *CSVFilePath);
+		}
+		FCSVReader Reader;
+		if (Reader.LoadFromFile(CSVFilePath, OutMessage))
+		{
+			const TArray<FCSVColumn> Columns = Reader.Columns;
+
+			if (Columns.Num() > 1)
 			{
-				if (Columns[CIdx].Values.Num() != NumOfValues)
+				const int32 NumOfValues = Columns[0].Values.Num();
+				for (int32 CIdx = 1; CIdx < Columns.Num(); CIdx++)
 				{
-					OutMessage = FString::Printf(TEXT("ERROR: Invalid CSV! Column %i (counting from 1) has %i values while Column 1 has %i values. Every Column must have the same amount of values!"), CIdx+1, Columns[CIdx].Values.Num(), NumOfValues);
+					if (Columns[CIdx].Values.Num() != NumOfValues)
+					{
+						OutMessage = FString::Printf(TEXT("ERROR: Invalid CSV! Column %i (counting from 1) has %i values while Column 1 has %i values. Every Column must have the same amount of values!"), CIdx+1, Columns[CIdx].Values.Num(), NumOfValues);
+						return false;
+					}
+				}
+
+				// Potential place for namespaces.
+				const FCSVColumn& Namespaces = Columns[0];
+
+				// Check if we have namespaces defined for every key or to use global value.
+				const bool bHasNamespaces = Columns[0].Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase);
+				const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
+
+				if (bUseGlobalNamespace == false && bHasNamespaces == false)
+				{
+					OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
 					return false;
 				}
+
+				if (bFirstCSV)
+				{
+					IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+				}
+
+				// Keys will be in first row if not having namespaces.
+				const FCSVColumn& Keys = Columns[bHasNamespaces ? 1 : 0];
+
+				if (bLogDebug)
+				{
+					UE_LOG(ELTEditorLog, Log, TEXT("Adding Entries"));
+					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
+				}
+
+				for (int32 Column = (bHasNamespaces ? 2 : 1); Column < Columns.Num(); Column++)
+				{
+					const FCSVColumn& Locs = Columns[Column];
+					FString Lang = Locs.Values[0];
+					if (Lang.RemoveFromStart(TEXT("lang-")))
+					{
+						if (LocReses.Contains(Lang) == false)
+						{
+							LocReses.Add(Lang, FTextLocalizationResource());
+						}
+						FTextLocalizationResource& LocRes = LocReses[Lang];
+						for (int32 Key = 1; Key < Keys.Values.Num(); Key++)
+						{
+							const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
+							if (Namespace.IsEmpty())
+							{
+								OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) is empty!"), Key);
+								return false;
+							}
+
+							if (bLogDebug)
+							{
+								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *(Locs.Values[Key]));
+							}
+							
+							LocRes.AddEntry(
+								FTextKey(Namespace),
+								FTextKey(Keys.Values[Key]),
+								Keys.Values[Key],
+								Locs.Values[Key],
+								0);
+						}
+					}
+				}
+
+				bFirstCSV = false;
 			}
-
-			// Potential place for namespaces.
-			const FCSVColumn& Namespaces = Columns[0];
-
-			// Check if we have namespaces defined for every key or to use global value.
-			const bool bHasNamespaces = Columns[0].Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase);
-			const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
-
-			if (bUseGlobalNamespace == false && bHasNamespaces == false)
+			else
 			{
-				OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
+				OutMessage = TEXT("ERROR: CSV has not enough Columns!");
 				return false;
 			}
-
-			IFileManager::Get().DeleteDirectory(*LocPath, false, true);
-
-			// Keys will be in first row if not having namespaces.
-			const FCSVColumn& Keys = Columns[bHasNamespaces ? 1 : 0];
-
-			for (int32 Column = (bHasNamespaces ? 2 : 1); Column < Columns.Num(); Column++)
-			{
-				const FCSVColumn& Locs = Columns[Column];
-				FString Lang = Locs.Values[0];
-				if (Lang.RemoveFromStart(TEXT("lang-")))
-				{
-					FTextLocalizationResource LocRes;
-					for (int32 Key = 1; Key < Keys.Values.Num(); Key++)
-					{
-						const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
-						if (Namespace.IsEmpty())
-						{
-							OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) is empty!"), Key);
-							return false;
-						}
-						LocRes.AddEntry(
-							FTextKey(Namespace),
-							FTextKey(Keys.Values[Key]),
-							Keys.Values[Key],
-							Locs.Values[Key],
-							0);
-					}
-					LocRes.SaveToFile(LocPath / Lang / LocName + TEXT(".locres"));
-				}
-			}
-
-			// LocMeta must be created for every localization path.
-			FTextLocalizationMetaDataResource LocMeta;
-			LocMeta.NativeCulture = TEXT("en");
-			LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
-			LocMeta.SaveToFile(LocPath / LocName + TEXT(".locmeta"));
 		}
 		else
 		{
-			OutMessage = TEXT("ERROR: CSV has not enough Columns!");
 			return false;
 		}
 	}
-	else
+
+	// LocMeta must be created for every localization path.
+	FTextLocalizationMetaDataResource LocMeta;
+	LocMeta.NativeCulture = TEXT("en");
+	LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
+	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
+	if (bLogDebug)
 	{
-		return false;
+		UE_LOG(ELTEditorLog, Log, TEXT("Saved Meta File: %s"), *MetaFileName);
+	}
+	LocMeta.SaveToFile(MetaFileName);
+
+	for (auto& [Lang, LocRes] : LocReses)
+	{
+		const FString LocFileName = LocPath / Lang / LocName + TEXT(".locres");
+		if (bLogDebug)
+		{
+			UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
+		}
+		LocRes.SaveToFile(LocFileName);
 	}
 
 	OutMessage = TEXT("SUCCESS: Localization import complete!");
@@ -513,6 +575,28 @@ FString UELTEditor::GetCurrentGlobalNamespace()
 	{
 		return TEXT("");
 	}
+}
+
+TArray<FString> UELTEditor::RelativeToAbsolutePaths(const TArray<FString>& RelativePaths)
+{
+	TArray<FString> Result;
+	for (const FString& RelativePath : RelativePaths)
+	{
+		Result.Add(FPaths::ConvertRelativePathToFull(RelativePath));
+	}
+	return Result;
+}
+
+FString UELTEditor::PathsListToString(const TArray<FString>& Paths)
+{
+	return FString::Join(Paths, TEXT(";"));
+}
+
+TArray<FString> UELTEditor::PathsStringToList(const FString& Paths)
+{
+	TArray<FString> Result;
+	Paths.ParseIntoArray(Result, TEXT(";"));
+	return Result;
 }
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

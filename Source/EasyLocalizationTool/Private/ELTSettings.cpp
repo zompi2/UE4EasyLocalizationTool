@@ -59,4 +59,14 @@ void UELTSettings::SetAvailableLanguages(const TArray<FString>& NewAvailableLang
 	ELT_SET_SETTING(AvailableLangs, NewAvailableLanguages);
 }
 
+bool UELTSettings::GetLogDebug()
+{
+	ELT_GET_SETTING(bLogDebug);
+}
+
+void UELTSettings::SetLogDebug(bool bNewLogDebug)
+{
+	ELT_SET_SETTING(bLogDebug, bNewLogDebug);
+}
+
 ELT_PRAGMA_ENABLE_OPTIMIZATION
