@@ -13,6 +13,8 @@
  * parses given CSV into the Unreal localization data.
  */
 
+EASYLOCALIZATIONTOOLEDITOR_API DECLARE_LOG_CATEGORY_EXTERN(ELTEditorLog, Log, All);
+
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditor : public UObject
 {
@@ -131,6 +133,11 @@ private:
 	 * Called when "GlobalNamespace" option has been changed in the Widget.
 	 */
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
+
+	/**
+	 * Called when "LogDebug" option has been changed in the Widget.
+	 */
+	void OnLogDebugChanged(bool bNewLogDebug);
 
 	// ~~~~~~~~~ End of events received from the Widget
 

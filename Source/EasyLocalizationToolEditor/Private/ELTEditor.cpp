@@ -1,7 +1,6 @@
 // Copyright (c) 2024 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditor.h"
-#include "EasyLocalizationToolEditorModule.h"
 #include "Internationalization/TextLocalizationResource.h"
 #include "Internationalization/TextLocalizationManager.h"
 #include "Misc/FileHelper.h"
@@ -25,6 +24,8 @@
 #include "LevelEditor.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
+
+DEFINE_LOG_CATEGORY(ELTEditorLog);
 
 void UELTEditor::Init()
 {
@@ -141,6 +142,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunChanged);
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
+	EditorWidget->OnLogGebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 
 	// Fill Localization paths list on the Widget.
 	TArray<FString> GameLocPaths = FPaths::GetGameLocalizationPaths();
@@ -175,6 +177,9 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
+	// Set LogDebug value to the Widget.
+	EditorWidget->SetLogDebug(UELTSettings::GetLogDebug());
+
 	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
@@ -198,7 +203,7 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 
 	// Update Localization directory name and path to CSV to the Widget.
 	EditorWidget->FillLocalizationName(GetCurrentLocName());
-	EditorWidget->FillCSVPath(GetCurrentCSVPath());
+	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
 	RefreshAvailableLangs(false);
@@ -220,7 +225,7 @@ void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
 		CSVPaths.Add(GetCurrentLocName(), PathsListToString(RelativeToAbsolutePaths(NewPaths)));
 	}
 	UELTEditorSettings::SetCSVPaths(CSVPaths);
-	EditorWidget->FillCSVPath(GetCurrentCSVPath());
+	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 }
 
 void UELTEditor::OnGenerateLocFiles()
@@ -292,6 +297,12 @@ void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 		GlobalNamespaces[GetCurrentLocName()] = NewGlobalNamespace;
 	}
 	UELTEditorSettings::SetGlobalNamespace(GlobalNamespaces);
+}
+
+void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
+{
+	// Log Debug flag has been changed in the Widget. Save this setting.
+	UELTSettings::SetLogDebug(bNewLogDebug);
 }
 
 // ~~~~~~~~~ End of events received from the Widget
@@ -395,14 +406,16 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& Lo
 
 bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage)
 {
+	const bool bLogDebug = UELTSettings::GetLogDebug();
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
 	for (const FString& CSVPath : CSVPaths)
 	{
 		const FString CSVFilePath = FPaths::ConvertRelativePathToFull(CSVPath);
-#if ELTEDITOR_WITH_LOGGING
-		UE_LOG(ELTEditorLog, Log, TEXT("Parsing file: %s"), *CSVFilePath);
-#endif
+		if (bLogDebug)
+		{
+			UE_LOG(ELTEditorLog, Log, TEXT("Parsing file: %s"), *CSVFilePath);
+		}
 		FCSVReader Reader;
 		if (Reader.LoadFromFile(CSVFilePath, OutMessage))
 		{
@@ -441,10 +454,12 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				// Keys will be in first row if not having namespaces.
 				const FCSVColumn& Keys = Columns[bHasNamespaces ? 1 : 0];
 
-#if ELTEDITOR_WITH_LOGGING
-				UE_LOG(ELTEditorLog, Log, TEXT("Adding Entries"));
-				UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
-#endif
+				if (bLogDebug)
+				{
+					UE_LOG(ELTEditorLog, Log, TEXT("Adding Entries"));
+					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
+				}
+
 				for (int32 Column = (bHasNamespaces ? 2 : 1); Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
@@ -465,9 +480,10 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								return false;
 							}
 
-#if ELTEDITOR_WITH_LOGGING
-							UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *(Locs.Values[Key]));
-#endif
+							if (bLogDebug)
+							{
+								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *(Locs.Values[Key]));
+							}
 							
 							LocRes.AddEntry(
 								FTextKey(Namespace),
@@ -498,17 +514,19 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	LocMeta.NativeCulture = TEXT("en");
 	LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
 	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
-#if ELTEDITOR_WITH_LOGGING
-	UE_LOG(ELTEditorLog, Log, TEXT("Saved Meta File: %s"), *MetaFileName);
-#endif
+	if (bLogDebug)
+	{
+		UE_LOG(ELTEditorLog, Log, TEXT("Saved Meta File: %s"), *MetaFileName);
+	}
 	LocMeta.SaveToFile(MetaFileName);
 
 	for (auto& [Lang, LocRes] : LocReses)
 	{
 		const FString LocFileName = LocPath / Lang / LocName + TEXT(".locres");
-#if ELTEDITOR_WITH_LOGGING
-		UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
-#endif
+		if (bLogDebug)
+		{
+			UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
+		}
 		LocRes.SaveToFile(LocFileName);
 	}
 

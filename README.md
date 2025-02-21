@@ -77,15 +77,15 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4, UE5.5** : `Tools -> Easy Localization Tool`  
 
-![elt_tools_54](https://github.com/user-attachments/assets/3d42ca41-b75d-45c9-963f-c2b6bb8f03b1)  
+ ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
 or use a shortcut : `Alt + Shift + L`  
 
 The following window should appear:  
 
-![eltimg](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/dd0e7a61-34ca-42f8-811b-5b30bf4d7a15)
+![ELTSShot](https://github.com/user-attachments/assets/cc5039e2-4363-4611-ac51-2c5b1d40d4a0)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -94,8 +94,9 @@ The following window should appear:
 * **Localization Preview** - enabled the preview of the localization in the editor.
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
-* **CSV File** - CSV file to import.
+* **CSV File** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
+* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
 
 [Back to top](#table-of-content)
 
@@ -284,7 +285,7 @@ set PROJECT_PATH=C:\MyGame
 call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
 ```
 
-**UE5.2, UE5.4** :  
+**UE5.2, UE5.4, UE5.5** :  
 
 ```
 set UE5_PATH=C:\UE5

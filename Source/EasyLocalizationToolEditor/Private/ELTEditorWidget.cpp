@@ -77,4 +77,9 @@ void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespac
 	OnGlobalNamespaceChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
 
+void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
+{
+	OnLogGebugChangedDelegate.ExecuteIfBound(bNewLogDebug);
+}
+
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

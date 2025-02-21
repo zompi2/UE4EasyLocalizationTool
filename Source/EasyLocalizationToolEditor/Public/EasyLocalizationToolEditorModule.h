@@ -10,8 +10,6 @@
  * Localization Editor module, which handles Editor object and DockTab creation.
  */
 
-EASYLOCALIZATIONTOOLEDITOR_API DECLARE_LOG_CATEGORY_EXTERN(ELTEditorLog, Log, All);
-
 class EASYLOCALIZATIONTOOLEDITOR_API FEasyLocalizationToolEditorModule : public IModuleInterface, public FGCObject
 {
 
