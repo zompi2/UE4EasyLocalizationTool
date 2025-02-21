@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditorStyle.h"
 #include "Framework/Application/SlateApplication.h"

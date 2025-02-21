@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #include "EasyLocalizationToolEditorModule.h"
 #include "ELTEditor.h"
