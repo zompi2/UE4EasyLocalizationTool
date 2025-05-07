@@ -21,20 +21,6 @@ struct FCSVColumn
 	}
 };
 
-#if ELT_USE_UNREAL_CSV_PARSER
-
-/**
- * A version of CSV reader which uses an UE4 built in parser.
- */
-class FCSVReader
-{
-public:
-	TArray<FCSVColumn> Columns;
-	bool LoadFromFile(const FString& FilePath, FString& OutMessage);
-};
-
-#else // ELT_USE_UNREAL_CSV_PARSER
-
 /**
  * A version of CSV reader which doesn't use any 3rd party parsers.
  * For now it seems to be more suitable solution, as the ue4 parser doesn't
@@ -44,7 +30,5 @@ class FCSVReader
 {
 public:
 	TArray<FCSVColumn> Columns;
-	bool LoadFromFile(const FString& FilePath, FString& OutMessage);
+	bool LoadFromFile(const FString& FilePath, const TCHAR& Delimeter, FString& OutMessage);
 };
-
-#endif // ELT_USE_UNREAL_CSV_PARSER

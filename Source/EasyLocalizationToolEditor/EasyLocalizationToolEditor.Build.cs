@@ -44,9 +44,6 @@ public class EasyLocalizationToolEditor : ModuleRules
 			PrivateDependencyModuleNames.Add("ToolMenus");
 		}
 
-        // Enable this option to use build in Unreal Engine CSV Parser instead of the one from this plugin
-        PublicDefinitions.Add("ELT_USE_UNREAL_CSV_PARSER=0");
-
         // Ensure there are no duplicated definitions already
         PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
 
