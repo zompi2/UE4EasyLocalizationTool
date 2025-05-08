@@ -548,14 +548,14 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	}
 	LocMeta.SaveToFile(MetaFileName);
 
-	for (auto& [Lang, LocRes] : LocReses)
+	for (auto& LocRes : LocReses)
 	{
-		const FString LocFileName = LocPath / Lang / LocName + TEXT(".locres");
+		const FString LocFileName = LocPath / LocRes.Key / LocName + TEXT(".locres");
 		if (bLogDebug)
 		{
 			UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
 		}
-		LocRes.SaveToFile(LocFileName);
+		LocRes.Value.SaveToFile(LocFileName);
 	}
 
 	OutMessage = TEXT("SUCCESS: Localization import complete!");
