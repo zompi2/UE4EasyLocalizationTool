@@ -4,7 +4,7 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin has been tested and it works on the Engine's versions: 4.27, 5.2 and 5.4.
+The plugin has been tested and it works on the Engine's versions: 4.27, 5.2, 5.4, and 5.5.
 
 # Contact
 
@@ -18,9 +18,9 @@ The example project wich uses this plugin can be found in **[this repository](ht
 
 The plugin is available on the Unreal Engine Fab! It is free, of course.  
 You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
-Currently plugin is available for UE version 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**.  
+Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**.  
 If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/build-4.27/EasyLocalizationTool-4.27-Compiled.zip)**.  
-The plugin's version that's on the Marketplace is **1.5.7**.
+The plugin's version that's on the Marketplace is **1.5.8**.
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -56,6 +56,8 @@ Namespace,Key,lang-en,lang-pl,lang-de,Comments
 GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish to type
 ```
 
+> By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
+
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
@@ -77,15 +79,15 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4, UE5.5** : `Tools -> Easy Localization Tool`  
 
-![elt_tools_54](https://github.com/user-attachments/assets/3d42ca41-b75d-45c9-963f-c2b6bb8f03b1)  
+ ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
 or use a shortcut : `Alt + Shift + L`  
 
 The following window should appear:  
 
-![eltimg](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/dd0e7a61-34ca-42f8-811b-5b30bf4d7a15)
+![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -94,14 +96,16 @@ The following window should appear:
 * **Localization Preview** - enabled the preview of the localization in the editor.
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
-* **CSV File** - CSV file to import.
+* **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
+* **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
+* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
 
 [Back to top](#table-of-content)
 
 ## Import
 
-In order to import localization from CSV simply select the CSV file in the tool's window and click **Import**.  
+In order to import localization from CSV simply select the CSV files in the tool's window and click **Import**.  
 If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** property. That's it!
 
 > After first import ever the editor might need to be restarted for localizations to work correctly.
@@ -281,23 +285,24 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
 ```
 
-**UE5.2, UE5.4** :  
+**UE5.2, UE5.4, UE5.5** :  
 
 ```
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
 ```
 
 Where:
 
-* **-CSVPath** - is a path to the csv file to import.
+* **-CSVPath** - is a path to the csv file to import. You can provide multiple paths, separated by `,`.
 * **-LocPath** - is a directory where localization files should be stored.
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
+* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used. 
 
 [Back to top](#table-of-content)
 

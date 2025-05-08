@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -12,6 +12,8 @@
  * It sets up values like CSV path and global namespace and it actually
  * parses given CSV into the Unreal localization data.
  */
+
+EASYLOCALIZATIONTOOLEDITOR_API DECLARE_LOG_CATEGORY_EXTERN(ELTEditorLog, Log, All);
 
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditor : public UObject
@@ -47,7 +49,8 @@ public:
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPath, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
 
 private:
 
@@ -89,7 +92,7 @@ private:
 	/**
 	 * Called when CSV path has changed in the Widget.
 	 */
-	void OnCSVPathChanged(const FString& NewPath);
+	void OnCSVPathChanged(const TArray<FString>& NewPaths);
 
 	/**
 	 * Called when the generate Loc Files request has been received from the Widget.
@@ -131,6 +134,16 @@ private:
 	 */
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
 
+	/**
+	 * Called when "Separaotr" option has been changed in the Widget.
+	 */
+	void OnSeparatorChanged(const FString& NewSeparator);
+
+	/**
+	 * Called when "LogDebug" option has been changed in the Widget.
+	 */
+	void OnLogDebugChanged(bool bNewLogDebug);
+
 	// ~~~~~~~~~ End of events received from the Widget
 
 
@@ -166,6 +179,21 @@ private:
 	 * Returns the Global Namespace set for this Localization directory.
 	 */
 	FString GetCurrentGlobalNamespace();
+
+	/**
+	 * Converts a list of relative paths to a list of absolute paths.
+	 */
+	static TArray<FString> RelativeToAbsolutePaths(const TArray<FString>& RelativePaths);
+
+	/**
+	 * Converst a list of paths into one string with ; separator.
+	 */
+	static FString PathsListToString(const TArray<FString>& Paths);
+
+	/**
+	 * Converts a string of paths with ; separator into a list of paths.
+	 */
+	static TArray<FString> PathsStringToList(const FString& Paths);
 
 	// Handler of the created Editor Utility Widget. 
 	// Is created in CreateEditorWidget().

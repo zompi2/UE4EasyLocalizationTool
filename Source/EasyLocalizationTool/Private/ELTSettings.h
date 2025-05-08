@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -44,6 +44,12 @@ public:
 	static TArray<FString> GetAvailableLanguages();
 	static void SetAvailableLanguages(const TArray<FString>& NewAvailableLanguages);
 
+	/**
+	 * Get/Set LogDebug flag.
+	 */
+	static bool GetLogDebug();
+	static void SetLogDebug(bool bNewLogDebug);
+
 private:
 
 	UPROPERTY(config)
@@ -57,4 +63,7 @@ private:
 
 	UPROPERTY(config)
 	TArray<FString> AvailableLangs;
+
+	UPROPERTY(config)
+	bool bLogDebug = false;
 };

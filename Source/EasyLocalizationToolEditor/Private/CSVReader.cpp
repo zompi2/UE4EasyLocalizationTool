@@ -1,70 +1,13 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
 #include "CSVReader.h"
 #include "Misc/FileHelper.h"
 
-#if ELT_USE_UNREAL_CSV_PARSER
-#include "Serialization/Csv/CsvParser.h"
-#endif
-
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
-#if ELT_USE_UNREAL_CSV_PARSER
-
-bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
-{
-	FString FileContent;
-	if (FFileHelper::LoadFileToString(FileContent, *FilePath))
-	{
-		const FCsvParser Parser(FileContent);
-		const auto& Rows = Parser.GetRows();
-		if (Rows.Num() > 0)
-		{
-			bool bFirstLine = true;
-			Columns.Empty();
-			int32 ColumnIndex = 0;
-			for (const auto& Row : Rows)
-			{
-				for (const auto& Entry : Row)
-				{
-					if (bFirstLine)
-					{
-						Columns.Add(FCSVColumn(Entry));
-					}
-					else
-					{
-						if (Columns.IsValidIndex(ColumnIndex))
-						{
-							Columns[ColumnIndex].Values.Add(Entry);
-						}
-						else
-						{
-							OutMessage = TEXT("ERROR: Invalid CSV!");
-							return false;
-						}
-						ColumnIndex++;
-					}
-				}
-				bFirstLine = false;
-				ColumnIndex = 0;
-			}
-			return true;
-		}
-		else
-		{
-			OutMessage = TEXT("ERROR: Invalid CSV!");
-			return false;
-		}
-	}
-	OutMessage = TEXT("ERROR: CSV file not found!");
-	return false;
-}
-
-#else // ELT_USE_UNREAL_CSV_PARSER
-
-bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
+bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Separator, FString& OutMessage)
 {
 	FString FileContent;
 	if (FFileHelper::LoadFileToString(FileContent, *FilePath))
@@ -130,7 +73,7 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 			{
 				if (Ch != '\r')
 				{
-					if (Ch == ',')
+					if (Ch == Separator)
 					{
 						if (AddWord() == false)
 						{
@@ -172,7 +115,5 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, FString& OutMessage)
 		return false;
 	}
 }
-
-#endif // ELT_USE_UNREAL_CSV_PARSER
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

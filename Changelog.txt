@@ -1,3 +1,13 @@
+###### 1.7.0
+* Option to change column separator added.
+* Removed Unreal CSV Parser as it was not used and was not compatible with the rest of the plugin.
+* Put UE4.27 compatible Widget back.
+* Minor fixes in comments and readme.
+
+###### 1.6.0
+* Option to import multiple CSV files with single import added.
+* Option to display additional log information when importing added.
+
 ###### 1.5.8
 * fixed deprecation warnings for UE5.5
 

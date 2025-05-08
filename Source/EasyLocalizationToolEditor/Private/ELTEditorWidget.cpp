@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditorWidget.h"
 #include "DesktopPlatformModule.h"
@@ -27,11 +27,11 @@ void UELTEditorWidget::SelectNewCSVPath()
 	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get())
 	{
 		TArray<FString> OutFileNames;
-		if (DesktopPlatform->OpenFileDialog(FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr), TEXT("Pick CSV"), FPaths::ProjectDir(), TEXT(""), TEXT("CSV|*.csv"), EFileDialogFlags::None, OutFileNames))
+		if (DesktopPlatform->OpenFileDialog(FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr), TEXT("Pick CSV"), FPaths::ProjectDir(), TEXT(""), TEXT("CSV|*.csv"), EFileDialogFlags::Multiple, OutFileNames))
 		{
 			if (OutFileNames.Num() > 0)
 			{
-				OnCSVPathChangedDelegate.ExecuteIfBound(OutFileNames[0]);
+				OnCSVPathChangedDelegate.ExecuteIfBound(OutFileNames);
 			}
 		}
 	}
@@ -75,6 +75,16 @@ void UELTEditorWidget::OnLocalizationOnFirstRunLangChanged(const FString& OnFirs
 void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 {
 	OnGlobalNamespaceChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
+}
+
+void UELTEditorWidget::OnSeparatorChanged(const FString& NewGlobalNamespace)
+{
+	OnSeparatorChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
+}
+
+void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
+{
+	OnLogGebugChangedDelegate.ExecuteIfBound(bNewLogDebug);
 }
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

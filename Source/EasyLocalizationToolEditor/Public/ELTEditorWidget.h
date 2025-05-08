@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -15,7 +15,7 @@
  * They will be broadcasted to inform the plugin code about changes in UI.
  */
 DECLARE_DELEGATE_OneParam(FOnLocalizationPathSelected, const FString&);
-DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnCSVPathChanged, const TArray<FString>&);
 DECLARE_DELEGATE(FOnGenerateLocFiles);
 DECLARE_DELEGATE_OneParam(FOnReimportAtEditorStartupChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewChanged, bool);
@@ -24,6 +24,8 @@ DECLARE_DELEGATE_OneParam(FManuallySetLastLanguageChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnSeparatorChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnLogGebugChanged, bool);
 
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWidget
@@ -78,7 +80,7 @@ public:
 	 * Call BP to fill up the path to the CSV file
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
-	void FillCSVPath(const FString& CSVPath);
+	void FillCSVPath(const TArray<FString>& CSVPaths);
 
 
 	/**
@@ -193,6 +195,34 @@ public:
 
 
 	/**
+	 * Set "Separator" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
+	void SetSeparator(const FString& Separator);
+
+	/**
+	 * "Separator" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
+	void OnSeparatorChanged(const FString& NewSeparator);
+
+
+
+	/**
+	 * Set "Log Debug" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
+	void SetLogDebug(bool bLogDebug);
+
+	/**
+	 * "Log Debug" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
+	void OnLogDebugChanged(bool bNewLogDebug);
+
+
+
+	/**
 	 * Callbacks to be binded to the ELTEditor methods.
 	 */
 	FOnLocalizationPathSelected OnLocalizationPathSelectedDelegate;
@@ -205,4 +235,6 @@ public:
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
+	FOnSeparatorChanged OnSeparatorChangedDelegate;
+	FOnLogGebugChanged OnLogGebugChangedDelegate;
 };

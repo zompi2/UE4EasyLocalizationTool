@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -57,6 +57,16 @@ TArray<FString> UELTSettings::GetAvailableLanguages()
 void UELTSettings::SetAvailableLanguages(const TArray<FString>& NewAvailableLanguages)
 {
 	ELT_SET_SETTING(AvailableLangs, NewAvailableLanguages);
+}
+
+bool UELTSettings::GetLogDebug()
+{
+	ELT_GET_SETTING(bLogDebug);
+}
+
+void UELTSettings::SetLogDebug(bool bNewLogDebug)
+{
+	ELT_SET_SETTING(bLogDebug, bNewLogDebug);
 }
 
 ELT_PRAGMA_ENABLE_OPTIMIZATION

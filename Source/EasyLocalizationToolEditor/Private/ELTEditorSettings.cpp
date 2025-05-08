@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -80,6 +80,16 @@ TMap<FString, FString> UELTEditorSettings::GetGlobalNamespaces()
 void UELTEditorSettings::SetGlobalNamespace(const TMap<FString, FString>& NewGlobalNamespaces)
 {
 	ELTE_SET_SETTING(GlobalNamespaces, NewGlobalNamespaces);
+}
+
+FString UELTEditorSettings::GetSeparator()
+{
+	ELTE_GET_SETTING(Separator);
+}
+
+void UELTEditorSettings::SetSeparator(const FString& NewSeparator)
+{
+	ELTE_SET_SETTING(Separator, NewSeparator);
 }
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION
