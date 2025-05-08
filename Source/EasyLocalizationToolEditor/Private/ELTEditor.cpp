@@ -430,7 +430,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 {
 	if (Separator.Len() != 1)
 	{
-		OutMessage = FString::Printf(TEXT("ERROR: The Separator is invalid. Separator = %s"), *Separator);
+		OutMessage = FString::Printf(TEXT("ERROR: The Separator is invalid. Must be exactly 1 character. Current Separator = %s"), *Separator);
 		return false;
 	}
 
