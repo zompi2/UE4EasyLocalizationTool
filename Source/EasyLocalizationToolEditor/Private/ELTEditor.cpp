@@ -142,6 +142,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunChanged);
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
+	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
 	EditorWidget->OnLogGebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 
 	// Fill Localization paths list on the Widget.
@@ -190,6 +191,9 @@ void UELTEditor::InitializeTheWidget()
 	{
 		EditorWidget->SetGlobalNamespace(TEXT(""));
 	}
+
+	// Set Separator
+	EditorWidget->SetSeparator(UELTEditorSettings::GetSeparator());
 }
 
 
@@ -299,6 +303,24 @@ void UELTEditor::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)
 	UELTEditorSettings::SetGlobalNamespace(GlobalNamespaces);
 }
 
+void UELTEditor::OnSeparatorChanged(const FString& NewSeparator)
+{
+	// "Separator" value has been changed in the Widget.
+	// Clamp it to one character and save it to settings.
+	FString Separator = NewSeparator;
+	if (Separator.Len() == 0)
+	{
+		Separator = TEXT(",");
+		EditorWidget->SetSeparator(Separator);
+	}
+	else if (Separator.Len() > 1)
+	{
+		Separator = FString(1, *Separator);
+		EditorWidget->SetSeparator(Separator);
+	}
+	UELTEditorSettings::SetSeparator(Separator);
+}
+
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// Log Debug flag has been changed in the Widget. Save this setting.
@@ -396,16 +418,22 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), ',', OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
 {
 	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
 {
+	if (Separator.Len() != 1)
+	{
+		OutMessage = FString::Printf(TEXT("ERROR: The Separator is invalid. Separator = %s"), *Separator);
+		return false;
+	}
+
 	const bool bLogDebug = UELTSettings::GetLogDebug();
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
@@ -417,7 +445,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			UE_LOG(ELTEditorLog, Log, TEXT("Parsing file: %s"), *CSVFilePath);
 		}
 		FCSVReader Reader;
-		if (Reader.LoadFromFile(CSVFilePath, Separator, OutMessage))
+		if (Reader.LoadFromFile(CSVFilePath, (*Separator)[0], OutMessage))
 		{
 			const TArray<FCSVColumn> Columns = Reader.Columns;
 

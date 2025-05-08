@@ -77,6 +77,11 @@ void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespac
 	OnGlobalNamespaceChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
 
+void UELTEditorWidget::OnSeparatorChanged(const FString& NewGlobalNamespace)
+{
+	OnSeparatorChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
+}
+
 void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
 {
 	OnLogGebugChangedDelegate.ExecuteIfBound(bNewLogDebug);

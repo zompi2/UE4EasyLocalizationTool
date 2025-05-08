@@ -24,6 +24,7 @@ DECLARE_DELEGATE_OneParam(FManuallySetLastLanguageChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnSeparatorChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnLogGebugChanged, bool);
 
 UCLASS()
@@ -194,6 +195,20 @@ public:
 
 
 	/**
+	 * Set "Global Namespace" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
+	void SetSeparator(const FString& Separator);
+
+	/**
+	 * "Global Namespace" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
+	void OnSeparatorChanged(const FString& NewSeparator);
+
+
+
+	/**
 	 * Set "Log Debug" option to the Widget.
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
@@ -220,5 +235,6 @@ public:
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
+	FOnSeparatorChanged OnSeparatorChangedDelegate;
 	FOnLogGebugChanged OnLogGebugChangedDelegate;
 };

@@ -49,8 +49,8 @@ public:
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage);
-	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
 
 private:
 
@@ -133,6 +133,11 @@ private:
 	 * Called when "GlobalNamespace" option has been changed in the Widget.
 	 */
 	void OnGlobalNamespaceChanged(const FString& NewGlobalNamespace);
+
+	/**
+	 * Called when "Separaotr" option has been changed in the Widget.
+	 */
+	void OnSeparatorChanged(const FString& NewSeparator);
 
 	/**
 	 * Called when "LogDebug" option has been changed in the Widget.

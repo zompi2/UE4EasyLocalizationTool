@@ -36,6 +36,12 @@ public:
 	static void SetGlobalNamespace(const TMap<FString, FString>& NewGlobalNamespaces);
 
 	/**
+	 * Get/Set separator.
+	 */
+	static FString GetSeparator();
+	static void SetSeparator(const FString& NewSeparator);
+
+	/**
 	 * Get/Set if the localization preview is on.
 	 */
 	static bool GetLocalizationPreview();
@@ -63,6 +69,9 @@ private:
 
 	UPROPERTY(config)
 	TMap<FString, FString> GlobalNamespaces;
+
+	UPROPERTY(config)
+	FString Separator = TEXT(",");
 
 	UPROPERTY(config)
 	bool bLocalizationPreview = false;

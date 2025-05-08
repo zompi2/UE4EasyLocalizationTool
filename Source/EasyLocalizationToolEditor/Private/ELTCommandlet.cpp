@@ -33,17 +33,12 @@ int32 UELTCommandlet::Main(const FString& Params)
 
 	FString Separator = TEXT(",");
 	FParse::Value(*Params, TEXT("-Separator="), Separator);
-	if (Separator.Len() != 1)
-	{
-		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization. -Separator= must have only one character!"));
-		return 1;
-	}
 
 	const FString LocName = FPaths::GetBaseFilename(LocPath);
 
 	// Run generation of loc files implementation. Get the output message and display it the localization fails.
 	FString OutMessage;
-	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, (*Separator)[0], OutMessage) == false)
+	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, Separator, OutMessage) == false)
 	{
 		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization: %s"), *OutMessage);
 		return 1;
