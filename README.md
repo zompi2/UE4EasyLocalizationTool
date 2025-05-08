@@ -87,7 +87,7 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/cc5039e2-4363-4611-ac51-2c5b1d40d4a0)
+![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
