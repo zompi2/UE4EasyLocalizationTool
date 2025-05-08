@@ -399,12 +399,12 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), ',', OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Delimeter, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage)
 {
-	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Delimeter, OutMessage);
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Delimeter, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const TCHAR& Separator, FString& OutMessage)
 {
 	const bool bLogDebug = UELTSettings::GetLogDebug();
 	bool bFirstCSV = true;
@@ -417,7 +417,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			UE_LOG(ELTEditorLog, Log, TEXT("Parsing file: %s"), *CSVFilePath);
 		}
 		FCSVReader Reader;
-		if (Reader.LoadFromFile(CSVFilePath, Delimeter, OutMessage))
+		if (Reader.LoadFromFile(CSVFilePath, Separator, OutMessage))
 		{
 			const TArray<FCSVColumn> Columns = Reader.Columns;
 

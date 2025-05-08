@@ -7,7 +7,7 @@
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
-bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Delimeter, FString& OutMessage)
+bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Separator, FString& OutMessage)
 {
 	FString FileContent;
 	if (FFileHelper::LoadFileToString(FileContent, *FilePath))
@@ -73,7 +73,7 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Delimeter, F
 			{
 				if (Ch != '\r')
 				{
-					if (Ch == Delimeter)
+					if (Ch == Separator)
 					{
 						if (AddWord() == false)
 						{

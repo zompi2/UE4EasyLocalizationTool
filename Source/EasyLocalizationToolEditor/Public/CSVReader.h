@@ -30,5 +30,5 @@ class FCSVReader
 {
 public:
 	TArray<FCSVColumn> Columns;
-	bool LoadFromFile(const FString& FilePath, const TCHAR& Delimeter, FString& OutMessage);
+	bool LoadFromFile(const FString& FilePath, const TCHAR& Separator, FString& OutMessage);
 };

@@ -31,11 +31,11 @@ int32 UELTCommandlet::Main(const FString& Params)
 	FString Namespace;
 	FParse::Value(*Params, TEXT("-Namespace="), Namespace);
 
-	FString Delimeter = TEXT(",");
-	FParse::Value(*Params, TEXT("-Delimeter="), Delimeter);
-	if (Delimeter.Len() != 1)
+	FString Separator = TEXT(",");
+	FParse::Value(*Params, TEXT("-Separator="), Separator);
+	if (Separator.Len() != 1)
 	{
-		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization. -Delimeter= must have only one character!"));
+		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization. -Separator= must have only one character!"));
 		return 1;
 	}
 
@@ -43,7 +43,7 @@ int32 UELTCommandlet::Main(const FString& Params)
 
 	// Run generation of loc files implementation. Get the output message and display it the localization fails.
 	FString OutMessage;
-	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, (*Delimeter)[0], OutMessage) == false)
+	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, (*Separator)[0], OutMessage) == false)
 	{
 		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization: %s"), *OutMessage);
 		return 1;
