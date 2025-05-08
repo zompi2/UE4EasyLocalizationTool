@@ -56,6 +56,8 @@ Namespace,Key,lang-en,lang-pl,lang-de,Comments
 GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish to type
 ```
 
+> By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
+
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
@@ -85,7 +87,7 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/cc5039e2-4363-4611-ac51-2c5b1d40d4a0)
+![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -94,7 +96,8 @@ The following window should appear:
 * **Localization Preview** - enabled the preview of the localization in the editor.
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
-* **CSV File** - CSV files to import. You can import mutliple files at once to the same Localization.
+* **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
+* **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
 
@@ -102,7 +105,7 @@ The following window should appear:
 
 ## Import
 
-In order to import localization from CSV simply select the CSV file in the tool's window and click **Import**.  
+In order to import localization from CSV simply select the CSV files in the tool's window and click **Import**.  
 If your CSV doesn't have a **Namespace** column, fill **Globl Namespace** property. That's it!
 
 > After first import ever the editor might need to be restarted for localizations to work correctly.
@@ -282,7 +285,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
 ```
 
 **UE5.2, UE5.4, UE5.5** :  
@@ -291,14 +294,15 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
 ```
 
 Where:
 
-* **-CSVPath** - is a path to the csv file to import.
+* **-CSVPath** - is a path to the csv file to import. You can provide multiple paths, separated by `,`.
 * **-LocPath** - is a directory where localization files should be stored.
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
+* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used. 
 
 [Back to top](#table-of-content)
 

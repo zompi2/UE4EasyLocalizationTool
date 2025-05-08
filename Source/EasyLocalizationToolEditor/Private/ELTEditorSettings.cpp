@@ -82,4 +82,14 @@ void UELTEditorSettings::SetGlobalNamespace(const TMap<FString, FString>& NewGlo
 	ELTE_SET_SETTING(GlobalNamespaces, NewGlobalNamespaces);
 }
 
+FString UELTEditorSettings::GetSeparator()
+{
+	ELTE_GET_SETTING(Separator);
+}
+
+void UELTEditorSettings::SetSeparator(const FString& NewSeparator)
+{
+	ELTE_SET_SETTING(Separator, NewSeparator);
+}
+
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

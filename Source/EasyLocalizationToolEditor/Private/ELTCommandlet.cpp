@@ -31,12 +31,14 @@ int32 UELTCommandlet::Main(const FString& Params)
 	FString Namespace;
 	FParse::Value(*Params, TEXT("-Namespace="), Namespace);
 
+	FString Separator = TEXT(",");
+	FParse::Value(*Params, TEXT("-Separator="), Separator);
+
 	const FString LocName = FPaths::GetBaseFilename(LocPath);
 
-	// Run generation of loc files implementation. Get the output message and display it the localization
-	// fails.
+	// Run generation of loc files implementation. Get the output message and display it the localization fails.
 	FString OutMessage;
-	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, OutMessage) == false)
+	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, Separator, OutMessage) == false)
 	{
 		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization: %s"), *OutMessage);
 		return 1;
