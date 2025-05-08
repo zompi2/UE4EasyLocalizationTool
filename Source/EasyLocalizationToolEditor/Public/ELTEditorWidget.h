@@ -195,13 +195,13 @@ public:
 
 
 	/**
-	 * Set "Global Namespace" option to the Widget.
+	 * Set "Separator" option to the Widget.
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void SetSeparator(const FString& Separator);
 
 	/**
-	 * "Global Namespace" option has been changed on the Widget.
+	 * "Separator" option has been changed on the Widget.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnSeparatorChanged(const FString& NewSeparator);
@@ -215,7 +215,7 @@ public:
 	void SetLogDebug(bool bLogDebug);
 
 	/**
-	 * "Global Namespace" option has been changed on the Widget.
+	 * "Log Debug" option has been changed on the Widget.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnLogDebugChanged(bool bNewLogDebug);
