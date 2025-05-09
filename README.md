@@ -61,7 +61,8 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
-> Unreal Engine uses ICU codes. The full list of them can be found here: https://www.localeplanet.com/icu/
+> Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
+> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  

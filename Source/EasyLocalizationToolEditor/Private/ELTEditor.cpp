@@ -494,6 +494,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					FString Lang = Locs.Values[0];
 					if (Lang.RemoveFromStart(TEXT("lang-")))
 					{
+						Lang.ReplaceCharInline('_', '-');
 						if (LocReses.Contains(Lang) == false)
 						{
 							LocReses.Add(Lang, FTextLocalizationResource());
