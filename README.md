@@ -19,7 +19,7 @@ The example project wich uses this plugin can be found in **[this repository](ht
 The plugin is available on the Unreal Engine Fab! It is free, of course.  
 You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
 Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**).  
-If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-4.27-Prebuild.zip)**.  
+If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.1-4.27-Prebuild.zip)**.  
 The plugin's version that's on the Fab is **1.7.0**.
 
 # Unrel Engine 5.3 Issue
