@@ -18,9 +18,9 @@ The example project wich uses this plugin can be found in **[this repository](ht
 
 The plugin is available on the Unreal Engine Fab! It is free, of course.  
 You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
-Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**.  
-If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/build-4.27/EasyLocalizationTool-4.27-Compiled.zip)**.  
-The plugin's version that's on the Marketplace is **1.5.8**.
+Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**).  
+If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-4.27-Prebuild.zip)**.  
+The plugin's version that's on the Fab is **1.7.0**.
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -61,7 +61,8 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
-> Unreal Engine uses ICU codes. The full list of them can be found here: https://www.localeplanet.com/icu/
+> Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
+> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  
