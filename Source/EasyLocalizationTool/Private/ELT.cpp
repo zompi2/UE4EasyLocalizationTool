@@ -97,7 +97,11 @@ bool UELT::CanSetLanguage(const FString& Lang)
 		// Language can be set only if it is available in a list of available languages.
 		if (Lang.IsEmpty() == false)
 		{
-			if (UELTSettings::GetAvailableLanguages().Contains(Lang))
+			// Fix the possible incorrect icu code
+			FString LangToCheck = Lang;
+			LangToCheck.ReplaceCharInline('_', '-');
+
+			if (UELTSettings::GetAvailableLanguages().Contains(LangToCheck))
 			{
 				return true;
 			}
@@ -109,8 +113,12 @@ bool UELT::CanSetLanguage(const FString& Lang)
 
 bool UELT::SetLanguage(const FString& Lang)
 {
+	// Fix the possible incorrect icu code
+	FString LangToSet = Lang;
+	LangToSet.ReplaceCharInline('_', '-');
+
 	// Check if the language can be set
-	if (CanSetLanguage(Lang))
+	if (CanSetLanguage(LangToSet))
 	{
 		// Set up change lock. It will prevent changing languages in on localization change events.
 		LanguageChangeLock = true;
@@ -119,7 +127,7 @@ bool UELT::SetLanguage(const FString& Lang)
 		// to a desired language right away. Save the old language in order to fall back if the setting language
 		// fails.
 		FString OldLanguage = ELTCurrentLanguage;
-		ELTCurrentLanguage = Lang;
+		ELTCurrentLanguage = LangToSet;
 
 		// Always set the language, even if the desired language is the same as Current Language.
 		// Current Language is received from save file, but it doesn't mean it has already been applied!
