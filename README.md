@@ -4,23 +4,23 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin has been tested and it works on the Engine's versions: 4.27, 5.2, 5.4, and 5.5.
+The plugin works on Unreal Engine: 4.27, 5.2, 5.4, 5.5, 5.6.
 
 # Contact
 
 If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project. I will try my best to answer it quickly :) You can also write an e-mail to me: **zompi2@gmail.com**, however there is a risk that it will be filtered as spam.
 
-# Example Project
+# Plugin prebuilt binaries  
 
-The example project wich uses this plugin can be found in **[this repository](https://github.com/zompi2/UE4EasyLocalizationToolExample)**.
+If you don't want to build the plugin from the source you can get the prebuilt binaries:  
 
-# Fab
-
-The plugin is available on the Unreal Engine Fab! It is free, of course.  
-You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
-Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**).  
-If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.1-4.27-Prebuild.zip)**.  
-The plugin's version that's on the Fab is **1.7.0**.
+| UE version | Plugin version | Link |
+| :--------- | :------------- | :--- |
+| 4.27       | 1.7.1          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.1-4.27-Prebuild.zip) |
+| 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.4        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | comming soon   | comming soon |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  

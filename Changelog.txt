@@ -1,3 +1,6 @@
+###### 1.7.2
+* Fixed the issue when using '_' in the ICU codes in CanSetLanguage and SetLanguage functions.
+
 ###### 1.7.1
 * Fixed the issue when CSV uses '_' in the ICU code instead of '-' as Unreal supports only '-' when switching localizations.
 
