@@ -376,6 +376,7 @@ If the Text key keeps changing into a new key:
 # Used In
 
 Easy Localization Tool has been used in:
+* [Achilles: Survivor](https://store.steampowered.com/app/2922410/Achilles_Survivor)
 * [Achilles: Legends Untold](https://store.steampowered.com/app/1314000/Achilles_Legends_Untold)
 
 The workflow of importing CSV into localization files has been implemented with success in many other titles, such as:
