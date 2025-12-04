@@ -237,14 +237,15 @@ void UELTEditor::OnGenerateLocFiles()
 	// Generate Loc Files button has been pressed. 
 	// Generate Loc Files and if succeeded refresh available languages and preview.
 	FString ReturnMessage;
-	if (GenerateLocFiles(ReturnMessage))
+	const bool bSuccess = GenerateLocFiles(ReturnMessage);
+	if (bSuccess)
 	{
 		RefreshAvailableLangs(true);
 		SetLanguagePreview();
 	}
 	
 	// Display a Dialog Window to inform user that the localization generation has been finished.
-	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
+	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
 }
 
 void UELTEditor::OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStartup)

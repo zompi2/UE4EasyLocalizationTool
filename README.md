@@ -16,11 +16,11 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 
 | UE version | Plugin version | Link |
 | :--------- | :------------- | :--- |
-| 4.27       | 1.7.1          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.1-4.27-Prebuild.zip) |
+| 4.27       | 1.7.2          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.2-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.4        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | comming soon   | comming soon |
+| 5.4        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -376,9 +376,10 @@ If the Text key keeps changing into a new key:
 # Used In
 
 Easy Localization Tool has been used in:
+* [Achilles: Survivor](https://store.steampowered.com/app/2922410/Achilles_Survivor)
 * [Achilles: Legends Untold](https://store.steampowered.com/app/1314000/Achilles_Legends_Untold)
 
-The workflow of importing CSV into localization files has been implemented with success in many other titles, such as:
+The workflow of importing CSV into localization files has been implemented with success in other titles:
 * [SUCCUBUS](https://store.steampowered.com/app/985830/SUCCUBUS)
 * [Real Boxing 2](https://play.google.com/store/apps/details?id=com.vividgames.realboxing2)
 

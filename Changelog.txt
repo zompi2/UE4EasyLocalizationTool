@@ -1,3 +1,6 @@
+###### 1.7.3
+* Display appropiate icons in message dialogs.
+
 ###### 1.7.2
 * Fixed the issue when using '_' in the ICU codes in CanSetLanguage and SetLanguage functions.
 
