@@ -29,7 +29,7 @@ public:
 	/**
 	 * Returns a list of codes of all available languages.
 	 */
-	UFUNCTION(BlueprintPure, meta = (WorldContext = "WorldContextObject", DisplayName = "ELT - Get Available Languages"), Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintPure, meta = (DeprecatedFunction, DeprecationMessage="This function is deprecated. Use UELT::GetAvailableLanguages() instead.", WorldContext = "WorldContextObject", DisplayName = "ELT - Get Available Languages"), Category = "Easy Localization Tool")
 	static TArray<FString> GetAvailableLanguages(const UObject* WorldContextObject);
 
 	/**

@@ -50,7 +50,7 @@ public:
 	 * Returns a list of codes of all available languages.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
-	TArray<FString> GetAvailableLanguages();
+	static TArray<FString> GetAvailableLanguages();
 
 	/**
 	 * Checks if the language of given code can be set.
@@ -71,6 +71,20 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
 	void RefreshLanguageResources();
+
+	/**
+	 * Finds the localized text for current language with given namespace and key.
+	 * This function is slow, for correct localization implementation use localized FTexts.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
+	static FText GetLocalizedText(const FString& Namespace, const FString& Key);
+
+	/**
+	 * Finds the localized string for current language with given namespace and key.
+	 * This function is slow, for correct localization implementation use localized FTexts.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
+	static FString GetLocalizedString(const FString& Namespace, const FString& Key);
 
 	/**
 	 * An event which runs when text localizations has changed (dynamic version).

@@ -5,6 +5,7 @@
 #include "ELTSave.h"
 #include "Internationalization/Internationalization.h"
 #include "Internationalization/Culture.h"
+#include "Internationalization/TextKey.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
@@ -193,6 +194,23 @@ void UELT::RefreshLanguageResources()
 		FTextLocalizationManager::Get().EnableGameLocalizationPreview(ELTCurrentLanguage);
 	}
 #endif
+}
+
+FText UELT::GetLocalizedText(const FString& Namespace, const FString& Key)
+{
+	FText Result{};
+	const FTextId TextId(*Namespace, *Key);
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+	FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);
+#else
+	FText::FindText(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);
+#endif
+	return Result;
+}
+
+FString UELT::GetLocalizedString(const FString& Namespace, const FString& Key)
+{
+	return GetLocalizedText(Namespace, Key).ToString();
 }
 
 void UELT::SetLastUsedLanguage()
