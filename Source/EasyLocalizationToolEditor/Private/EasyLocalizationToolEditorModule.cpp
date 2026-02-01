@@ -5,6 +5,7 @@
 #include "ELTEditorCommands.h"
 #include "ELTEditorStyle.h"
 #include "LocTextDetails.h"
+#include "TextLocPreview.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Docking/TabManager.h"
@@ -12,6 +13,8 @@
 
 #include "PropertyEditorModule.h"
 #include "LevelEditor.h"
+
+#include "BlueprintEditorModule.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
 #include "ToolMenu.h"
@@ -56,9 +59,17 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
 {
+	// Unregister custom details.
+	FBlueprintEditorModule* BlueprintEditorModule = FModuleManager::GetModulePtr<FBlueprintEditorModule>("Kismet");
+	if (BlueprintEditorModule)
+	{
+		BlueprintEditorModule->UnregisterVariableCustomization(FProperty::StaticClass(), OnGetTextDetailsCustomizationDelegateHandle);
+	}
+
 	// Unregister LocText custom details panel.
 	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.UnregisterCustomPropertyTypeLayout("LocText");
+	PropertyModule.UnregisterCustomClassLayout(UObject::StaticClass()->GetFName());
 
 	// Unregister Tab Spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
@@ -141,6 +152,9 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			LevelEditor->GetMenuExtensibilityManager()->AddExtender(MainMenuExtender);
 #endif
 		}
+
+		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+		PropertyModule.RegisterCustomClassLayout(UObject::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FTextLocPreview::MakeInstance));
 	}
 }
 

@@ -67,4 +67,9 @@ private:
 
 	// Handler for an OnPOstEngineInit delegate.
 	FDelegateHandle OnPostEngineInitDelegateHandle;
+
+	// 
+	FDelegateHandle OnGetTextDetailsCustomizationDelegateHandle;
+
+
 };
