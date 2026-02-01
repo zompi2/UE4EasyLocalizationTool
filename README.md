@@ -1,5 +1,9 @@
 # Easy Localization Tool for Unreal Engine
 
+
+<img width="276" height="155" alt="elt1" src="https://github.com/user-attachments/assets/56ffde10-bb65-4904-b5d9-aed602e30385" />
+<img width="301" height="163" alt="elt2" src="https://github.com/user-attachments/assets/819a3c49-f799-4f3d-aa28-97a6654bed10" />
+
 This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
 
 It simply allow to import CSV file with localization.
