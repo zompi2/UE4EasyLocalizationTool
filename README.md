@@ -1,8 +1,8 @@
 # Easy Localization Tool for Unreal Engine
 
 
-<img width="276" height="155" alt="elt1" src="https://github.com/user-attachments/assets/56ffde10-bb65-4904-b5d9-aed602e30385" />
-<img width="301" height="163" alt="elt2" src="https://github.com/user-attachments/assets/819a3c49-f799-4f3d-aa28-97a6654bed10" />
+<img width="281" height="164" alt="elt1" src="https://github.com/user-attachments/assets/0c8956a2-be4d-4c52-a603-77fe4a34dd83" />
+<img width="279" height="159" alt="elt2" src="https://github.com/user-attachments/assets/a4f1801e-bef9-4791-a08d-49807a7c5eaa" />
 
 This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
 
