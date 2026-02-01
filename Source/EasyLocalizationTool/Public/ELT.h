@@ -49,7 +49,7 @@ public:
 	/**
 	 * Returns a list of codes of all available languages.
 	 */
-	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "ELT - Get Available Languagtes"), Category = "Easy Localization Tool")
 	static TArray<FString> GetAvailableLanguages();
 
 	/**
@@ -76,14 +76,14 @@ public:
 	 * Finds the localized text for current language with given namespace and key.
 	 * This function is slow, for correct localization implementation use localized FTexts.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Get Localized Text"), Category = "Easy Localization Tool")
 	static FText GetLocalizedText(const FString& Namespace, const FString& Key);
 
 	/**
 	 * Finds the localized string for current language with given namespace and key.
 	 * This function is slow, for correct localization implementation use localized FTexts.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Get Localized String"), Category = "Easy Localization Tool")
 	static FString GetLocalizedString(const FString& Namespace, const FString& Key);
 
 	/**
