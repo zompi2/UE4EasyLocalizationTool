@@ -12,11 +12,7 @@ class EASYLOCALIZATIONTOOLEDITOR_API FTextLocPreview : public IDetailCustomizati
 public:
 
 	/** Makes a new instance of this detail layout class for a specific detail view requesting it */
-	static TSharedPtr<IDetailCustomization> MakeInstanceBP(TSharedPtr<IBlueprintEditor> InBlueprintEditor);
 	static TSharedRef<IDetailCustomization> MakeInstance();
-
-	FTextLocPreview(UBlueprint* InBlueprintPtr);
-	FTextLocPreview();
 
 	// IDetailCustomization interface
 	void CustomizeDetails(IDetailLayoutBuilder& DetailLayout) override;
@@ -27,4 +23,5 @@ public:
 private:
 
 	FText EditedText;
+	TSharedPtr<class IPropertyHandle> TextPropHandle;
 };

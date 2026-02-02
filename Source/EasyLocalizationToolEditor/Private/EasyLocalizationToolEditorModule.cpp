@@ -51,21 +51,10 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	)
 	.SetMenuType(ETabSpawnerMenuType::Hidden)
 	.SetIcon(FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon"));
-
-	// Register LocText custom details panel.
-	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
-	PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
 }
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
 {
-	// Unregister custom details.
-	FBlueprintEditorModule* BlueprintEditorModule = FModuleManager::GetModulePtr<FBlueprintEditorModule>("Kismet");
-	if (BlueprintEditorModule)
-	{
-		BlueprintEditorModule->UnregisterVariableCustomization(FProperty::StaticClass(), OnGetTextDetailsCustomizationDelegateHandle);
-	}
-
 	// Unregister LocText custom details panel.
 	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.UnregisterCustomPropertyTypeLayout("LocText");
@@ -153,7 +142,9 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 #endif
 		}
 
+		// Register LocText custom details panel and expand the FText details panel with localization preview.
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+		PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
 		PropertyModule.RegisterCustomClassLayout(UObject::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FTextLocPreview::MakeInstance));
 	}
 }

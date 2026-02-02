@@ -35,8 +35,7 @@ public class EasyLocalizationToolEditor : ModuleRules
                 "UMG",
                 "UMGEditor",
 				"EditorStyle",
-				"Projects",
-				"Kismet"
+				"Projects"
 			}
 		);
 
