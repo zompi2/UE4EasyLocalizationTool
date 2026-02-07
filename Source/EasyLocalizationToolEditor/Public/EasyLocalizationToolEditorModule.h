@@ -67,4 +67,6 @@ private:
 
 	// Handler for an OnPOstEngineInit delegate.
 	FDelegateHandle OnPostEngineInitDelegateHandle;
+
+	TSharedPtr<struct FTextPreviewGraphPanelPinFactory> GraphPanelPinFactory;
 };

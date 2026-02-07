@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
 
 #include "TextLocPreview.h"
 #include "DetailLayoutBuilder.h"
@@ -11,6 +11,9 @@
 #include "BlueprintEditorModule.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "ELTEditorSettings.h"
+#include "SGraphPinTextPreview.h"
+
+ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 TSharedRef<IDetailCustomization> FTextLocPreview::MakeInstance()
 {
@@ -101,4 +104,27 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 	}
 }
 
-#endif // ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+TSharedPtr<SGraphPin> FTextPreviewGraphPanelPinFactory::CreatePin(UEdGraphPin* Pin) const
+{
+	if (UELTEditorSettings::GetPreviewInUIEnabled() == false)
+	{
+		return nullptr;
+	}
+
+	if (Pin == nullptr)
+	{
+		return nullptr;
+	}
+
+	const FEdGraphPinType& PinType = Pin->PinType;
+	if (PinType.PinCategory == UEdGraphSchema_K2::PC_Text)
+	{
+		return SNew(SGraphPinTextPreview, Pin);
+	}
+
+	return nullptr;
+}
+
+ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION
+
+#endif // ELTEDITOR_WITH_PREVIEW_IN_UI

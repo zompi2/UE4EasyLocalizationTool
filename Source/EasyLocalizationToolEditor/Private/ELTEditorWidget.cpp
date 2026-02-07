@@ -94,7 +94,7 @@ void UELTEditorWidget::OnPreviewInUIChanged(bool bNewPreviewInUI)
 
 bool UELTEditorWidget::IsPreviewInUISupported()
 {
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
 	return true;
 #else
 	return false;	

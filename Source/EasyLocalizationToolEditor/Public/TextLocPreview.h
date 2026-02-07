@@ -2,13 +2,13 @@
 
 #pragma once
 
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
+
 #include "CoreMinimal.h"
-
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
-
 #include "IDetailCustomization.h"
 #include "UObject/UnrealType.h"
 #include "UObject/WeakFieldPtr.h"
+#include "EdGraphUtilities.h"
 
 class EASYLOCALIZATIONTOOLEDITOR_API FTextLocPreview : public IDetailCustomization
 {
@@ -29,4 +29,11 @@ private:
 	TSharedPtr<class IPropertyHandle> TextPropHandle;
 };
 
-#endif // #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+struct EASYLOCALIZATIONTOOLEDITOR_API FTextPreviewGraphPanelPinFactory : public FGraphPanelPinFactory
+{
+public:
+
+	TSharedPtr<SGraphPin> CreatePin(UEdGraphPin* Pin) const override;
+};
+
+#endif // ELTEDITOR_WITH_PREVIEW_IN_UI

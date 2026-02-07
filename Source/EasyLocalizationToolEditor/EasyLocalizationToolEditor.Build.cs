@@ -18,24 +18,27 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"InputCore"
 			}
 		);
-			
-		
+
+
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"EasyLocalizationTool",
-                "Engine",
+				"Engine",
 				"CoreUObject",
-                "Slate",
-                "SlateCore",
-                "UnrealEd",
+				"Slate",
+				"SlateCore",
+				"UnrealEd",
 				"WorkspaceMenuStructure",
 				"DesktopPlatform",
-                "Blutility",
-                "UMG",
-                "UMGEditor",
+				"Blutility",
+				"UMG",
+				"UMGEditor",
 				"EditorStyle",
-				"Projects"
+				"Projects",
+				"GraphEditor",
+				"EditorWidgets",
+				"BlueprintGraph"
 			}
 		);
 
@@ -44,13 +47,13 @@ public class EasyLocalizationToolEditor : ModuleRules
 			PrivateDependencyModuleNames.Add("ToolMenus");
 		}
 
-        // Ensure there are no duplicated definitions already
-        PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
+		// Ensure there are no duplicated definitions already
+		PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
 
-        // Disable optimization for non shipping builds (for easier debugging)
-        bool bDisableOptimization = false;
-        if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
-        {
+		// Disable optimization (for easier debugging)
+		bool bDisableOptimization = true;
+		if (bDisableOptimization)
+		{
 			if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
 			{
 				PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=UE_DISABLE_OPTIMIZATION");
@@ -58,14 +61,24 @@ public class EasyLocalizationToolEditor : ModuleRules
 			}
 			else
 			{
-                PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=PRAGMA_DISABLE_OPTIMIZATION");
-                PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=PRAGMA_ENABLE_OPTIMIZATION");
-            }
+				PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=PRAGMA_DISABLE_OPTIMIZATION");
+				PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=PRAGMA_ENABLE_OPTIMIZATION");
+			}
+		}
+		else
+		{
+			PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=");
+			PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=");
+		}
+
+		bool bAddPreviewInUI = true;
+		if (bAddPreviewInUI && Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 5)
+		{
+			PublicDefinitions.Add("ELTEDITOR_WITH_PREVIEW_IN_UI=1");
+		}
+		else
+		{
+            PublicDefinitions.Add("ELTEDITOR_WITH_PREVIEW_IN_UI=0");
         }
-        else
-        {
-            PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=");
-            PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=");
-        }
-    }
+	}
 }
