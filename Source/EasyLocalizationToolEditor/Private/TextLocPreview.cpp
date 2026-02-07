@@ -1,5 +1,7 @@
 // Copyright (c) 2025 Damian Nowakowski. All rights reserved.
 
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
+
 #include "TextLocPreview.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
@@ -8,6 +10,7 @@
 #include "IDetailGroup.h"
 #include "BlueprintEditorModule.h"
 #include "Kismet2/BlueprintEditorUtils.h"
+#include "ELTEditorSettings.h"
 
 TSharedRef<IDetailCustomization> FTextLocPreview::MakeInstance()
 {
@@ -16,6 +19,11 @@ TSharedRef<IDetailCustomization> FTextLocPreview::MakeInstance()
 
 void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 {
+	if (UELTEditorSettings::GetPreviewInUIEnabled() == false)
+	{
+		return;
+	}
+
 	TArray<FName> CategoryNames;
 	DetailLayout.GetCategoryNames(CategoryNames);
 	for (const FName& CatName : CategoryNames)
@@ -92,3 +100,5 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 		}
 	}
 }
+
+#endif // ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))

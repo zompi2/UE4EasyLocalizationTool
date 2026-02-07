@@ -25,7 +25,8 @@ DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnSeparatorChanged, const FString&);
-DECLARE_DELEGATE_OneParam(FOnLogGebugChanged, bool);
+DECLARE_DELEGATE_OneParam(FOnLogDebugChanged, bool);
+DECLARE_DELEGATE_OneParam(FOnPreviewInUIChanged, bool);
 
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWidget
@@ -223,6 +224,26 @@ public:
 
 
 	/**
+	 * Set "Log Debug" option to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
+	void SetPreviewInUI(bool bPreviewInUI);
+
+	/**
+	 * "Log Debug" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
+	void OnPreviewInUIChanged(bool bNewPreviewInUI);
+
+	/**
+	 * Returns true if the "Preview In UI" option is supported.
+	 * If it's not supported - do not display it in the Widget.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Easy Localization Tool Editor")
+	bool IsPreviewInUISupported();
+
+
+	/**
 	 * Callbacks to be binded to the ELTEditor methods.
 	 */
 	FOnLocalizationPathSelected OnLocalizationPathSelectedDelegate;
@@ -236,5 +257,6 @@ public:
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
 	FOnSeparatorChanged OnSeparatorChangedDelegate;
-	FOnLogGebugChanged OnLogGebugChangedDelegate;
+	FOnLogDebugChanged OnLogDebugChangedDelegate;
+	FOnPreviewInUIChanged OnPreviewInUIChangedDelegate;
 };

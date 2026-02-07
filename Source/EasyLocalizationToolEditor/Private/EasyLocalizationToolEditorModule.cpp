@@ -58,7 +58,9 @@ void FEasyLocalizationToolEditorModule::ShutdownModule()
 	// Unregister LocText custom details panel.
 	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.UnregisterCustomPropertyTypeLayout("LocText");
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
 	PropertyModule.UnregisterCustomClassLayout(UObject::StaticClass()->GetFName());
+#endif
 
 	// Unregister Tab Spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
@@ -145,7 +147,9 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 		// Register LocText custom details panel and expand the FText details panel with localization preview.
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
 		PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
 		PropertyModule.RegisterCustomClassLayout(UObject::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FTextLocPreview::MakeInstance));
+#endif
 	}
 }
 

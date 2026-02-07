@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5)) 
+
 #include "IDetailCustomization.h"
 #include "UObject/UnrealType.h"
 #include "UObject/WeakFieldPtr.h"
@@ -25,3 +28,5 @@ private:
 	FText EditedText;
 	TSharedPtr<class IPropertyHandle> TextPropHandle;
 };
+
+#endif // #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))

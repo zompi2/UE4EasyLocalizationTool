@@ -143,7 +143,8 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
-	EditorWidget->OnLogGebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
+	EditorWidget->OnLogDebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
+	EditorWidget->OnPreviewInUIChangedDelegate.BindUObject(this, &UELTEditor::OnPreviewInUIChanged);
 
 	// Fill Localization paths list on the Widget.
 	TArray<FString> GameLocPaths = FPaths::GetGameLocalizationPaths();
@@ -180,6 +181,9 @@ void UELTEditor::InitializeTheWidget()
 
 	// Set LogDebug value to the Widget.
 	EditorWidget->SetLogDebug(UELTSettings::GetLogDebug());
+
+	// Set PreivewInUI value to the Widget.
+	EditorWidget->SetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
 
 	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
@@ -245,7 +249,11 @@ void UELTEditor::OnGenerateLocFiles()
 	}
 	
 	// Display a Dialog Window to inform user that the localization generation has been finished.
+#if (ENGINE_MAJOR_VERSION == 5)
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
+#else
+	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
+#endif
 }
 
 void UELTEditor::OnReimportAtEditorStartupChanged(bool bNewReimportAtEditorStartup)
@@ -324,8 +332,14 @@ void UELTEditor::OnSeparatorChanged(const FString& NewSeparator)
 
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
-	// Log Debug flag has been changed in the Widget. Save this setting.
+	// "Log Debug" flag has been changed in the Widget. Save this setting.
 	UELTSettings::SetLogDebug(bNewLogDebug);
+}
+
+void UELTEditor::OnPreviewInUIChanged(bool bNewPreviewInUI)
+{
+	// "Preview In UI" option has been changed in the Widget. Save this setting.
+	UELTEditorSettings::SetPreviewInUIEnabled(bNewPreviewInUI);
 }
 
 // ~~~~~~~~~ End of events received from the Widget

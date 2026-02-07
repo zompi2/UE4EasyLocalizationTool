@@ -59,6 +59,12 @@ public:
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
 
+	/**
+	 * Get/Set if the preview should be displayed on UI.
+	 */
+	static bool GetPreviewInUIEnabled();
+	static void SetPreviewInUIEnabled(bool bNewPreviewInUIEnabled);
+
 private:
 
 	UPROPERTY(config)
@@ -81,4 +87,7 @@ private:
 
 	UPROPERTY(config)
 	bool bReimportAtEditorStartup = false;
+
+	UPROPERTY(config)
+	bool bPreviewInUI = true;
 };
