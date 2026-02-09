@@ -145,6 +145,10 @@ The **Game** localization is the default one. In order to add another localizati
 
 In order to use a localized phrase type a **KEY** into the Text form and then set a Namespace and Key values for this Text:
 
+![testexampleloc](https://github.com/user-attachments/assets/1303cbbe-7451-4404-9f45-751967405e02)
+
+For UE4.27 it will look like this:
+
 ![testexampleloc](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67)
 
 To use it in a c++ code use the following macro:
