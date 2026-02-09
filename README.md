@@ -88,7 +88,7 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
+![ELTSShot](https://github.com/user-attachments/assets/96a3fa10-3e73-4661-9630-32878fae828e)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -100,7 +100,8 @@ The following window should appear:
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
-* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
+* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
+* **Show preview in UI** - select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
 
 [Back to top](#table-of-content)
 
