@@ -72,6 +72,16 @@ void UELTEditorSettings::SetReimportAtEditorStartup(bool bNewReimportAtEditorSta
 	ELTE_SET_SETTING(bReimportAtEditorStartup, bNewReimportAtEditorStartup);
 }
 
+bool UELTEditorSettings::GetPreviewInUIEnabled()
+{
+	ELTE_GET_SETTING(bPreviewInUI);
+}
+
+void UELTEditorSettings::SetPreviewInUIEnabled(bool bNewPreviewInUIEnabled)
+{
+	ELTE_SET_SETTING(bPreviewInUI, bNewPreviewInUIEnabled);
+}
+
 TMap<FString, FString> UELTEditorSettings::GetGlobalNamespaces()
 {
 	ELTE_GET_SETTING(GlobalNamespaces);

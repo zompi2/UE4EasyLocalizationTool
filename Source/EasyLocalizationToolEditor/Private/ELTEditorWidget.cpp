@@ -84,7 +84,21 @@ void UELTEditorWidget::OnSeparatorChanged(const FString& NewGlobalNamespace)
 
 void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
 {
-	OnLogGebugChangedDelegate.ExecuteIfBound(bNewLogDebug);
+	OnLogDebugChangedDelegate.ExecuteIfBound(bNewLogDebug);
+}
+
+void UELTEditorWidget::OnPreviewInUIChanged(bool bNewPreviewInUI)
+{
+	OnPreviewInUIChangedDelegate.ExecuteIfBound(bNewPreviewInUI);
+}
+
+bool UELTEditorWidget::IsPreviewInUISupported()
+{
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
+	return true;
+#else
+	return false;	
+#endif
 }
 
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

@@ -16,10 +16,7 @@ FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObje
 
 TArray<FString> UELTBlueprintLibrary::GetAvailableLanguages(const UObject* WorldContextObject)
 {
-	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		if (UELT* ELT = UELT::Get(ThisWorld))
-			return ELT->GetAvailableLanguages();
-	return {};
+	return UELT::GetAvailableLanguages();
 }
 
 bool UELTBlueprintLibrary::CanSetLanguage(const UObject* WorldContextObject, const FString& Language)

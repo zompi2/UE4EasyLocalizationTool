@@ -59,11 +59,14 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 
 > By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
 
+> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
+
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
 > Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
-> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.
+> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.  
+> *(Since 1.8.0)* The Plugin will replace every `_` character with the `-` character when parsing the language keys.
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  
@@ -89,7 +92,7 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
+![ELTSShot](https://github.com/user-attachments/assets/96a3fa10-3e73-4661-9630-32878fae828e)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -101,7 +104,8 @@ The following window should appear:
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
-* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
+* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
+* **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
 
 [Back to top](#table-of-content)
 
@@ -145,6 +149,10 @@ The **Game** localization is the default one. In order to add another localizati
 ## Using Localizations
 
 In order to use a localized phrase type a **KEY** into the Text form and then set a Namespace and Key values for this Text:
+
+![testexampleloc](https://github.com/user-attachments/assets/1303cbbe-7451-4404-9f45-751967405e02)
+
+For UE4.27 it will look like this:
 
 ![testexampleloc](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67)
 
@@ -203,6 +211,10 @@ Returns a list of available language codes.
 ![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/acc12392-9879-4306-8c5e-e0ee36bf6283)
 
 ``` cpp
+// Since 1.8.0
+UELT::GetAvailableLanguages();
+
+// Before 1.8.0
 GetELT()->GetAvailableLanguages();
 ```
 
@@ -329,6 +341,27 @@ Checks if two FTexts' keys are the same. If at least one of them has invalid key
 
 ``` cpp
 UELTBlueprintLibrary::AreTextKeysEqual(MyTextA, MyTextB);
+```
+
+#### Get Localized Text
+
+Gets a localized FText based on the given Namespace and Key. Use this method only for debugging purposes.
+
+![image](https://github.com/user-attachments/assets/0c8956a2-be4d-4c52-a603-77fe4a34dd83)
+
+```cpp
+UELT::GetLocalizedText(TEXT("NAMESPACE"), TEXT("KEY"));
+```
+
+#### Get Localized String
+
+
+Gets a localized FString based on the given Namespace and Key. Use this method only for debugging purposes.
+
+![image](https://github.com/user-attachments/assets/a4f1801e-bef9-4791-a08d-49807a7c5eaa)
+
+```cpp
+UELT::GetLocalizedString(TEXT("NAMESPACE"), TEXT("KEY"));
 ```
 
 #### Validate Text

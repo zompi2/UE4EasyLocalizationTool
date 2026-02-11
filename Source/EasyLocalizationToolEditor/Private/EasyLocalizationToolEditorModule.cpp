@@ -5,6 +5,7 @@
 #include "ELTEditorCommands.h"
 #include "ELTEditorStyle.h"
 #include "LocTextDetails.h"
+#include "TextLocPreview.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Docking/TabManager.h"
@@ -12,6 +13,8 @@
 
 #include "PropertyEditorModule.h"
 #include "LevelEditor.h"
+
+#include "BlueprintEditorModule.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
 #include "ToolMenu.h"
@@ -49,16 +52,29 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	.SetMenuType(ETabSpawnerMenuType::Hidden)
 	.SetIcon(FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon"));
 
-	// Register LocText custom details panel.
-	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
-	PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
+	// Register Text pin factory to show localization preview under Text pins in BP nodes.
+	GraphPanelPinFactory = MakeShared<FTextPreviewGraphPanelPinFactory>();
+	FEdGraphUtilities::RegisterVisualPinFactory(GraphPanelPinFactory);
+#endif
 }
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
 {
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
+	// Unregister Text pin factory
+	if (GraphPanelPinFactory)
+	{
+		FEdGraphUtilities::UnregisterVisualPinFactory(GraphPanelPinFactory);
+	}
+#endif
+
 	// Unregister LocText custom details panel.
 	FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.UnregisterCustomPropertyTypeLayout("LocText");
+#if USE_STABLE_LOCALIZATION_KEYS
+	PropertyModule.UnregisterCustomClassLayout(UObject::StaticClass()->GetFName());
+#endif
 
 	// Unregister Tab Spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
@@ -141,6 +157,13 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			LevelEditor->GetMenuExtensibilityManager()->AddExtender(MainMenuExtender);
 #endif
 		}
+
+		// Register LocText custom details panel and expand the FText details panel with localization preview.
+		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+		PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
+#if ELTEDITOR_WITH_PREVIEW_IN_UI
+		PropertyModule.RegisterCustomClassLayout(UObject::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FTextLocPreview::MakeInstance));
+#endif
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
+#include "ELT.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
@@ -61,15 +62,7 @@ FText FLocTextDetails::GetText() const
 		NamespaceProperty->GetValue(NamespaceValue);
 		KeyProperty->GetValue(KeyValue);
 
-		const FTextId TextId(*NamespaceValue, *KeyValue);
-		FText OutText;
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
-		FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), OutText, &KeyValue);
-#else
-		FText::FindText(TextId.GetNamespace(), TextId.GetKey(), OutText, &KeyValue);
-#endif
-
-		return OutText;
+		return UELT::GetLocalizedText(NamespaceValue, KeyValue);
 	}
 	
 	return FText::GetEmpty();

@@ -144,6 +144,11 @@ private:
 	 */
 	void OnLogDebugChanged(bool bNewLogDebug);
 
+	/**
+	 * Called when "PreviewUI" option has been changed in the Widget.
+	 */
+	void OnPreviewInUIChanged(bool bNewPreviewInUI);
+
 	// ~~~~~~~~~ End of events received from the Widget
 
 

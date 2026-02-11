@@ -5,6 +5,7 @@
 #include "ELTSave.h"
 #include "Internationalization/Internationalization.h"
 #include "Internationalization/Culture.h"
+#include "Internationalization/TextKey.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
@@ -75,7 +76,8 @@ FString UELT::GetCurrentLanguage()
 			{
 				if (UELTSave* LoadedSave = Cast<UELTSave>(UGameplayStatics::LoadGameFromSlot(ELTSaveName, 0)))
 				{
-					ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage;
+					ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage.ToLower();
+					ELTCurrentLanguage.ReplaceCharInline('_', '-');
 				}
 			}
 		}
@@ -98,7 +100,7 @@ bool UELT::CanSetLanguage(const FString& Lang)
 		if (Lang.IsEmpty() == false)
 		{
 			// Fix the possible incorrect icu code
-			FString LangToCheck = Lang;
+			FString LangToCheck = Lang.ToLower();
 			LangToCheck.ReplaceCharInline('_', '-');
 
 			if (UELTSettings::GetAvailableLanguages().Contains(LangToCheck))
@@ -114,7 +116,7 @@ bool UELT::CanSetLanguage(const FString& Lang)
 bool UELT::SetLanguage(const FString& Lang)
 {
 	// Fix the possible incorrect icu code
-	FString LangToSet = Lang;
+	FString LangToSet = Lang.ToLower();
 	LangToSet.ReplaceCharInline('_', '-');
 
 	// Check if the language can be set
@@ -193,6 +195,23 @@ void UELT::RefreshLanguageResources()
 		FTextLocalizationManager::Get().EnableGameLocalizationPreview(ELTCurrentLanguage);
 	}
 #endif
+}
+
+FText UELT::GetLocalizedText(const FString& Namespace, const FString& Key)
+{
+	FText Result{};
+	const FTextId TextId(*Namespace, *Key);
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+	FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);
+#else
+	FText::FindText(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);
+#endif
+	return Result;
+}
+
+FString UELT::GetLocalizedString(const FString& Namespace, const FString& Key)
+{
+	return GetLocalizedText(Namespace, Key).ToString();
 }
 
 void UELT::SetLastUsedLanguage()
