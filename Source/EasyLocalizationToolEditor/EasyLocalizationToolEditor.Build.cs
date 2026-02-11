@@ -51,7 +51,7 @@ public class EasyLocalizationToolEditor : ModuleRules
 		PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
 
 		// Disable optimization (for easier debugging)
-		bool bDisableOptimization = true;
+		bool bDisableOptimization = false;
 		if (bDisableOptimization)
 		{
 			if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
