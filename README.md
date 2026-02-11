@@ -21,6 +21,7 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 | 5.4        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.5        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.6        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.7.2          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -58,11 +59,14 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 
 > By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
 
+> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
+
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
 > Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
-> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.
+> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.  
+> *(Since 1.8.0)* The Plugin will replace every `_` character with the `-` character when parsing the language keys.
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  
@@ -101,7 +105,7 @@ The following window should appear:
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
-* **Show preview in UI** - select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
+* **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
 
 [Back to top](#table-of-content)
 
@@ -207,6 +211,10 @@ Returns a list of available language codes.
 ![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/acc12392-9879-4306-8c5e-e0ee36bf6283)
 
 ``` cpp
+// Since 1.8.0
+UELT::GetAvailableLanguages();
+
+// Before 1.8.0
 GetELT()->GetAvailableLanguages();
 ```
 

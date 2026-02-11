@@ -76,7 +76,8 @@ FString UELT::GetCurrentLanguage()
 			{
 				if (UELTSave* LoadedSave = Cast<UELTSave>(UGameplayStatics::LoadGameFromSlot(ELTSaveName, 0)))
 				{
-					ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage;
+					ELTCurrentLanguage = LoadedSave->SavedCurrentLanguage.ToLower();
+					ELTCurrentLanguage.ReplaceCharInline('_', '-');
 				}
 			}
 		}
@@ -99,7 +100,7 @@ bool UELT::CanSetLanguage(const FString& Lang)
 		if (Lang.IsEmpty() == false)
 		{
 			// Fix the possible incorrect icu code
-			FString LangToCheck = Lang;
+			FString LangToCheck = Lang.ToLower();
 			LangToCheck.ReplaceCharInline('_', '-');
 
 			if (UELTSettings::GetAvailableLanguages().Contains(LangToCheck))
@@ -115,7 +116,7 @@ bool UELT::CanSetLanguage(const FString& Lang)
 bool UELT::SetLanguage(const FString& Lang)
 {
 	// Fix the possible incorrect icu code
-	FString LangToSet = Lang;
+	FString LangToSet = Lang.ToLower();
 	LangToSet.ReplaceCharInline('_', '-');
 
 	// Check if the language can be set

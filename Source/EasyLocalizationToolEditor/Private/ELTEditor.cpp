@@ -462,12 +462,28 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		FCSVReader Reader;
 		if (Reader.LoadFromFile(CSVFilePath, (*Separator)[0], OutMessage))
 		{
-			const TArray<FCSVColumn> Columns = Reader.Columns;
+			int32 FirstColumn = 0;
+			bool bHasNamespaces = false;
 
-			if (Columns.Num() > 1)
+			const TArray<FCSVColumn> Columns = Reader.Columns;
+			for (const FCSVColumn& Column : Columns)
 			{
-				const int32 NumOfValues = Columns[0].Values.Num();
-				for (int32 CIdx = 1; CIdx < Columns.Num(); CIdx++)
+				if (Column.Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase))
+				{
+					bHasNamespaces=true;
+					break;
+				}
+				if (Column.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase))
+				{
+					break;
+				}
+				++FirstColumn;
+			}
+
+			if (Columns.Num() > (FirstColumn + 1))
+			{
+				const int32 NumOfValues = Columns[FirstColumn].Values.Num();
+				for (int32 CIdx = FirstColumn + 1; CIdx < Columns.Num(); CIdx++)
 				{
 					if (Columns[CIdx].Values.Num() != NumOfValues)
 					{
@@ -477,10 +493,9 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				}
 
 				// Potential place for namespaces.
-				const FCSVColumn& Namespaces = Columns[0];
+				const FCSVColumn& Namespaces = Columns[FirstColumn];
 
 				// Check if we have namespaces defined for every key or to use global value.
-				const bool bHasNamespaces = Columns[0].Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase);
 				const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
 
 				if (bUseGlobalNamespace == false && bHasNamespaces == false)
@@ -495,7 +510,12 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				}
 
 				// Keys will be in first row if not having namespaces.
-				const FCSVColumn& Keys = Columns[bHasNamespaces ? 1 : 0];
+				const FCSVColumn& Keys = Columns[bHasNamespaces ? FirstColumn+1 : FirstColumn];
+				if (Keys.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase) == false)
+				{
+					OutMessage = TEXT("ERROR: Key column in CSV not found!");
+					return false;
+				}
 
 				if (bLogDebug)
 				{
@@ -503,13 +523,13 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 				}
 
-				for (int32 Column = (bHasNamespaces ? 2 : 1); Column < Columns.Num(); Column++)
+				for (int32 Column = (bHasNamespaces ? FirstColumn+2 : FirstColumn+1); Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
-					FString Lang = Locs.Values[0];
+					FString Lang = Locs.Values[0].ToLower();
+					Lang.ReplaceCharInline('_', '-');
 					if (Lang.RemoveFromStart(TEXT("lang-")))
 					{
-						Lang.ReplaceCharInline('_', '-');
 						if (LocReses.Contains(Lang) == false)
 						{
 							LocReses.Add(Lang, FTextLocalizationResource());

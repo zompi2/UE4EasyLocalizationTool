@@ -1,5 +1,12 @@
 ###### 1.8.0
-
+* Text localization preview can be displayed under the Text input box in the editor UI and BP nodes (available for UE5.5 and newer)
+* GetLocalizedText and GetLocalizedString functions added for debugging localized values based on namespace and key
+* All columns in CSV before namespace or key are ignored
+* All '_' characters in the lang headers are replaced with '-'
+* This means it's now possible to export DataTables to CSVs that are valid for ELT
+* Lang keys are stored in lowercase form to avoid issues with different naming conventions
+* Fixed the FMessageDialog compilation error for UE4.27
+* Moved GetAvailableLanguages from the BP Library class to the core ELT class as a static function. The old function is marked as deprecated.
 
 ###### 1.7.3
 * Display appropiate icons in message dialogs.
