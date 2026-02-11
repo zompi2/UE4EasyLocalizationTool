@@ -16,7 +16,7 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 
 | UE version | Plugin version | Link |
 | :--------- | :------------- | :--- |
-| 4.27       | 1.7.2          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.2-4.27-Prebuild.zip) |
+| 4.27       | 1.8.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.8.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.4        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.5        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
@@ -84,7 +84,7 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4, UE5.5** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4 - UE5.7** : `Tools -> Easy Localization Tool`  
 
  ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
