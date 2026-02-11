@@ -10,6 +10,7 @@
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "UObject/Package.h"
+#include "Launch/Resources/Version.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
