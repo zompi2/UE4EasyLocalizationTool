@@ -80,5 +80,15 @@ public class EasyLocalizationToolEditor : ModuleRules
 		{
             PublicDefinitions.Add("ELTEDITOR_WITH_PREVIEW_IN_UI=0");
         }
-	}
+
+		bool bUseSlateEditorUI = true;
+		if (bUseSlateEditorUI)
+		{
+			PublicDefinitions.Add("ELTEDITOR_USE_SLATE_EDITOR_UI=1");
+		}
+		else
+		{
+			PublicDefinitions.Add("ELTEDITOR_USE_SLATE_EDITOR_UI=0");
+        }
+    }
 }

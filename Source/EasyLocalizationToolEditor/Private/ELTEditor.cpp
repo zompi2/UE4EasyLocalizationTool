@@ -23,6 +23,10 @@
 #include "CSVReader.h"
 #include "LevelEditor.h"
 
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+#include "SELTEditorWidget.h"
+#endif
+
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 DEFINE_LOG_CATEGORY(ELTEditorLog);
@@ -66,8 +70,12 @@ UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 
 bool UELTEditor::CanCreateEditorUI()
 {
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	return true;
+#else
 	// Editor UI can be created only when we have proper Editor Utility Widget Blueprint available.
 	return GetUtilityWidgetBlueprint() != nullptr;
+#endif
 }
 
 TSharedRef<SWidget> UELTEditor::CreateEditorUI()
@@ -83,6 +91,15 @@ TSharedRef<SWidget> UELTEditor::CreateEditorUI()
 TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 {
 	TSharedRef<SWidget> CreatedWidget = SNullWidget::NullWidget;
+
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	EditorWidget = NewObject<UELTEditorWidget>(this);
+	if (EditorWidget)
+	{
+		CreatedWidget = EditorWidget->GetWidget();
+		InitializeTheWidget();
+	}
+#else
 	if (UEditorUtilityWidgetBlueprint* UtilityWidgetBP = GetUtilityWidgetBlueprint())
 	{
 		// Create Widget from the Editor Utility Widget BP.
@@ -95,6 +112,7 @@ TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 			InitializeTheWidget();
 		}
 	}
+#endif
 
 	// Returned Widget will be docked into the Editor Tab.
 	return CreatedWidget;

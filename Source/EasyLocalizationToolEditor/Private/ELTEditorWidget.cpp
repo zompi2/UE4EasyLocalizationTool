@@ -4,6 +4,10 @@
 #include "DesktopPlatformModule.h"
 #include "Interfaces/IPluginManager.h"
 
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+#include "SELTEditorWidget.h"
+#endif
+
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 FString UELTEditorWidget::GetPluginVersion()
@@ -15,6 +19,18 @@ FString UELTEditorWidget::GetPluginVersion()
 		}
 	}
 	return TEXT("");
+}
+
+void UELTEditorWidget::CallFillLocalizationPaths(const TArray<FString>& Paths)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillLocalizationPaths(Paths);
+	}
+#else
+	FillLocalizationPaths(Paths);
+#endif
 }
 
 void UELTEditorWidget::OnLocalizationPathSelected(const FString& Path)
@@ -98,6 +114,20 @@ bool UELTEditorWidget::IsPreviewInUISupported()
 	return true;
 #else
 	return false;	
+#endif
+}
+
+TSharedRef<SELTEditorWidget> UELTEditorWidget::GetWidget()
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid() == false)
+	{
+		MyWidget = SNew(SELTEditorWidget);
+		MyWidget->WidgetController = this;
+	}
+	return MyWidget.ToSharedRef();
+#else
+	return SNullWidget::NullWidget;
 #endif
 }
 
