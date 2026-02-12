@@ -29,6 +29,7 @@ DECLARE_DELEGATE_OneParam(FOnFallbackWhenEmptyChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnLogDebugChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnPreviewInUIChanged, bool);
 
+class SELTEditorWidget;
 
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditorWidget : public UEditorUtilityWidget
@@ -48,6 +49,7 @@ public:
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
 	void FillLocalizationPaths(const TArray<FString>& Paths);
+	void CallFillLocalizationPaths(const TArray<FString>& Paths);
 
 	/**
 	 * Call BP to display a current localization path.
@@ -276,4 +278,7 @@ public:
 	FOnFallbackWhenEmptyChanged OnFallbackWhenEmptyChangedDelegate;
 	FOnLogDebugChanged OnLogDebugChangedDelegate;
 	FOnPreviewInUIChanged OnPreviewInUIChangedDelegate;
+
+	TSharedPtr<SELTEditorWidget> MyWidget = nullptr;
+	TSharedRef<SELTEditorWidget> GetWidget();
 };
