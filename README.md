@@ -18,10 +18,10 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 | :--------- | :------------- | :--- |
 | 4.27       | 1.8.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.8.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.4        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.7        | 1.7.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.4        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
