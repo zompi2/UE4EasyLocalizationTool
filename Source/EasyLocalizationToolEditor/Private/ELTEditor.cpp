@@ -170,52 +170,52 @@ void UELTEditor::InitializeTheWidget()
 	{
 		GameLocPath = FPaths::ConvertRelativePathToFull(GameLocPath);
 	}
-	EditorWidget->FillLocalizationPaths(GameLocPaths);
+	EditorWidget->CallFillLocalizationPaths(GameLocPaths);
 	if (GameLocPaths.Num() > 0)
 	{
 		if (GameLocPaths.Contains(CurrentLocPath))
 		{
-			EditorWidget->SetLocalizationPath(CurrentLocPath);
+			EditorWidget->CallSetLocalizationPath(CurrentLocPath);
 		}
 		else
 		{
-			EditorWidget->SetLocalizationPath(GameLocPaths[0]);
+			EditorWidget->CallSetLocalizationPath(GameLocPaths[0]);
 		}
 	}
 
 	// Set the Localization Preview current values to the Widget.
-	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
-	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
+	EditorWidget->CallSetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
+	EditorWidget->CallSetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
 	// Set the ManualLastLanguageLoad current value to the Widget.
-	EditorWidget->SetManuallySetLastUsedLanguage(UELTSettings::GetManuallySetLastUsedLanguage());
+	EditorWidget->CallSetManuallySetLastUsedLanguage(UELTSettings::GetManuallySetLastUsedLanguage());
 
 	// Set the ReimportAtEditorStartup current value to the Widget.
-	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
+	EditorWidget->CallSetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
 
 	// Set the Localization Override At First Run current values to the Widget.
-	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
-	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
+	EditorWidget->CallSetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
+	EditorWidget->CallSetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
 	// Set LogDebug value to the Widget.
-	EditorWidget->SetLogDebug(UELTSettings::GetLogDebug());
+	EditorWidget->CallSetLogDebug(UELTSettings::GetLogDebug());
 
 	// Set PreivewInUI value to the Widget.
-	EditorWidget->SetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
+	EditorWidget->CallSetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
 
 	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
 	{
-		EditorWidget->SetGlobalNamespace(GlobalNamespaces[GetCurrentLocName()]);
+		EditorWidget->CallSetGlobalNamespace(GlobalNamespaces[GetCurrentLocName()]);
 	}
 	else
 	{
-		EditorWidget->SetGlobalNamespace(TEXT(""));
+		EditorWidget->CallSetGlobalNamespace(TEXT(""));
 	}
 
 	// Set Separator
-	EditorWidget->SetSeparator(UELTEditorSettings::GetSeparator());
+	EditorWidget->CallSetSeparator(UELTEditorSettings::GetSeparator());
 }
 
 
@@ -228,15 +228,15 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 	UELTEditorSettings::SetLocalizationPath(CurrentLocPath);
 
 	// Update Localization directory name and path to CSV to the Widget.
-	EditorWidget->FillLocalizationName(GetCurrentLocName());
-	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
+	EditorWidget->CallFillLocalizationName(GetCurrentLocName());
+	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
 	RefreshAvailableLangs(false);
-	EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
+	EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
 	// Set Global Namespace for this Localization directory to the Widget.
-	EditorWidget->SetGlobalNamespace(GetCurrentGlobalNamespace());
+	EditorWidget->CallSetGlobalNamespace(GetCurrentGlobalNamespace());
 }
 
 void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
@@ -251,7 +251,7 @@ void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
 		CSVPaths.Add(GetCurrentLocName(), PathsListToString(RelativeToAbsolutePaths(NewPaths)));
 	}
 	UELTEditorSettings::SetCSVPaths(CSVPaths);
-	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
+	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 }
 
 void UELTEditor::OnGenerateLocFiles()
@@ -338,12 +338,12 @@ void UELTEditor::OnSeparatorChanged(const FString& NewSeparator)
 	if (Separator.Len() == 0)
 	{
 		Separator = TEXT(",");
-		EditorWidget->SetSeparator(Separator);
+		EditorWidget->CallSetSeparator(Separator);
 	}
 	else if (Separator.Len() > 1)
 	{
 		Separator = FString(1, *Separator);
-		EditorWidget->SetSeparator(Separator);
+		EditorWidget->CallSetSeparator(Separator);
 	}
 	UELTEditorSettings::SetSeparator(Separator);
 }
@@ -407,8 +407,8 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 	if (bRefreshUI)
 	{
 		// If the RefreshUI has been requested - set the available languages on the Widget.
-		EditorWidget->FillAvailableLangs(CurrentAvailableLangs);
-		EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
+		EditorWidget->CallFillAvailableLangs(CurrentAvailableLangs);
+		EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 		
 		// If the Preview or OverrideAtFirstLaunch languages are not available after refreshing
 		// available languages - set them to empty. If they are available - ensure they are properly displayed.
@@ -422,7 +422,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 		else
 		{
-			EditorWidget->SetLocalizationPreviewLang(LangPreview);
+			EditorWidget->CallSetLocalizationPreviewLang(LangPreview);
 		}
 
 		if (CurrentAvailableLangs.Contains(LangAtFirstLaunch) == false)
@@ -431,7 +431,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 		else
 		{
-			EditorWidget->SetLocalizationOnFirstRunLang(LangAtFirstLaunch);
+			EditorWidget->CallSetLocalizationOnFirstRunLang(LangAtFirstLaunch);
 		}
 	}
 
