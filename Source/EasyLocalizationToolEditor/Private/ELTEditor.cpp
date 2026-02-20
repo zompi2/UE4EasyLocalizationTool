@@ -442,12 +442,12 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
 {
-	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, OutMessage);
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, OutMessage);
 }
 
 // Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
@@ -458,7 +458,7 @@ enum class EFallbackWhenEmptyType : uint8
 	KEY
 };
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
 {
 	if (Separator.Len() != 1)
 	{
@@ -467,14 +467,14 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	}
 
 	// Get the FallbackWhenEmpty type.
-	EFallbackWhenEmptyType FallbackWhenEmpty = EFallbackWhenEmptyType::NONE;
-	if (UELTEditorSettings::GetFallbackWhenEmpty() == TEXT("FIRST_LANG"))
+	EFallbackWhenEmptyType FallbackWhenEmptyType = EFallbackWhenEmptyType::NONE;
+	if (FallbackWhenEmpty == TEXT("FIRST_LANG"))
 	{
-		FallbackWhenEmpty = EFallbackWhenEmptyType::FIRST_LANG;
+		FallbackWhenEmptyType = EFallbackWhenEmptyType::FIRST_LANG;
 	} 
-	else if (UELTEditorSettings::GetFallbackWhenEmpty() == TEXT("KEY"))
+	else if (FallbackWhenEmpty == TEXT("KEY"))
 	{
-		FallbackWhenEmpty = EFallbackWhenEmptyType::KEY;
+		FallbackWhenEmptyType = EFallbackWhenEmptyType::KEY;
 	}
 
 	const bool bLogDebug = UELTSettings::GetLogDebug();
@@ -575,11 +575,11 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 							// If the localized string is empty and the fallback option is set - use the fallback value.
 							FString LocalizedString = Locs.Values[Key];
-							if (FallbackWhenEmpty != EFallbackWhenEmptyType::NONE)
+							if (FallbackWhenEmptyType != EFallbackWhenEmptyType::NONE)
 							{
 								if (LocalizedString.TrimStartAndEnd().IsEmpty())
 								{
-									if (FallbackWhenEmpty == EFallbackWhenEmptyType::FIRST_LANG)
+									if (FallbackWhenEmptyType == EFallbackWhenEmptyType::FIRST_LANG)
 									{
 										LocalizedString = Columns[FirstLangColumn].Values[Key];
 
@@ -589,7 +589,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 											LocalizedString = Keys.Values[Key];
 										}
 									}
-									else if (FallbackWhenEmpty == EFallbackWhenEmptyType::KEY)
+									else if (FallbackWhenEmptyType == EFallbackWhenEmptyType::KEY)
 									{
 										LocalizedString = Keys.Values[Key];
 									}
