@@ -82,6 +82,11 @@ void UELTEditorWidget::OnSeparatorChanged(const FString& NewGlobalNamespace)
 	OnSeparatorChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
 
+void UELTEditorWidget::OnFallbackWhenEmptyChanged(const FString& NewFallback)
+{
+	OnFallbackWhenEmptyChangedDelegate.ExecuteIfBound(NewFallback);
+}
+
 void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
 {
 	OnLogDebugChangedDelegate.ExecuteIfBound(bNewLogDebug);

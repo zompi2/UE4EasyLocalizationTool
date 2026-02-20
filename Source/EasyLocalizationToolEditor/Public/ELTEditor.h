@@ -140,6 +140,11 @@ private:
 	void OnSeparatorChanged(const FString& NewSeparator);
 
 	/**
+	 * Called when "FallbackWhenEmpty" option has been changed in the Widget.
+	 */
+	void OnFallbackWhenEmptyChanged(const FString& NewFallback);
+
+	/**
 	 * Called when "LogDebug" option has been changed in the Widget.
 	 */
 	void OnLogDebugChanged(bool bNewLogDebug);

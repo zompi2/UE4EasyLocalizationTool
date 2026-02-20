@@ -143,6 +143,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
+	EditorWidget->OnFallbackWhenEmptyChangedDelegate.BindUObject(this, &UELTEditor::OnFallbackWhenEmptyChanged);
 	EditorWidget->OnLogDebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 	EditorWidget->OnPreviewInUIChangedDelegate.BindUObject(this, &UELTEditor::OnPreviewInUIChanged);
 
@@ -198,6 +199,9 @@ void UELTEditor::InitializeTheWidget()
 
 	// Set Separator
 	EditorWidget->SetSeparator(UELTEditorSettings::GetSeparator());
+
+	// Set Fallback when Empty
+	EditorWidget->SetFallbackWhenEmpty(UELTEditorSettings::GetFallbackWhenEmpty());
 }
 
 
@@ -330,6 +334,11 @@ void UELTEditor::OnSeparatorChanged(const FString& NewSeparator)
 	UELTEditorSettings::SetSeparator(Separator);
 }
 
+void UELTEditor::OnFallbackWhenEmptyChanged(const FString& NewFallback)
+{
+	UELTEditorSettings::SetFallbackWhenEmpty(NewFallback);
+}
+
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// "Log Debug" flag has been changed in the Widget. Save this setting.
@@ -441,12 +450,31 @@ bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& Lo
 	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, OutMessage);
 }
 
+// Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
+enum class EFallbackWhenEmptyType : uint8
+{
+	NONE,
+	FIRST_LANG,
+	KEY
+};
+
 bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
 {
 	if (Separator.Len() != 1)
 	{
 		OutMessage = FString::Printf(TEXT("ERROR: The Separator is invalid. Must be exactly 1 character. Current Separator = %s"), *Separator);
 		return false;
+	}
+
+	// Get the FallbackWhenEmpty type.
+	EFallbackWhenEmptyType FallbackWhenEmpty = EFallbackWhenEmptyType::NONE;
+	if (UELTEditorSettings::GetFallbackWhenEmpty() == TEXT("FIRST_LANG"))
+	{
+		FallbackWhenEmpty = EFallbackWhenEmptyType::FIRST_LANG;
+	} 
+	else if (UELTEditorSettings::GetFallbackWhenEmpty() == TEXT("KEY"))
+	{
+		FallbackWhenEmpty = EFallbackWhenEmptyType::KEY;
 	}
 
 	const bool bLogDebug = UELTSettings::GetLogDebug();
@@ -523,7 +551,8 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 				}
 
-				for (int32 Column = (bHasNamespaces ? FirstColumn+2 : FirstColumn+1); Column < Columns.Num(); Column++)
+				const int32 FirstLangColumn = bHasNamespaces ? (FirstColumn + 2) : (FirstColumn + 1);
+				for (int32 Column = FirstLangColumn; Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
 					FString Lang = Locs.Values[0].ToLower();
@@ -544,16 +573,39 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								return false;
 							}
 
-							if (bLogDebug)
+							// If the localized string is empty and the fallback option is set - use the fallback value.
+							FString LocalizedString = Locs.Values[Key];
+							if (FallbackWhenEmpty != EFallbackWhenEmptyType::NONE)
 							{
-								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *(Locs.Values[Key]));
+								if (LocalizedString.TrimStartAndEnd().IsEmpty())
+								{
+									if (FallbackWhenEmpty == EFallbackWhenEmptyType::FIRST_LANG)
+									{
+										LocalizedString = Columns[FirstLangColumn].Values[Key];
+
+										// If the first language value is also empty - use the key as a fallback.
+										if (LocalizedString.TrimStartAndEnd().IsEmpty())
+										{
+											LocalizedString = Keys.Values[Key];
+										}
+									}
+									else if (FallbackWhenEmpty == EFallbackWhenEmptyType::KEY)
+									{
+										LocalizedString = Keys.Values[Key];
+									}
+								}
 							}
 							
+							if (bLogDebug)
+							{
+								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *LocalizedString);
+							}
+
 							LocRes.AddEntry(
 								FTextKey(Namespace),
 								FTextKey(Keys.Values[Key]),
 								Keys.Values[Key],
-								Locs.Values[Key],
+								LocalizedString,
 								0);
 						}
 					}

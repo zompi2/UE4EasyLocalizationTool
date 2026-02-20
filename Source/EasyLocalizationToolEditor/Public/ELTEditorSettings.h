@@ -65,6 +65,12 @@ public:
 	static bool GetPreviewInUIEnabled();
 	static void SetPreviewInUIEnabled(bool bNewPreviewInUIEnabled);
 
+	/**
+	 * Get/Set fallback when empty entry is imported.
+	 */
+	static FString GetFallbackWhenEmpty();
+	static void SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpty);
+
 private:
 
 	UPROPERTY(config)
@@ -90,4 +96,7 @@ private:
 
 	UPROPERTY(config)
 	bool bPreviewInUI = true;
+
+	UPROPERTY(config)
+	FString FallbackWhenEmpty = TEXT("NONE");
 };
