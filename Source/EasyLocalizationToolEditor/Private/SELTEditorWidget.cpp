@@ -10,6 +10,15 @@ ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 void SELTEditorWidget::Construct(const FArguments& InArgs)
 {
+	FallbackWhenEmptyAvailable.Empty();
+	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("NONE"))));
+	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("FIRST_LANG"))));
+	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("KEY"))));
+	SelectedFallbackWhenEmpty = FallbackWhenEmptyAvailable[0];
+
+	SpacerBrush.SetImageSize(FVector2D(350.f, 1.f));
+	SpacerBrush.TintColor = FSlateColor(FLinearColor(.62f,.62f,.62f,1.f));
+
 	SUserWidget::Construct(SUserWidget::FArguments()
 	[
 		SNew(SConstraintCanvas)
@@ -45,9 +54,10 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
-						SNew(SSpacer)
+						SNew(SImage).Image(&SpacerBrush)
 					]
 					// > Localiation Paths Box
 					+SVerticalBox::Slot()
@@ -118,9 +128,10 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
-						SNew(SSpacer)
+						SNew(SImage).Image(&SpacerBrush)
 					]
 					// > Available Langs In Selected Localization Box ================
 					+SVerticalBox::Slot()
@@ -176,9 +187,10 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
-						SNew(SSpacer)
+						SNew(SImage).Image(&SpacerBrush)
 					]
 					// > Reimport on editor startup Box ================
 					+SVerticalBox::Slot()
@@ -405,13 +417,66 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 								})
 						]
 					]
+					// > Fallback when empty Box ================
+					+SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
+					[
+						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("\
+When the entry is empty should it fill it with a fallback value?\n\
+NONE - no fallback\n\
+FIRST_LANG - use value of the first language.If that value is empty use Key\n\
+KEY - use the key of this entry"))
+					// >>>> Fallback when empty Label
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(STextBlock)
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Text(INVTEXT("Fallback when empty:"))
+						]
+					// >>>> Fallback when empty List
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(SComboBox<TSharedPtr<FString>>)
+								.OptionsSource(&FallbackWhenEmptyAvailable)
+								.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
+								{
+									return SNew(STextBlock).Text(FText::FromString(*InItem));
+								})
+								.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
+								{
+									SelectedFallbackWhenEmpty = Item;
+									if (SelectedFallbackWhenEmpty.IsValid())
+									{
+										// TODO: Uncomment when merged with this feature.
+										// WidgetController->OnFallbackWhenEmptyChanged(*Item);
+									}
+								})
+							[
+								SNew(STextBlock)
+									.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+									.Text_Lambda([this]() -> FText
+										{
+											if (SelectedFallbackWhenEmpty.IsValid())
+											{
+												return FText::FromString(*SelectedFallbackWhenEmpty);
+											}
+											return FText::GetEmpty();
+										})
+							]
+						]
+					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
-						SNew(SSpacer)
+						SNew(SImage).Image(&SpacerBrush)
 					]
 					// > CSV files Box ================
 					+SVerticalBox::Slot()
@@ -519,9 +584,10 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
-						SNew(SSpacer)
+						SNew(SImage).Image(&SpacerBrush)
 					]
 					// > Log Debug Box ================
 					+SVerticalBox::Slot()
@@ -728,6 +794,18 @@ void SELTEditorWidget::SetGlobalNamespace(const FString& GlobalNamespace)
 void SELTEditorWidget::SetSeparator(const FString& Separator)
 {
 	SeparatorValue = Separator;
+}
+
+void SELTEditorWidget::SetFallbackWhenEmpty(const FString& FallbackWhenEmpty)
+{
+	TSharedPtr<FString>* FoundFallbackWhenEmpty = FallbackWhenEmptyAvailable.FindByPredicate([&FallbackWhenEmpty](const TSharedPtr<FString>& Item) -> bool
+	{
+		return *Item == FallbackWhenEmpty;
+	});
+	if (FoundFallbackWhenEmpty)
+	{
+		SelectedFallbackWhenEmpty = *FoundFallbackWhenEmpty;
+	}
 }
 
 void SELTEditorWidget::SetLogDebug(bool bLogDebug)

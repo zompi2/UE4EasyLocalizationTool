@@ -32,6 +32,7 @@ public:
 	void SetLocalizationOnFirstRunLang(const FString& OnFirstRunLang);
 	void SetGlobalNamespace(const FString& GlobalNamespace);
 	void SetSeparator(const FString& Separator);
+	void SetFallbackWhenEmpty(const FString& FallbackWhenEmpty);
 	void SetLogDebug(bool bLogDebug);
 	void SetPreviewInUI(bool bPreviewInUI);
 
@@ -42,6 +43,9 @@ public:
 
 	TArray<TSharedPtr<FString>> PreviewsAvailables;
 	TSharedPtr<FString> SelectedPreviewLang = nullptr;
+
+	TArray<TSharedPtr<FString>> FallbackWhenEmptyAvailable;
+	TSharedPtr<FString> SelectedFallbackWhenEmpty = nullptr;
 
 	TArray<TSharedPtr<FString>> LanguageOverridesAvailable;
 	TSharedPtr<FString> SelectedLanguageOverride = nullptr;
@@ -59,4 +63,6 @@ public:
 	FString SeparatorValue;
 	FString CSVFiles;
 	FString GlobalNamespaceValue;
+
+	struct FSlateBrush SpacerBrush;
 };

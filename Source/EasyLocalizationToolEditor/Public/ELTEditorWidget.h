@@ -223,7 +223,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnSeparatorChanged(const FString& NewSeparator);
 
-
+	void CallSetFallbackWhenEmpty(const FString& FallbackWhenEmpty);
 
 	/**
 	 * Set "Log Debug" option to the Widget.

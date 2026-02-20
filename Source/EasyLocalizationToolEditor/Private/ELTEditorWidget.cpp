@@ -189,6 +189,19 @@ void UELTEditorWidget::CallSetSeparator(const FString& Separator)
 #endif
 }
 
+void UELTEditorWidget::CallSetFallbackWhenEmpty(const FString& FallbackWhenEmpty)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetFallbackWhenEmpty(FallbackWhenEmpty);
+	}
+#else
+	// TODO: Uncomment it when feature is merged.
+	//SetFallbackWhenEmpty(FallbackWhenEmpty);
+#endif
+}
+
 void UELTEditorWidget::CallSetLogDebug(bool bLogDebug)
 {
 #if ELTEDITOR_USE_SLATE_EDITOR_UI
