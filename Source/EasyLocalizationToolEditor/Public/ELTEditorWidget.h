@@ -224,7 +224,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
 	void OnSeparatorChanged(const FString& NewSeparator);
 
-
+	void CallSetFallbackWhenEmpty(const FString& FallbackWhenEmpty);
 
 	/**
 	 * Set "Fallback when Empty" option to the Widget.
