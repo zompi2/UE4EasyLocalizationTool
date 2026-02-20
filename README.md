@@ -10,6 +10,18 @@ The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.7.
 
 If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project. I will try my best to answer it quickly :) You can also write an e-mail to me: **zompi2@gmail.com**, however there is a risk that it will be filtered as spam.
 
+# Building the Plugin
+
+To use the Plugin in it's source form:
+1. Download the repository to a new "EasyLocalizationTool" directory and put that directory into your project's Plugin directory.
+2. Add "EasyLocalizationTool" entry to the `PublicDependencyModuleNames` list in your project's `Build.cs` file.
+3. Add ```{
+			"Name": "EasyLocalizationTool",
+			"Enabled": true
+		}``` entry to your project's `.uplugin` file.
+4. Generate Visual Studio project file.
+5. Build your game as usual :)
+
 # Plugin prebuilt binaries  
 
 If you don't want to build the plugin from the source you can get the prebuilt binaries:  
@@ -59,8 +71,6 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 
 > By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
 
-> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
-
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
@@ -72,7 +82,8 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 > **!!! VERY IMPORTANT !!!**  
 > 
 > The newline character for every entry **MUST** be a **CRLF**, otherwise UE's Slate will constantly try to replace the given text Source, leading to errors!   
-> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.  
+> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.
+> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
 > Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
 
 [Back to top](#table-of-content)
