@@ -65,9 +65,9 @@ public:
 	static FString Conv_LocTextToString(FLocText InLocText);
 
 	/**
-	 * Gets Package, Namespace and Key from a FText.
+	 * Gets Package, Namespace, Key ans Source from a FText.
 	 */
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "ELT - Get Text Data"), Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Get Text Data"), Category = "Easy Localization Tool")
 	static void GetTextData(FText InText, FString& OutPackage, FString& OutNamespace, FString& OutKey, FString& OutSource);
 
 	/**
@@ -75,4 +75,20 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "ELT - Are Text Keys Equal"), Category = "Easy Localization Tool")
 	static bool AreTextKeysEqual(const FText& A, const FText& B);
+
+	/**
+	 * Gets a buffer string from FText. It can be used to save FText data in a file or send it over the network. 
+	 * The buffer contains Package, Namespace and Key. 
+	 * bRequiresQuotes - True if the written text literal must be surrounded by quotes (eg, when saving as a delimited list)
+	 * bStripPackage - Namespace True to strip the package namespace from the written NSLOCTEXT value (eg, when saving cooked data)
+	 */
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Get Text As Buffer"), Category = "Easy Localization Tool")
+	static FString GetTextAsBuffer(const FText& InText, const bool bRequiresQuotes = false, const bool bStripPackageNamespace = false);
+
+	/**
+	 * Creates FText from a buffer string created by GetTextAsBuffer. The buffer should contain Package, Namespace and Key.
+	 * bRequiresQuotes - True if the read text literal must be surrounded by quotes (eg, when loading from a delimited list).
+	 */
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Make Text From Buffer"), Category = "Easy Localization Tool")
+	static FText MakeTextFromBuffer(const FString& InBuffer, const bool bRequiresQuotes = false);
 };
