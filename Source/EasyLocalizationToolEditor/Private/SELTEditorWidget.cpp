@@ -59,11 +59,12 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SImage).Image(&SpacerBrush)
 					]
-					// > Localiation Paths Box
+					// > Localization Paths Box
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+							.ToolTipText(INVTEXT("Name of currently selected Localization. The game can have multiple localization directories."))
 					// >>>> Localization Path selection list
 							+SVerticalBox::Slot()
 							.AutoHeight()
@@ -138,6 +139,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+						.ToolTipText(INVTEXT("List of language codes that are implemented in selected localization directory."))
 					// >>>> Available Langs In Selected Localization Label
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -163,6 +165,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+						.ToolTipText(INVTEXT("List of language codes that are implemented by every localization directory."))
 					// >>>> Available Langs Label
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -197,6 +200,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("Reimports the lastly selected localization with the last used CSV file when editor starts."))
 					// >>>> Reimport on editor startup Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
@@ -229,6 +233,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("Enabled the preview of the localization in the editor."))
 					// >>>> Localization Preview Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
@@ -292,6 +297,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("If enabled it won't save and load lastly set language automatically."))
 					// >>>> Manually Set Last Language Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
@@ -324,6 +330,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("If enabled, when the game starts for the very first time the selected language will be used.\nNormally, the system language will be used or it will fallback to \"en\"."))
 					// >>>> Override Language on Startup Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
@@ -387,6 +394,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+						.ToolTipText(INVTEXT("A CSV column separator. It's \",\" by default, but it can be any other single character."))
 					// >>>> Separator Label
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -451,13 +459,12 @@ KEY - use the key of this entry"))
 									SelectedFallbackWhenEmpty = Item;
 									if (SelectedFallbackWhenEmpty.IsValid())
 									{
-										// TODO: Uncomment when merged with this feature.
-										// WidgetController->OnFallbackWhenEmptyChanged(*Item);
+										WidgetController->OnFallbackWhenEmptyChanged(*Item);
 									}
 								})
 							[
 								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+									.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
 									.Text_Lambda([this]() -> FText
 										{
 											if (SelectedFallbackWhenEmpty.IsValid())
@@ -483,6 +490,7 @@ KEY - use the key of this entry"))
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+						.ToolTipText(INVTEXT("CSV files to import. You can import mutliple files at once to the same Localization."))
 					// >>>> CSV files list box
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -550,6 +558,7 @@ KEY - use the key of this entry"))
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
+						.ToolTipText(INVTEXT("This namespace will be assigned to every key in localization."))
 					// >>>> Global namespace label ================
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -594,6 +603,7 @@ KEY - use the key of this entry"))
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("Select this option to see additional informations in Output Log.\nBe aware that big CSVs might generate a lot of logs."))
 					// >>>> Log Debug Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
@@ -626,17 +636,18 @@ KEY - use the key of this entry"))
 					.AutoHeight()
 					[
 						SNew(SHorizontalBox)
-							.Visibility_Lambda([this]() -> EVisibility
+						.ToolTipText(INVTEXT("Select this option to show a localization preview under the Text fields in the Editor UI."))
+						.Visibility_Lambda([this]() -> EVisibility
+						{
+							if (WidgetController.IsValid())
 							{
-								if (WidgetController.IsValid())
+								if (WidgetController->IsPreviewInUISupported())
 								{
-									if (WidgetController->IsPreviewInUISupported())
-									{
-										return EVisibility::Visible;
-									}
+									return EVisibility::Visible;
 								}
-								return EVisibility::Collapsed;
-							})
+							}
+							return EVisibility::Collapsed;
+						})
 					// >>>> Preview In UI Label
 						+SHorizontalBox::Slot()
 						.AutoWidth()
