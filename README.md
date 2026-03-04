@@ -103,7 +103,8 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/96a3fa10-3e73-4661-9630-32878fae828e)
+![ELTSShot](https://github.com/user-attachments/assets/a32915c5-3fdd-4cdd-b4cc-bdd8e13b7a06)
+
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -113,6 +114,10 @@ The following window should appear:
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
+* **Fallback when Empty** - When the entry is empty should it be filled with a fallback value?
+    * NONE - no fallback
+    * FIRST_LANG - use value of the first language. If that value is empty use Key
+    * KEY - use the key of this entry
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
@@ -310,7 +315,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
 **UE5.2, UE5.4, UE5.5** :  
@@ -319,7 +324,7 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
 Where:
@@ -327,7 +332,8 @@ Where:
 * **-CSVPath** - is a path to the csv file to import. You can provide multiple paths, separated by `,`.
 * **-LocPath** - is a directory where localization files should be stored.
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
-* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used. 
+* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used.
+* **-Fallback** - optional parameter which sets a *Fallback when Empty* value. If not given, the default `NONE` will be used. Can be either `NONE` or `FIRST_LANG` or `KEY` (case insensitive). 
 
 [Back to top](#table-of-content)
 
@@ -409,7 +415,8 @@ CSV must have the same amount of entries in every row (entries can be empty, but
 * `ERROR: CSV file not found!` - this error will encounter when the given CSV file does not exist.
 * `ERROR: Namespaces in CSV not found!` - this error will encounter when CSV has no `Namespace` Column and the `Global Namespace` is not set.
 * `ERROR: Namespace in row 2 (counting from 1) is empty!` - this error will encounter when CSV has `Namespace` Column, but there is an empty entry under it and the `Global Namespace` is not set.
-* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.  
+* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.
+* `Error: The Localization Name or Path is Empty! Can't generate loc files. Ensure the [Internationalization] section in DefaultGame.ini has at least one LocalizationPath.` - make sure there are at least one `LocalizationPaths` entry under `[Internationalization]` section. The default ones were probably overriden and cleared. 
 
 If the text displays a Key value instead of the localized value:
 * If this is a child widget blueprint and the Text is defined in it's parent you might need to use a [LocText Struct](#loctext-struct).
