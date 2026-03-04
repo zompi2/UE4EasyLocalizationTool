@@ -695,7 +695,7 @@ void SELTEditorWidget::FillLocalizationPaths(const TArray<FString>& Paths)
 	SelectedLocPath = LocPathsList.Num() > 0 ? LocPathsList[0] : nullptr;
 	if (WidgetController.IsValid())
 	{
-		WidgetController->OnLocalizationPathSelected(*SelectedLocPath);
+		WidgetController->OnLocalizationPathSelected(SelectedLocPath ? *SelectedLocPath : TEXT(""));
 	}
 }
 
@@ -728,7 +728,7 @@ void SELTEditorWidget::FillAvailableLangs(const TArray<FString>& Langs)
 	SelectedPreviewLang = PreviewsAvailables.Num() > 0 ? PreviewsAvailables[0] : nullptr;
 	if (WidgetController.IsValid())
 	{
-		WidgetController->OnLocalizationPreviewLangChanged(*SelectedPreviewLang);
+		WidgetController->OnLocalizationPreviewLangChanged(SelectedPreviewLang ? *SelectedPreviewLang : TEXT(""));
 	}
 
 	LanguageOverridesAvailable.Empty();
@@ -739,7 +739,7 @@ void SELTEditorWidget::FillAvailableLangs(const TArray<FString>& Langs)
 	SelectedLanguageOverride = LanguageOverridesAvailable.Num() > 0 ? LanguageOverridesAvailable[0] : nullptr;
 	if (WidgetController.IsValid())
 	{
-		WidgetController->OnLocalizationOnFirstRunLangChanged(*SelectedLanguageOverride);
+		WidgetController->OnLocalizationOnFirstRunLangChanged(SelectedLanguageOverride ? *SelectedLanguageOverride : TEXT(""));
 	}
 }
 

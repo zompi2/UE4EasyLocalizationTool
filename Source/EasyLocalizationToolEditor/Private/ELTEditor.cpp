@@ -458,6 +458,11 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 // Any other key/value will be ignored
 bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
+	if (CurrentLocPath.IsEmpty() || GetCurrentLocName().IsEmpty())
+	{
+		OutMessage = TEXT("The Localization Name or Path is Empty! Can't generate loc files.\nEnsure the [Internationalization] section in DefaultGame.ini has at least one LocalizationPath.");
+		return false;
+	}
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
 	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), OutMessage);
@@ -495,6 +500,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		FallbackWhenEmptyType = EFallbackWhenEmptyType::KEY;
 	}
 
+	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	const bool bLogDebug = UELTSettings::GetLogDebug();
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
@@ -550,9 +556,14 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					return false;
 				}
 
+				// Clear the localization directory first.
 				if (bFirstCSV)
 				{
-					IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+					// Ensure we are not deleting any important files by checking if we are in Content directory and the Meta file is there exists.
+					if (LocPath.Contains("Content") && IFileManager::Get().FileExists(*MetaFileName))
+					{
+						IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+					}
 				}
 
 				// Keys will be in first row if not having namespaces.
@@ -647,7 +658,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	FTextLocalizationMetaDataResource LocMeta;
 	LocMeta.NativeCulture = TEXT("en");
 	LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
-	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	if (bLogDebug)
 	{
 		UE_LOG(ELTEditorLog, Log, TEXT("Saved Meta File: %s"), *MetaFileName);
