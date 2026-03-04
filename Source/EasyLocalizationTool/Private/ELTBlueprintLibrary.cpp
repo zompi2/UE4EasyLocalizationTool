@@ -1,8 +1,9 @@
-// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
 #include "Engine/Engine.h"
+#include "Internationalization/Text.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -16,10 +17,7 @@ FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObje
 
 TArray<FString> UELTBlueprintLibrary::GetAvailableLanguages(const UObject* WorldContextObject)
 {
-	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
-		if (UELT* ELT = UELT::Get(ThisWorld))
-			return ELT->GetAvailableLanguages();
-	return {};
+	return UELT::GetAvailableLanguages();
 }
 
 bool UELTBlueprintLibrary::CanSetLanguage(const UObject* WorldContextObject, const FString& Language)
@@ -94,6 +92,18 @@ bool UELTBlueprintLibrary::AreTextKeysEqual(const FText& A, const FText& B)
 	}
 
 	return false;
+}
+
+FString UELTBlueprintLibrary::GetTextAsBuffer(const FText& InText, const bool bRequiresQuotes/* = false*/, const bool bStripPackageNamespace/* = false*/)
+{
+	FString Buffer = TEXT("");
+	FTextStringHelper::WriteToBuffer(Buffer, InText, bRequiresQuotes, bStripPackageNamespace);
+	return Buffer;
+}
+
+FText UELTBlueprintLibrary::MakeTextFromBuffer(const FString& InBuffer, const bool bRequiresQuotes/* = false*/)
+{
+	return FTextStringHelper::CreateFromBuffer(*InBuffer, nullptr, nullptr, bRequiresQuotes);
 }
 
 ELT_PRAGMA_ENABLE_OPTIMIZATION

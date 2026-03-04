@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Damian Nowakowski. All rights reserved.
+// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #pragma once
 
@@ -59,6 +59,24 @@ public:
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
 
+	/**
+	 * Get/Set if the preview should be displayed on UI.
+	 */
+	static bool GetPreviewInUIEnabled();
+	static void SetPreviewInUIEnabled(bool bNewPreviewInUIEnabled);
+
+	/**
+	 * Get/Set fallback when empty entry is imported.
+	 */
+	static FString GetFallbackWhenEmpty();
+	static void SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpty);
+
+	/**
+	 * Get/Set LogDebug flag.
+	 */
+	static bool GetLogDebug();
+	static void SetLogDebug(bool bNewLogDebug);
+
 private:
 
 	UPROPERTY(config)
@@ -81,4 +99,13 @@ private:
 
 	UPROPERTY(config)
 	bool bReimportAtEditorStartup = false;
+
+	UPROPERTY(config)
+	bool bPreviewInUI = true;
+
+	UPROPERTY(config)
+	bool bLogDebug = false;
+
+	UPROPERTY(config)
+	FString FallbackWhenEmpty = TEXT("NONE");
 };

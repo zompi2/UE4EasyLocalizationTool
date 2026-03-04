@@ -4,23 +4,36 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin works on Unreal Engine: 4.27, 5.2, 5.4, 5.5, 5.6.
+The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.7.
 
 # Contact
 
 If you have any question or suggestion regardles this plugin simply add an **Issue** to the github project. I will try my best to answer it quickly :) You can also write an e-mail to me: **zompi2@gmail.com**, however there is a risk that it will be filtered as spam.
 
+# Building the Plugin
+
+To use the Plugin in it's source form:
+1. Download the repository to a new "EasyLocalizationTool" directory and put that directory into your project's Plugin directory.
+2. Add "EasyLocalizationTool" entry to the `PublicDependencyModuleNames` list in your project's `Build.cs` file.
+3. Add ```{
+			"Name": "EasyLocalizationTool",
+			"Enabled": true
+		}``` entry to your project's `.uplugin` file.
+4. Generate Visual Studio project file.
+5. Build your game as usual :)
+
 # Plugin prebuilt binaries  
 
 If you don't want to build the plugin from the source you can get the prebuilt binaries:  
 
-# Fab
-
-The plugin is available on the Unreal Engine Fab! It is free, of course.  
-You can **[download it from here](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32)**.  
-Currently plugin is available for UE version 5.5, 5.4 and 5.2 (5.3 is not available, because of **[this reason](#unrel-engine-53-issue)**).  
-If you are using 4.27 you can download the precompiled package **[from here](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.7.1-4.27-Prebuild.zip)**.  
-The plugin's version that's on the Fab is **1.7.0**.
+| UE version | Plugin version | Link |
+| :--------- | :------------- | :--- |
+| 4.27       | 1.8.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.8.0-4.27-Prebuild.zip) |
+| 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.4        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -62,13 +75,15 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
 > Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
-> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.
+> When specifying country use `-` (`lang-en-US`), not `_` (`lang-en_US`) as Unreal supports only the `-` format. The Plugin will fix the sign if it's not correct.  
+> *(Since 1.8.0)* The Plugin will replace every `_` character with the `-` character when parsing the language keys.
 * **Comments** - just a row for comments
 
 > **!!! VERY IMPORTANT !!!**  
 > 
 > The newline character for every entry **MUST** be a **CRLF**, otherwise UE's Slate will constantly try to replace the given text Source, leading to errors!   
-> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.  
+> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.
+> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
 > Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
 
 [Back to top](#table-of-content)
@@ -80,7 +95,7 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4, UE5.5** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4 - UE5.7** : `Tools -> Easy Localization Tool`  
 
  ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
@@ -88,7 +103,8 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/0dada621-e86c-4fde-9082-98a5b72dd975)
+![ELTSShot](https://github.com/user-attachments/assets/a32915c5-3fdd-4cdd-b4cc-bdd8e13b7a06)
+
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -98,9 +114,14 @@ The following window should appear:
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
+* **Fallback when Empty** - When the entry is empty should it be filled with a fallback value?
+    * NONE - no fallback
+    * FIRST_LANG - use value of the first language. If that value is empty use Key
+    * KEY - use the key of this entry
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
-* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs. 
+* **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
+* **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
 
 [Back to top](#table-of-content)
 
@@ -144,6 +165,10 @@ The **Game** localization is the default one. In order to add another localizati
 ## Using Localizations
 
 In order to use a localized phrase type a **KEY** into the Text form and then set a Namespace and Key values for this Text:
+
+![testexampleloc](https://github.com/user-attachments/assets/1303cbbe-7451-4404-9f45-751967405e02)
+
+For UE4.27 it will look like this:
 
 ![testexampleloc](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67)
 
@@ -202,6 +227,10 @@ Returns a list of available language codes.
 ![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/acc12392-9879-4306-8c5e-e0ee36bf6283)
 
 ``` cpp
+// Since 1.8.0
+UELT::GetAvailableLanguages();
+
+// Before 1.8.0
 GetELT()->GetAvailableLanguages();
 ```
 
@@ -286,7 +315,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
 **UE5.2, UE5.4, UE5.5** :  
@@ -295,7 +324,7 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=,
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
 Where:
@@ -303,7 +332,8 @@ Where:
 * **-CSVPath** - is a path to the csv file to import. You can provide multiple paths, separated by `,`.
 * **-LocPath** - is a directory where localization files should be stored.
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
-* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used. 
+* **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used.
+* **-Fallback** - optional parameter which sets a *Fallback when Empty* value. If not given, the default `NONE` will be used. Can be either `NONE` or `FIRST_LANG` or `KEY` (case insensitive). 
 
 [Back to top](#table-of-content)
 
@@ -328,6 +358,50 @@ Checks if two FTexts' keys are the same. If at least one of them has invalid key
 
 ``` cpp
 UELTBlueprintLibrary::AreTextKeysEqual(MyTextA, MyTextB);
+```
+
+#### Get Localized Text
+
+Gets a localized FText based on the given Namespace and Key. Use this method only for debugging purposes.
+
+![image](https://github.com/user-attachments/assets/0c8956a2-be4d-4c52-a603-77fe4a34dd83)
+
+```cpp
+UELT::GetLocalizedText(TEXT("NAMESPACE"), TEXT("KEY"));
+```
+
+#### Get Localized String
+
+Gets a localized FString based on the given Namespace and Key. Use this method only for debugging purposes.
+
+![image](https://github.com/user-attachments/assets/a4f1801e-bef9-4791-a08d-49807a7c5eaa)
+
+```cpp
+UELT::GetLocalizedString(TEXT("NAMESPACE"), TEXT("KEY"));
+```
+
+#### Get Text As Buffer
+
+Gets a buffer string from FText. It can be used to save FText data in a file or send it over the network.  
+The buffer contains Package, Namespace and Key. 
+- `RequiresQuotes` - True if the written text literal must be surrounded by quotes (eg, when saving as a delimited list)
+- `StripPackage` - Namespace True to strip the package namespace from the written NSLOCTEXT value (eg, when saving cooked data)
+
+![image](https://github.com/user-attachments/assets/7412eb1a-ef18-411e-9e24-75c9c3f034a7)
+
+```cpp
+UELTBlueprintLibrary::GetTextAsBuffer(MyText, false, false);
+```
+
+#### Make Text From Buffer
+
+Creates FText from a buffer string created by GetTextAsBuffer. The buffer should contain Package, Namespace and Key.
+- `RequiresQuotes` - True if the read text literal must be surrounded by quotes (eg, when loading from a delimited list).
+
+![image](https://github.com/user-attachments/assets/c1c3c7f5-6427-4d3c-8343-4e786838c021)
+
+```cpp
+UELTBlueprintLibrary::MakeTextFromBuffer(MyBuffer, false);
 ```
 
 #### Validate Text
@@ -364,7 +438,8 @@ CSV must have the same amount of entries in every row (entries can be empty, but
 * `ERROR: CSV file not found!` - this error will encounter when the given CSV file does not exist.
 * `ERROR: Namespaces in CSV not found!` - this error will encounter when CSV has no `Namespace` Column and the `Global Namespace` is not set.
 * `ERROR: Namespace in row 2 (counting from 1) is empty!` - this error will encounter when CSV has `Namespace` Column, but there is an empty entry under it and the `Global Namespace` is not set.
-* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.  
+* `ERROR: CSV has not enough Columns!` - this error will enncounter when CSV is empty or if it has only one Column. This tool requires at least two Columns in a CSV file to work.
+* `Error: The Localization Name or Path is Empty! Can't generate loc files. Ensure the [Internationalization] section in DefaultGame.ini has at least one LocalizationPath.` - make sure there are at least one `LocalizationPaths` entry under `[Internationalization]` section. The default ones were probably overriden and cleared. 
 
 If the text displays a Key value instead of the localized value:
 * If this is a child widget blueprint and the Text is defined in it's parent you might need to use a [LocText Struct](#loctext-struct).
