@@ -114,7 +114,7 @@ The following window should appear:
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
-* **Fallback when Empty** - When the entry is empty should it be filled with a fallback value?
+* **Fallback when Empty** - *(Since 1.9.0)* When the entry is empty should it be filled with a fallback value?
     * NONE - no fallback
     * FIRST_LANG - use value of the first language. If that value is empty use Key
     * KEY - use the key of this entry
