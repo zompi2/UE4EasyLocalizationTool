@@ -372,13 +372,36 @@ UELT::GetLocalizedText(TEXT("NAMESPACE"), TEXT("KEY"));
 
 #### Get Localized String
 
-
 Gets a localized FString based on the given Namespace and Key. Use this method only for debugging purposes.
 
 ![image](https://github.com/user-attachments/assets/a4f1801e-bef9-4791-a08d-49807a7c5eaa)
 
 ```cpp
 UELT::GetLocalizedString(TEXT("NAMESPACE"), TEXT("KEY"));
+```
+
+#### Get Text As Buffer
+
+Gets a buffer string from FText. It can be used to save FText data in a file or send it over the network.  
+The buffer contains Package, Namespace and Key. 
+- `RequiresQuotes` - True if the written text literal must be surrounded by quotes (eg, when saving as a delimited list)
+- `StripPackage` - Namespace True to strip the package namespace from the written NSLOCTEXT value (eg, when saving cooked data)
+
+![image](https://github.com/user-attachments/assets/7412eb1a-ef18-411e-9e24-75c9c3f034a7)
+
+```cpp
+UELTBlueprintLibrary::GetTextAsBuffer(MyText, false, false);
+```
+
+#### Make Text From Buffer
+
+Creates FText from a buffer string created by GetTextAsBuffer. The buffer should contain Package, Namespace and Key.
+- `RequiresQuotes` - True if the read text literal must be surrounded by quotes (eg, when loading from a delimited list).
+
+![image](https://github.com/user-attachments/assets/c1c3c7f5-6427-4d3c-8343-4e786838c021)
+
+```cpp
+UELTBlueprintLibrary::MakeTextFromBuffer(MyBuffer, false);
 ```
 
 #### Validate Text
