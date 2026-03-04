@@ -65,6 +65,18 @@ public:
 	static bool GetPreviewInUIEnabled();
 	static void SetPreviewInUIEnabled(bool bNewPreviewInUIEnabled);
 
+	/**
+	 * Get/Set fallback when empty entry is imported.
+	 */
+	static FString GetFallbackWhenEmpty();
+	static void SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpty);
+
+	/**
+	 * Get/Set LogDebug flag.
+	 */
+	static bool GetLogDebug();
+	static void SetLogDebug(bool bNewLogDebug);
+
 private:
 
 	UPROPERTY(config)
@@ -90,4 +102,10 @@ private:
 
 	UPROPERTY(config)
 	bool bPreviewInUI = true;
+
+	UPROPERTY(config)
+	bool bLogDebug = false;
+
+	UPROPERTY(config)
+	FString FallbackWhenEmpty = TEXT("NONE");
 };

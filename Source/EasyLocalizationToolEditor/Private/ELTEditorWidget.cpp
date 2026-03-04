@@ -4,6 +4,10 @@
 #include "DesktopPlatformModule.h"
 #include "Interfaces/IPluginManager.h"
 
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+#include "SELTEditorWidget.h"
+#endif
+
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 FString UELTEditorWidget::GetPluginVersion()
@@ -16,6 +20,211 @@ FString UELTEditorWidget::GetPluginVersion()
 	}
 	return TEXT("");
 }
+
+void UELTEditorWidget::CallFillLocalizationPaths(const TArray<FString>& Paths)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillLocalizationPaths(Paths);
+	}
+#else
+	FillLocalizationPaths(Paths);
+#endif
+}
+
+void UELTEditorWidget::CallSetLocalizationPath(const FString& Path)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLocalizationPath(Path);
+	}
+#else
+	SetLocalizationPath(Path);
+#endif
+}
+
+void UELTEditorWidget::CallFillLocalizationName(const FString& LocName)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillLocalizationName(LocName);
+	}
+#else
+	FillLocalizationName(LocName);
+#endif
+}
+
+void UELTEditorWidget::CallFillAvailableLangs(const TArray<FString>& Langs)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillAvailableLangs(Langs);
+	}
+#else
+	FillAvailableLangs(Langs);
+#endif
+}
+
+void UELTEditorWidget::CallFillAvailableLangsInLocFile(const TArray<FString>& Langs)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillAvailableLangsInLocFile(Langs);
+	}
+#else
+	FillAvailableLangsInLocFile(Langs);
+#endif
+}
+
+void UELTEditorWidget::CallFillCSVPath(const TArray<FString>& CSVPaths)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->FillCSVPath(CSVPaths);
+	}
+#else
+	FillCSVPath(CSVPaths);
+#endif
+}
+
+void UELTEditorWidget::CallSetLocalizationPreview(bool LocalizationPreview)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLocalizationPreview(LocalizationPreview);
+	}
+#else
+	SetLocalizationPreview(LocalizationPreview);
+#endif
+}
+
+void UELTEditorWidget::CallSetLocalizationPreviewLang(const FString& PreviewLang)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLocalizationPreviewLang(PreviewLang);
+	}
+#else
+	SetLocalizationPreviewLang(PreviewLang);
+#endif
+}
+
+void UELTEditorWidget::CallSetReimportAtEditorStartup(bool bReimportAtEditorStartup)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetReimportAtEditorStartup(bReimportAtEditorStartup);
+	}
+#else
+	SetReimportAtEditorStartup(bReimportAtEditorStartup);
+#endif
+}
+
+void UELTEditorWidget::CallSetManuallySetLastUsedLanguage(bool bManuallySetLastUsedLanguage)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetManuallySetLastUsedLanguage(bManuallySetLastUsedLanguage);
+	}
+#else
+	SetManuallySetLastUsedLanguage(bManuallySetLastUsedLanguage);
+#endif
+}
+
+void UELTEditorWidget::CallSetLocalizationOnFirstRun(bool LocalizationOnFirstRun)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLocalizationOnFirstRun(LocalizationOnFirstRun);
+	}
+#else
+	SetLocalizationOnFirstRun(LocalizationOnFirstRun);
+#endif
+}
+
+void UELTEditorWidget::CallSetLocalizationOnFirstRunLang(const FString& OnFirstRunLang)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLocalizationOnFirstRunLang(OnFirstRunLang);
+	}
+#else
+	SetLocalizationOnFirstRunLang(OnFirstRunLang);
+#endif
+}
+
+void UELTEditorWidget::CallSetGlobalNamespace(const FString& GlobalNamespace)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetGlobalNamespace(GlobalNamespace);
+	}
+#else
+	SetGlobalNamespace(GlobalNamespace);
+#endif
+}
+
+void UELTEditorWidget::CallSetSeparator(const FString& Separator)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetSeparator(Separator);
+	}
+#else
+	SetSeparator(Separator);
+#endif
+}
+
+void UELTEditorWidget::CallSetFallbackWhenEmpty(const FString& FallbackWhenEmpty)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetFallbackWhenEmpty(FallbackWhenEmpty);
+	}
+#else
+	SetFallbackWhenEmpty(FallbackWhenEmpty);
+#endif
+}
+
+void UELTEditorWidget::CallSetLogDebug(bool bLogDebug)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetLogDebug(bLogDebug);
+	}
+#else
+	SetLogDebug(bLogDebug);
+#endif
+}
+
+void UELTEditorWidget::CallSetPreviewInUI(bool bPreviewInUI)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetPreviewInUI(bPreviewInUI);
+	}
+#else
+	SetPreviewInUI(bPreviewInUI);
+#endif
+}
+
 
 void UELTEditorWidget::OnLocalizationPathSelected(const FString& Path)
 {
@@ -82,6 +291,11 @@ void UELTEditorWidget::OnSeparatorChanged(const FString& NewGlobalNamespace)
 	OnSeparatorChangedDelegate.ExecuteIfBound(NewGlobalNamespace);
 }
 
+void UELTEditorWidget::OnFallbackWhenEmptyChanged(const FString& NewFallback)
+{
+	OnFallbackWhenEmptyChangedDelegate.ExecuteIfBound(NewFallback);
+}
+
 void UELTEditorWidget::OnLogDebugChanged(bool bNewLogDebug)
 {
 	OnLogDebugChangedDelegate.ExecuteIfBound(bNewLogDebug);
@@ -98,6 +312,20 @@ bool UELTEditorWidget::IsPreviewInUISupported()
 	return true;
 #else
 	return false;	
+#endif
+}
+
+TSharedRef<SWidget> UELTEditorWidget::GetWidget()
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid() == false)
+	{
+		MyWidget = SNew(SELTEditorWidget);
+		MyWidget->WidgetController = this;
+	}
+	return MyWidget.ToSharedRef();
+#else
+	return SNullWidget::NullWidget;
 #endif
 }
 

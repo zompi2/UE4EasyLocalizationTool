@@ -102,4 +102,24 @@ void UELTEditorSettings::SetSeparator(const FString& NewSeparator)
 	ELTE_SET_SETTING(Separator, NewSeparator);
 }
 
+FString UELTEditorSettings::GetFallbackWhenEmpty()
+{
+	ELTE_GET_SETTING(FallbackWhenEmpty);
+}
+
+void UELTEditorSettings::SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpty)
+{
+	ELTE_SET_SETTING(FallbackWhenEmpty, NewFallbackWhenEmpty);
+}
+
+bool UELTEditorSettings::GetLogDebug()
+{
+	ELTE_GET_SETTING(bLogDebug);
+}
+
+void UELTEditorSettings::SetLogDebug(bool bNewLogDebug)
+{
+	ELTE_SET_SETTING(bLogDebug, bNewLogDebug);
+}
+
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

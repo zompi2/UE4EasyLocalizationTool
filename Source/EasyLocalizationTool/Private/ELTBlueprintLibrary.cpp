@@ -3,6 +3,7 @@
 #include "ELTBlueprintLibrary.h"
 #include "ELT.h"
 #include "Engine/Engine.h"
+#include "Internationalization/Text.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -91,6 +92,18 @@ bool UELTBlueprintLibrary::AreTextKeysEqual(const FText& A, const FText& B)
 	}
 
 	return false;
+}
+
+FString UELTBlueprintLibrary::GetTextAsBuffer(const FText& InText, const bool bRequiresQuotes/* = false*/, const bool bStripPackageNamespace/* = false*/)
+{
+	FString Buffer = TEXT("");
+	FTextStringHelper::WriteToBuffer(Buffer, InText, bRequiresQuotes, bStripPackageNamespace);
+	return Buffer;
+}
+
+FText UELTBlueprintLibrary::MakeTextFromBuffer(const FString& InBuffer, const bool bRequiresQuotes/* = false*/)
+{
+	return FTextStringHelper::CreateFromBuffer(*InBuffer, nullptr, nullptr, bRequiresQuotes);
 }
 
 ELT_PRAGMA_ENABLE_OPTIMIZATION

@@ -23,6 +23,10 @@
 #include "CSVReader.h"
 #include "LevelEditor.h"
 
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+#include "SELTEditorWidget.h"
+#endif
+
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 DEFINE_LOG_CATEGORY(ELTEditorLog);
@@ -66,8 +70,12 @@ UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 
 bool UELTEditor::CanCreateEditorUI()
 {
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	return true;
+#else
 	// Editor UI can be created only when we have proper Editor Utility Widget Blueprint available.
 	return GetUtilityWidgetBlueprint() != nullptr;
+#endif
 }
 
 TSharedRef<SWidget> UELTEditor::CreateEditorUI()
@@ -83,6 +91,15 @@ TSharedRef<SWidget> UELTEditor::CreateEditorUI()
 TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 {
 	TSharedRef<SWidget> CreatedWidget = SNullWidget::NullWidget;
+
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	EditorWidget = NewObject<UELTEditorWidget>(this);
+	if (EditorWidget)
+	{
+		CreatedWidget = EditorWidget->GetWidget();
+		InitializeTheWidget();
+	}
+#else
 	if (UEditorUtilityWidgetBlueprint* UtilityWidgetBP = GetUtilityWidgetBlueprint())
 	{
 		// Create Widget from the Editor Utility Widget BP.
@@ -95,6 +112,7 @@ TSharedRef<SWidget> UELTEditor::CreateEditorWidget()
 			InitializeTheWidget();
 		}
 	}
+#endif
 
 	// Returned Widget will be docked into the Editor Tab.
 	return CreatedWidget;
@@ -143,6 +161,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnLocalizationOnFirstRunLangChangedDelegate.BindUObject(this, &UELTEditor::OnLocalizationFirstRunLangChanged);
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
+	EditorWidget->OnFallbackWhenEmptyChangedDelegate.BindUObject(this, &UELTEditor::OnFallbackWhenEmptyChanged);
 	EditorWidget->OnLogDebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 	EditorWidget->OnPreviewInUIChangedDelegate.BindUObject(this, &UELTEditor::OnPreviewInUIChanged);
 
@@ -152,52 +171,55 @@ void UELTEditor::InitializeTheWidget()
 	{
 		GameLocPath = FPaths::ConvertRelativePathToFull(GameLocPath);
 	}
-	EditorWidget->FillLocalizationPaths(GameLocPaths);
+	EditorWidget->CallFillLocalizationPaths(GameLocPaths);
 	if (GameLocPaths.Num() > 0)
 	{
 		if (GameLocPaths.Contains(CurrentLocPath))
 		{
-			EditorWidget->SetLocalizationPath(CurrentLocPath);
+			EditorWidget->CallSetLocalizationPath(CurrentLocPath);
 		}
 		else
 		{
-			EditorWidget->SetLocalizationPath(GameLocPaths[0]);
+			EditorWidget->CallSetLocalizationPath(GameLocPaths[0]);
 		}
 	}
 
 	// Set the Localization Preview current values to the Widget.
-	EditorWidget->SetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
-	EditorWidget->SetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
+	EditorWidget->CallSetLocalizationPreview(UELTEditorSettings::GetLocalizationPreview());
+	EditorWidget->CallSetLocalizationPreviewLang(UELTEditorSettings::GetLocalizationPreviewLang());
 
 	// Set the ManualLastLanguageLoad current value to the Widget.
-	EditorWidget->SetManuallySetLastUsedLanguage(UELTSettings::GetManuallySetLastUsedLanguage());
+	EditorWidget->CallSetManuallySetLastUsedLanguage(UELTSettings::GetManuallySetLastUsedLanguage());
 
 	// Set the ReimportAtEditorStartup current value to the Widget.
-	EditorWidget->SetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
+	EditorWidget->CallSetReimportAtEditorStartup(UELTEditorSettings::GetReimportAtEditorStartup());
 
 	// Set the Localization Override At First Run current values to the Widget.
-	EditorWidget->SetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
-	EditorWidget->SetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
+	EditorWidget->CallSetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
+	EditorWidget->CallSetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
 	// Set LogDebug value to the Widget.
-	EditorWidget->SetLogDebug(UELTSettings::GetLogDebug());
+	EditorWidget->CallSetLogDebug(UELTEditorSettings::GetLogDebug());
 
 	// Set PreivewInUI value to the Widget.
-	EditorWidget->SetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
+	EditorWidget->CallSetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
 
 	// Set Global Namespace value for this Localization directory to the Widget.
 	const TMap<FString, FString>& GlobalNamespaces = UELTEditorSettings::GetGlobalNamespaces();
 	if (GlobalNamespaces.Contains(GetCurrentLocName()))
 	{
-		EditorWidget->SetGlobalNamespace(GlobalNamespaces[GetCurrentLocName()]);
+		EditorWidget->CallSetGlobalNamespace(GlobalNamespaces[GetCurrentLocName()]);
 	}
 	else
 	{
-		EditorWidget->SetGlobalNamespace(TEXT(""));
+		EditorWidget->CallSetGlobalNamespace(TEXT(""));
 	}
 
 	// Set Separator
-	EditorWidget->SetSeparator(UELTEditorSettings::GetSeparator());
+	EditorWidget->CallSetSeparator(UELTEditorSettings::GetSeparator());
+
+	// Set Fallback when Empty
+	EditorWidget->CallSetFallbackWhenEmpty(UELTEditorSettings::GetFallbackWhenEmpty());
 }
 
 
@@ -210,15 +232,15 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 	UELTEditorSettings::SetLocalizationPath(CurrentLocPath);
 
 	// Update Localization directory name and path to CSV to the Widget.
-	EditorWidget->FillLocalizationName(GetCurrentLocName());
-	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
+	EditorWidget->CallFillLocalizationName(GetCurrentLocName());
+	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
 	RefreshAvailableLangs(false);
-	EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
+	EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
 	// Set Global Namespace for this Localization directory to the Widget.
-	EditorWidget->SetGlobalNamespace(GetCurrentGlobalNamespace());
+	EditorWidget->CallSetGlobalNamespace(GetCurrentGlobalNamespace());
 }
 
 void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
@@ -233,7 +255,7 @@ void UELTEditor::OnCSVPathChanged(const TArray<FString>& NewPaths)
 		CSVPaths.Add(GetCurrentLocName(), PathsListToString(RelativeToAbsolutePaths(NewPaths)));
 	}
 	UELTEditorSettings::SetCSVPaths(CSVPaths);
-	EditorWidget->FillCSVPath(PathsStringToList(GetCurrentCSVPath()));
+	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 }
 
 void UELTEditor::OnGenerateLocFiles()
@@ -320,20 +342,25 @@ void UELTEditor::OnSeparatorChanged(const FString& NewSeparator)
 	if (Separator.Len() == 0)
 	{
 		Separator = TEXT(",");
-		EditorWidget->SetSeparator(Separator);
+		EditorWidget->CallSetSeparator(Separator);
 	}
 	else if (Separator.Len() > 1)
 	{
 		Separator = FString(1, *Separator);
-		EditorWidget->SetSeparator(Separator);
+		EditorWidget->CallSetSeparator(Separator);
 	}
 	UELTEditorSettings::SetSeparator(Separator);
+}
+
+void UELTEditor::OnFallbackWhenEmptyChanged(const FString& NewFallback)
+{
+	UELTEditorSettings::SetFallbackWhenEmpty(NewFallback);
 }
 
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// "Log Debug" flag has been changed in the Widget. Save this setting.
-	UELTSettings::SetLogDebug(bNewLogDebug);
+	UELTEditorSettings::SetLogDebug(bNewLogDebug);
 }
 
 void UELTEditor::OnPreviewInUIChanged(bool bNewPreviewInUI)
@@ -389,8 +416,8 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 	if (bRefreshUI)
 	{
 		// If the RefreshUI has been requested - set the available languages on the Widget.
-		EditorWidget->FillAvailableLangs(CurrentAvailableLangs);
-		EditorWidget->FillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
+		EditorWidget->CallFillAvailableLangs(CurrentAvailableLangs);
+		EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 		
 		// If the Preview or OverrideAtFirstLaunch languages are not available after refreshing
 		// available languages - set them to empty. If they are available - ensure they are properly displayed.
@@ -404,7 +431,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 		else
 		{
-			EditorWidget->SetLocalizationPreviewLang(LangPreview);
+			EditorWidget->CallSetLocalizationPreviewLang(LangPreview);
 		}
 
 		if (CurrentAvailableLangs.Contains(LangAtFirstLaunch) == false)
@@ -413,7 +440,7 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 		else
 		{
-			EditorWidget->SetLocalizationOnFirstRunLang(LangAtFirstLaunch);
+			EditorWidget->CallSetLocalizationOnFirstRunLang(LangAtFirstLaunch);
 		}
 	}
 
@@ -431,17 +458,30 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 // Any other key/value will be ignored
 bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
+	if (CurrentLocPath.IsEmpty() || GetCurrentLocName().IsEmpty())
+	{
+		OutMessage = TEXT("The Localization Name or Path is Empty! Can't generate loc files.\nEnsure the [Internationalization] section in DefaultGame.ini has at least one LocalizationPath.");
+		return false;
+	}
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
 {
-	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, OutMessage);
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage)
+// Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
+enum class EFallbackWhenEmptyType : uint8
+{
+	NONE,
+	FIRST_LANG,
+	KEY
+};
+
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
 {
 	if (Separator.Len() != 1)
 	{
@@ -449,7 +489,19 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		return false;
 	}
 
-	const bool bLogDebug = UELTSettings::GetLogDebug();
+	// Get the FallbackWhenEmpty type.
+	EFallbackWhenEmptyType FallbackWhenEmptyType = EFallbackWhenEmptyType::NONE;
+	if (FallbackWhenEmpty == TEXT("FIRST_LANG"))
+	{
+		FallbackWhenEmptyType = EFallbackWhenEmptyType::FIRST_LANG;
+	} 
+	else if (FallbackWhenEmpty == TEXT("KEY"))
+	{
+		FallbackWhenEmptyType = EFallbackWhenEmptyType::KEY;
+	}
+
+	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
+	const bool bLogDebug = UELTEditorSettings::GetLogDebug();
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
 	for (const FString& CSVPath : CSVPaths)
@@ -504,9 +556,14 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					return false;
 				}
 
+				// Clear the localization directory first.
 				if (bFirstCSV)
 				{
-					IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+					// Ensure we are not deleting any important files by checking if we are in Content directory and the Meta file is there exists.
+					if (LocPath.Contains("Content") && IFileManager::Get().FileExists(*MetaFileName))
+					{
+						IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+					}
 				}
 
 				// Keys will be in first row if not having namespaces.
@@ -523,7 +580,8 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 				}
 
-				for (int32 Column = (bHasNamespaces ? FirstColumn+2 : FirstColumn+1); Column < Columns.Num(); Column++)
+				const int32 FirstLangColumn = bHasNamespaces ? (FirstColumn + 2) : (FirstColumn + 1);
+				for (int32 Column = FirstLangColumn; Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
 					FString Lang = Locs.Values[0].ToLower();
@@ -544,16 +602,39 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								return false;
 							}
 
-							if (bLogDebug)
+							// If the localized string is empty and the fallback option is set - use the fallback value.
+							FString LocalizedString = Locs.Values[Key];
+							if (FallbackWhenEmptyType != EFallbackWhenEmptyType::NONE)
 							{
-								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *(Locs.Values[Key]));
+								if (LocalizedString.TrimStartAndEnd().IsEmpty())
+								{
+									if (FallbackWhenEmptyType == EFallbackWhenEmptyType::FIRST_LANG)
+									{
+										LocalizedString = Columns[FirstLangColumn].Values[Key];
+
+										// If the first language value is also empty - use the key as a fallback.
+										if (LocalizedString.TrimStartAndEnd().IsEmpty())
+										{
+											LocalizedString = Keys.Values[Key];
+										}
+									}
+									else if (FallbackWhenEmptyType == EFallbackWhenEmptyType::KEY)
+									{
+										LocalizedString = Keys.Values[Key];
+									}
+								}
 							}
 							
+							if (bLogDebug)
+							{
+								UE_LOG(ELTEditorLog, Log, TEXT("%s | %s | %s | %s"), *Lang, *Namespace, *(Keys.Values[Key]), *LocalizedString);
+							}
+
 							LocRes.AddEntry(
 								FTextKey(Namespace),
 								FTextKey(Keys.Values[Key]),
 								Keys.Values[Key],
-								Locs.Values[Key],
+								LocalizedString,
 								0);
 						}
 					}
@@ -577,7 +658,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	FTextLocalizationMetaDataResource LocMeta;
 	LocMeta.NativeCulture = TEXT("en");
 	LocMeta.NativeLocRes = TEXT("en") / LocName + TEXT(".locres");
-	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	if (bLogDebug)
 	{
 		UE_LOG(ELTEditorLog, Log, TEXT("Saved Meta File: %s"), *MetaFileName);

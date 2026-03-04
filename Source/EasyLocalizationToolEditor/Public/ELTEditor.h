@@ -49,8 +49,8 @@ public:
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
-	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
 
 private:
 
@@ -138,6 +138,11 @@ private:
 	 * Called when "Separaotr" option has been changed in the Widget.
 	 */
 	void OnSeparatorChanged(const FString& NewSeparator);
+
+	/**
+	 * Called when "FallbackWhenEmpty" option has been changed in the Widget.
+	 */
+	void OnFallbackWhenEmptyChanged(const FString& NewFallback);
 
 	/**
 	 * Called when "LogDebug" option has been changed in the Widget.
