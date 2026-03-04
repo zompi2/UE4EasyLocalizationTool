@@ -197,8 +197,7 @@ void UELTEditorWidget::CallSetFallbackWhenEmpty(const FString& FallbackWhenEmpty
 		MyWidget->SetFallbackWhenEmpty(FallbackWhenEmpty);
 	}
 #else
-	// TODO: Uncomment it when feature is merged.
-	//SetFallbackWhenEmpty(FallbackWhenEmpty);
+	SetFallbackWhenEmpty(FallbackWhenEmpty);
 #endif
 }
 
