@@ -199,7 +199,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->CallSetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
 	// Set LogDebug value to the Widget.
-	EditorWidget->CallSetLogDebug(UELTSettings::GetLogDebug());
+	EditorWidget->CallSetLogDebug(UELTEditorSettings::GetLogDebug());
 
 	// Set PreivewInUI value to the Widget.
 	EditorWidget->CallSetPreviewInUI(UELTEditorSettings::GetPreviewInUIEnabled());
@@ -360,7 +360,7 @@ void UELTEditor::OnFallbackWhenEmptyChanged(const FString& NewFallback)
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// "Log Debug" flag has been changed in the Widget. Save this setting.
-	UELTSettings::SetLogDebug(bNewLogDebug);
+	UELTEditorSettings::SetLogDebug(bNewLogDebug);
 }
 
 void UELTEditor::OnPreviewInUIChanged(bool bNewPreviewInUI)
@@ -501,7 +501,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	}
 
 	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
-	const bool bLogDebug = UELTSettings::GetLogDebug();
+	const bool bLogDebug = UELTEditorSettings::GetLogDebug();
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
 	for (const FString& CSVPath : CSVPaths)

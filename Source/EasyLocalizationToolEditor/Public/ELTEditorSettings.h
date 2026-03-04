@@ -71,6 +71,12 @@ public:
 	static FString GetFallbackWhenEmpty();
 	static void SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpty);
 
+	/**
+	 * Get/Set LogDebug flag.
+	 */
+	static bool GetLogDebug();
+	static void SetLogDebug(bool bNewLogDebug);
+
 private:
 
 	UPROPERTY(config)
@@ -96,6 +102,9 @@ private:
 
 	UPROPERTY(config)
 	bool bPreviewInUI = true;
+
+	UPROPERTY(config)
+	bool bLogDebug = false;
 
 	UPROPERTY(config)
 	FString FallbackWhenEmpty = TEXT("NONE");

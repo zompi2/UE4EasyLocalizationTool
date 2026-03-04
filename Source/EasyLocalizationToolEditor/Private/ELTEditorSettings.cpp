@@ -112,4 +112,14 @@ void UELTEditorSettings::SetFallbackWhenEmpty(const FString& NewFallbackWhenEmpt
 	ELTE_SET_SETTING(FallbackWhenEmpty, NewFallbackWhenEmpty);
 }
 
+bool UELTEditorSettings::GetLogDebug()
+{
+	ELTE_GET_SETTING(bLogDebug);
+}
+
+void UELTEditorSettings::SetLogDebug(bool bNewLogDebug)
+{
+	ELTE_SET_SETTING(bLogDebug, bNewLogDebug);
+}
+
 ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION

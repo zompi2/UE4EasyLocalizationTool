@@ -2,8 +2,9 @@
 * Added the option to set a fallback value when a value in CSV is empty.
 * Added a safety check to prevent from importing CSV files when no Localization storage directory is specified.
 * GetTextAsBuffer and MakeTextFromBuffer functions added which allows to serialize FTexts.
-* Editor Widget rewritten into raw Slate widget to ensure it will be valid for all Engine versions.
 * Tooltips for Editor Widget added.
+* Editor Widget rewritten into raw Slate widget to ensure it will be valid for all Engine versions.
+* Moved bLogDebug property from game config to editor config (where it actually should be).
 
 ###### 1.8.0
 * Text localization preview can be displayed under the Text input box in the editor UI and BP nodes (available for UE5.5 and newer).
