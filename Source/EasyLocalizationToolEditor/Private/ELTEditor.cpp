@@ -491,11 +491,11 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 	// Get the FallbackWhenEmpty type.
 	EFallbackWhenEmptyType FallbackWhenEmptyType = EFallbackWhenEmptyType::NONE;
-	if (FallbackWhenEmpty == TEXT("FIRST_LANG"))
+	if (FallbackWhenEmpty.Equals(TEXT("FIRST_LANG"), ESearchCase::IgnoreCase))
 	{
 		FallbackWhenEmptyType = EFallbackWhenEmptyType::FIRST_LANG;
 	} 
-	else if (FallbackWhenEmpty == TEXT("KEY"))
+	else if (FallbackWhenEmpty.Equals(TEXT("KEY"), ESearchCase::IgnoreCase))
 	{
 		FallbackWhenEmptyType = EFallbackWhenEmptyType::KEY;
 	}
