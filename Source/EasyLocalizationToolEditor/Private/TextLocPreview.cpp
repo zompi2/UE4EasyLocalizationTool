@@ -32,12 +32,13 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 
 	TArray<FName> CategoryNames;
 	DetailLayout.GetCategoryNames(CategoryNames);
-	if (CategoryNames.Contains("Routing"))
-	{
-		int z =0;
-	}
 	for (const FName& CatName : CategoryNames)
 	{
+		if (CatName.ToString().Contains("|"))
+		{
+			continue;
+		}
+
 		IDetailCategoryBuilder& Category = DetailLayout.EditCategory(CatName);
 
 		TArray<TSharedRef<IPropertyHandle>> PropertyHandles;
