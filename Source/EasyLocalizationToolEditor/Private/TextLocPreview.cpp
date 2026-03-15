@@ -35,71 +35,79 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 
 		TArray<TSharedRef<IPropertyHandle>> PropertyHandles;
 		Category.GetDefaultProperties(PropertyHandles);
-		for (TSharedRef<IPropertyHandle>& Prop : PropertyHandles)
+		for (TSharedRef<IPropertyHandle>& PropHandle : PropertyHandles)
 		{
-			if (Prop->IsValidHandle())
+			if (PropHandle->IsValidHandle() == false)
 			{
-				FText TextPropValue;
-				if (Prop->GetValue(TextPropValue) == FPropertyAccess::Success)
-				{
-					if (CatName == "DefaultValueCategory")
-					{
-						DetailLayout.EditCategory(CatName)
-							.AddCustomRow(INVTEXT("LocPreview"))
-							.ValueContent()
-							[
-								SNew(SHorizontalBox)
-									+ SHorizontalBox::Slot()
-									.AutoWidth()
-									[
-										SNew(STextBlock).Text_Lambda([this, Prop]
-										{
-											FText TextValue;
-											Prop->GetValue(TextValue);
-											return TextValue;
-										})
-									]
-							];
-					}
-					else
-					{
-						IDetailPropertyRow* PropertyRow = DetailLayout.EditDefaultProperty(Prop);
-						if (PropertyRow)
-						{
-							TSharedPtr<SWidget> OutNameWidget;
-							TSharedPtr<SWidget> OutValueWidget;
-							PropertyRow->GetDefaultWidgets(OutNameWidget, OutValueWidget);
-
-							PropertyRow->CustomWidget()
-								.NameContent()
-								[
-									OutNameWidget->AsShared()
-								]
-								.ValueContent()
-								[
-									SNew(SVerticalBox)
-										+ SVerticalBox::Slot()
-										.AutoHeight()
-										.Padding(0.f, 6.f)
-										[
-											OutValueWidget->AsShared()
-										]
-										+ SVerticalBox::Slot()
-										.AutoHeight()
-										[
-											SNew(STextBlock).Text_Lambda([this, Prop]
-											{
-												FText TextValue;
-												Prop->GetValue(TextValue);
-												return TextValue;
-											})
-											.Margin(FMargin(0.f, 0.f, 0.f, 6.f))
-										]
-								];
-						}
-					}		
-				}
+				continue;
 			}
+
+			FProperty* Prop = PropHandle->GetProperty();
+			if (Prop == nullptr)
+			{
+				continue;
+			}
+
+			if (Prop->IsA(FTextProperty::StaticClass()) == false)
+			{
+				continue;
+			}
+
+			if (CatName == "DefaultValueCategory")
+			{
+				Category.AddCustomRow(INVTEXT("LocPreview"))
+					.ValueContent()
+					[
+						SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(STextBlock).Text_Lambda([this, PropHandle]
+								{
+									FText TextValue;
+									PropHandle->GetValue(TextValue);
+									return TextValue;
+								})
+							]
+					];
+			}
+			else
+			{
+				IDetailPropertyRow* PropertyRow = DetailLayout.EditDefaultProperty(PropHandle);
+				if (PropertyRow)
+				{
+					TSharedPtr<SWidget> OutNameWidget;
+					TSharedPtr<SWidget> OutValueWidget;
+					PropertyRow->GetDefaultWidgets(OutNameWidget, OutValueWidget);
+
+					PropertyRow->CustomWidget()
+						.NameContent()
+						[
+							OutNameWidget->AsShared()
+						]
+						.ValueContent()
+						[
+							SNew(SVerticalBox)
+								+ SVerticalBox::Slot()
+								.AutoHeight()
+								.Padding(0.f, 6.f)
+								[
+									OutValueWidget->AsShared()
+								]
+								+ SVerticalBox::Slot()
+								.AutoHeight()
+								[
+									SNew(STextBlock).Text_Lambda([this, PropHandle]
+									{
+										FText TextValue;
+										PropHandle->GetValue(TextValue);
+										return TextValue;
+									})
+									.Margin(FMargin(0.f, 0.f, 0.f, 6.f))
+								]
+						];
+				}
+			}		
 		}
 	}
 }
