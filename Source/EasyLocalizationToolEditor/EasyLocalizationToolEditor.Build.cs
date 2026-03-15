@@ -38,7 +38,8 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"Projects",
 				"GraphEditor",
 				"EditorWidgets",
-				"BlueprintGraph"
+				"BlueprintGraph",
+				"PropertyEditor"
 			}
 		);
 
@@ -51,7 +52,7 @@ public class EasyLocalizationToolEditor : ModuleRules
 		PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTEDITOR_"));
 
 		// Disable optimization (for easier debugging)
-		bool bDisableOptimization = false;
+		bool bDisableOptimization = true;
 		if (bDisableOptimization)
 		{
 			if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)

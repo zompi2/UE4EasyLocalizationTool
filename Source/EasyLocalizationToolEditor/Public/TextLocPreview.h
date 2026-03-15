@@ -23,6 +23,14 @@ public:
 	/** The blueprint we are editing */
 	TWeakObjectPtr<UBlueprint> BlueprintPtr;
 
+	// Creates a button strip in each category that contains reflected functions marked as CallInEditor
+	void AddCallInEditorMethods(IDetailLayoutBuilder& DetailBuilder);
+
+	TArray<TWeakObjectPtr<UObject>> GetFunctionCallExecutionContext(TWeakObjectPtr<UFunction> InWeakFunction) const;
+
+	// The list of selected objects, used when invoking a CallInEditor method
+	TArray<TWeakObjectPtr<UObject>> SelectedObjectsList;
+
 private:
 
 	FText EditedText;

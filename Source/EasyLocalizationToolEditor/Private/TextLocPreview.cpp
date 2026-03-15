@@ -12,6 +12,7 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "ELTEditorSettings.h"
 #include "SGraphPinTextPreview.h"
+#include "PropertyCustomizationHelpers.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -22,6 +23,8 @@ TSharedRef<IDetailCustomization> FTextLocPreview::MakeInstance()
 
 void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 {
+	AddCallInEditorMethods(DetailLayout);
+
 	if (UELTEditorSettings::GetPreviewInUIEnabled() == false)
 	{
 		return;
@@ -29,6 +32,10 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 
 	TArray<FName> CategoryNames;
 	DetailLayout.GetCategoryNames(CategoryNames);
+	if (CategoryNames.Contains("Routing"))
+	{
+		int z =0;
+	}
 	for (const FName& CatName : CategoryNames)
 	{
 		IDetailCategoryBuilder& Category = DetailLayout.EditCategory(CatName);
@@ -111,6 +118,30 @@ void FTextLocPreview::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 		}
 	}
 }
+
+void FTextLocPreview::AddCallInEditorMethods(IDetailLayoutBuilder& DetailBuilder)
+{
+	DetailBuilder.GetObjectsBeingCustomized(/*out*/ SelectedObjectsList);
+	SelectedObjectsList.RemoveAllSwap([](TWeakObjectPtr<UObject> ObjPtr) { UObject* Obj = ObjPtr.Get(); return (Obj == nullptr) || Obj->HasAnyFlags(RF_ArchetypeObject); });
+
+	TArray<UFunction*> CallInEditorFunctions;
+	PropertyCustomizationHelpers::GetCallInEditorFunctionsForClass(
+		DetailBuilder.GetBaseClass(),
+		CallInEditorFunctions);
+
+	PropertyCustomizationHelpers::AddFunctionCallWidgets(
+		DetailBuilder,
+		CallInEditorFunctions,
+		FPropertyFunctionCallDelegates(
+			FPropertyFunctionCallDelegates::FOnGetExecutionContext::CreateSP(this, &FTextLocPreview::GetFunctionCallExecutionContext)
+		));
+}
+
+TArray<TWeakObjectPtr<UObject>> FTextLocPreview::GetFunctionCallExecutionContext(TWeakObjectPtr<UFunction> InWeakFunction) const
+{
+	return SelectedObjectsList;
+}
+
 
 TSharedPtr<SGraphPin> FTextPreviewGraphPanelPinFactory::CreatePin(UEdGraphPin* Pin) const
 {
