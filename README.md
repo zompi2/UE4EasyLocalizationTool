@@ -123,6 +123,8 @@ The following window should appear:
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
 * **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
 
+> If you encounter any Editor UI bugs with the **Show preview in UI** option enabled (or with the whole plugin enabled) please report that and see if disabling the `bAddPreviewInUI` in the `EasyLocalizationToolEditor.Build.cs` file helps.
+
 [Back to top](#table-of-content)
 
 ## Import
