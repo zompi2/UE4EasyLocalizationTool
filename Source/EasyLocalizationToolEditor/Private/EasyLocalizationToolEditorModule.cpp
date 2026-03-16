@@ -162,6 +162,9 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
 		PropertyModule.RegisterCustomPropertyTypeLayout("LocText", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FLocTextDetails::MakeInstance));
 #if ELTEDITOR_WITH_PREVIEW_IN_UI
+		// This will add a preview of the localized text under any FText property in BP editor and details panel.
+		// It has to overwrite whole UObject class layout, instead of the property type layout, because the built-in property types
+		// like FText can't be overriden. 
 		PropertyModule.RegisterCustomClassLayout(UObject::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FTextLocPreview::MakeInstance));
 #endif
 	}
