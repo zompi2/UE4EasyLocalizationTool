@@ -39,8 +39,9 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"GraphEditor",
 				"EditorWidgets",
 				"BlueprintGraph",
-				"PropertyEditor"
-			}
+				"PropertyEditor",
+				"ToolWidgets"
+            }
 		);
 
 		if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4)
