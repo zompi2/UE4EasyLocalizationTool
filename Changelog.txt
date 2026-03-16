@@ -1,3 +1,7 @@
+###### 1.9.1
+* Fixed the broken "Call In Editor" option which was broken by RegisterCustomClassLayout, which is required to display FText preview in the BP editor.
+* Fixed the duplicated categories when Localization preview in editor was enabled.
+
 ###### 1.9.0
 * Added the option to set a fallback value when a value in CSV is empty.
 * Added a safety check to prevent from importing CSV files when no Localization storage directory is specified.

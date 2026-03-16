@@ -28,12 +28,12 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 
 | UE version | Plugin version | Link |
 | :--------- | :------------- | :--- |
-| 4.27       | 1.8.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.8.0-4.27-Prebuild.zip) |
+| 4.27       | 1.9.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.9.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.4        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.7        | 1.8.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.4        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -114,7 +114,7 @@ The following window should appear:
 * **Manually Set Last Language** - if enabled it won't save and load lastly set language automatically. 
 * **Override Language on Startup** - if enabled, when the game starts for the very first time the selected language will be used. Normally, the system language will be used or it will fallback to `en`.
 * **Separator** - a CSV column separator. It's `,` by default, but it can be any other single character.
-* **Fallback when Empty** - When the entry is empty should it be filled with a fallback value?
+* **Fallback when Empty** - *(Since 1.9.0)* When the entry is empty should it be filled with a fallback value?
     * NONE - no fallback
     * FIRST_LANG - use value of the first language. If that value is empty use Key
     * KEY - use the key of this entry

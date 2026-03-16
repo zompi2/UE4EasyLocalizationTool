@@ -4,13 +4,14 @@
 
 #if ELTEDITOR_WITH_PREVIEW_IN_UI
 
-#include "CoreMinimal.h"
+#include "ELTObjectDetails.h"
 #include "IDetailCustomization.h"
 #include "UObject/UnrealType.h"
 #include "UObject/WeakFieldPtr.h"
 #include "EdGraphUtilities.h"
+#include "DetailCategoryBuilder.h"
 
-class EASYLOCALIZATIONTOOLEDITOR_API FTextLocPreview : public IDetailCustomization
+class EASYLOCALIZATIONTOOLEDITOR_API FTextLocPreview : public FELTObjectDetails
 {
 public:
 
@@ -22,17 +23,13 @@ public:
 
 	/** The blueprint we are editing */
 	TWeakObjectPtr<UBlueprint> BlueprintPtr;
-
-private:
-
-	FText EditedText;
-	TSharedPtr<class IPropertyHandle> TextPropHandle;
 };
 
 struct EASYLOCALIZATIONTOOLEDITOR_API FTextPreviewGraphPanelPinFactory : public FGraphPanelPinFactory
 {
 public:
 
+	/** Create a custom pin for the FText preview in BP nodes. */
 	TSharedPtr<SGraphPin> CreatePin(UEdGraphPin* Pin) const override;
 };
 
