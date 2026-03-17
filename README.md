@@ -31,9 +31,9 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 | 4.27       | 1.9.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.9.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.4        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.7        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -464,7 +464,7 @@ The workflow of importing CSV into localization files has been implemented with 
 
 # Special Thanks
 
-I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work and to everyone that contributed to this project.  
+I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work, to [gnat](https://github.com/gnat) for finding elusive bugs, and to everyone that contributed to this project.  
 Also, I want to thank You for using this plugin! It is very important for me that my work is useful for someone!  
 Happy coding!
 
