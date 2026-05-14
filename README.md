@@ -320,7 +320,7 @@ set PROJECT_PATH=C:\MyGame
 call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
-**UE5.2, UE5.4, UE5.5** :  
+**UE5.2, UE5.4-UE5.7** :  
 
 ```
 set UE5_PATH=C:\UE5
