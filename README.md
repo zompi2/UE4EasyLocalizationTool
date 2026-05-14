@@ -4,7 +4,7 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.7.
+The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.8.
 
 # Contact
 
@@ -34,6 +34,7 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 | 5.5        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.6        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.7        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.8        | 1.9.2          | Soon |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -95,7 +96,7 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4 - UE5.7** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4 - UE5.8** : `Tools -> Easy Localization Tool`  
 
  ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
@@ -320,7 +321,7 @@ set PROJECT_PATH=C:\MyGame
 call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
-**UE5.2, UE5.4-UE5.7** :  
+**UE5.2, UE5.4-UE5.8** :  
 
 ```
 set UE5_PATH=C:\UE5
