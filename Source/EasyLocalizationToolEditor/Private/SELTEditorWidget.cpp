@@ -16,7 +16,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("KEY"))));
 	SelectedFallbackWhenEmpty = FallbackWhenEmptyAvailable[0];
 
-	SpacerBrush.SetImageSize(FVector2D(450.f, 1.f));
+	SpacerBrush.SetImageSize(FVector2D(600.f, 1.f));
 	SpacerBrush.TintColor = FSlateColor(FLinearColor(.62f,.62f,.62f,1.f));
 
 	SUserWidget::Construct(SUserWidget::FArguments()
@@ -207,7 +207,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Reimport on editor startup Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -244,7 +244,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Localization Preview Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -313,7 +313,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Manually Set Last Language Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -350,7 +350,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Override Language on Startup Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -419,7 +419,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Separator Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -462,7 +462,7 @@ KEY - use the key of this entry"))
 					// >>>> Fallback when empty Label
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -505,7 +505,7 @@ KEY - use the key of this entry"))
 					// > Generate Key Reference String Table on Import Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("\
@@ -514,15 +514,18 @@ These String Table can be used to easily assign keys to FText properties.\n\n\
 The String Table will be generated in the Localization Folder path and IS OVERRIDDEN if it already exists."))
 					// >>>> Generate Key Reference String Table CSV Import Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(400.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Generate Key Reference String Table on Import:"))
 						]
 					// >>>> Generate Key Reference String Table on Import checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -628,7 +631,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// >>>> Global namespace label ================
 						+SHorizontalBox::Slot()
 						.FillContentWidth(1)
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -676,7 +679,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 						.ToolTipText(INVTEXT("Select this option to see additional informations in Output Log.\nBe aware that big CSVs might generate a lot of logs."))
 					// >>>> Log Debug Label
 						+SHorizontalBox::Slot()
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
@@ -723,7 +726,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 						})
 					// >>>> Preview In UI Label
 						+SHorizontalBox::Slot()
-						.MaxWidth(250.0f)
+						.MaxWidth(400.0f)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
