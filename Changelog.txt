@@ -1,5 +1,6 @@
 ###### 1.9.2
 * Fixed deprecation warnings for UE5.8
+* Fixed compilation error for UE4.27
 
 ###### 1.9.1
 * Fixed the broken "Call In Editor" option which was broken by RegisterCustomClassLayout, which is required to display FText preview in the BP editor. (the bug was present for UE 5.5+ version)
