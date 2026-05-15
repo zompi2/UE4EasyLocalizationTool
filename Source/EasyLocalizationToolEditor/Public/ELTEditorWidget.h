@@ -23,6 +23,7 @@ DECLARE_DELEGATE_OneParam(FOnLocalizationPreviewLangChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FManuallySetLastLanguageChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnLocalizationOnFirstRunLangChanged, const FString&);
+DECLARE_DELEGATE_OneParam(FOnGenerateKeyReferenceStringTableChanged, bool);
 DECLARE_DELEGATE_OneParam(FOnGlobalNamespaceChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnSeparatorChanged, const FString&);
 DECLARE_DELEGATE_OneParam(FOnFallbackWhenEmptyChanged, const FString&);
@@ -197,6 +198,20 @@ public:
 
 
 	/**
+	 * Set "Generate Key Reference String Table On CSV Import" to the Widget.
+	 */
+	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
+	void SetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable);
+	void CallSetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable);
+	
+	/**
+	 * "Generate Key Reference String Table On CSV Import" option has been changed on the Widget.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Easy Localization Tool Editor")
+	void OnGenerateKeyReferenceStringTableChanged(bool bGenerateKeyReferenceStringTable);
+
+
+	/**
 	 * Set "Global Namespace" option to the Widget.
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
@@ -287,6 +302,7 @@ public:
 	FManuallySetLastLanguageChanged OnManuallySetLastLanguageChangedDelegate;
 	FOnLocalizationOnFirstRunChanged OnLocalizationOnFirstRunChangedDelegate;
 	FOnLocalizationOnFirstRunLangChanged OnLocalizationOnFirstRunLangChangedDelegate;
+	FOnGenerateKeyReferenceStringTableChanged OnGenerateKeyReferenceStringTableChangedDelegate;
 	FOnGlobalNamespaceChanged OnGlobalNamespaceChangedDelegate;
 	FOnSeparatorChanged OnSeparatorChangedDelegate;
 	FOnFallbackWhenEmptyChanged OnFallbackWhenEmptyChangedDelegate;

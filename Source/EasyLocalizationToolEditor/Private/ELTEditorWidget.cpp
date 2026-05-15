@@ -153,6 +153,18 @@ void UELTEditorWidget::CallSetLocalizationOnFirstRun(bool LocalizationOnFirstRun
 #endif
 }
 
+void UELTEditorWidget::CallSetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable)
+{
+#if ELTEDITOR_USE_SLATE_EDITOR_UI
+	if (MyWidget.IsValid())
+	{
+		MyWidget->SetGenerateKeyReferenceStringTable(bGenerateKeyReferenceStringTable);
+	}
+#else
+	SetReimportAtEditorStartup(bReimportAtEditorStartup);
+#endif
+}
+
 void UELTEditorWidget::CallSetLocalizationOnFirstRunLang(const FString& OnFirstRunLang)
 {
 #if ELTEDITOR_USE_SLATE_EDITOR_UI
@@ -279,6 +291,11 @@ void UELTEditorWidget::OnLocalizationOnFirstRun(bool LocalizationOnFirstRun)
 void UELTEditorWidget::OnLocalizationOnFirstRunLangChanged(const FString& OnFirstRunLang)
 {
 	OnLocalizationOnFirstRunLangChangedDelegate.ExecuteIfBound(OnFirstRunLang);
+}
+
+void UELTEditorWidget::OnGenerateKeyReferenceStringTableChanged(bool bGenerateKeyReferenceStringTable)
+{
+	OnGenerateKeyReferenceStringTableChangedDelegate.ExecuteIfBound(bGenerateKeyReferenceStringTable);
 }
 
 void UELTEditorWidget::OnGlobalNamespaceChanged(const FString& NewGlobalNamespace)

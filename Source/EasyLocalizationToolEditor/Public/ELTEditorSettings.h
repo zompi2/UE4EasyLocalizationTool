@@ -59,6 +59,9 @@ public:
 	static bool GetReimportAtEditorStartup();
 	static void SetReimportAtEditorStartup(bool bNewReimportAtEditorStartup);
 
+	static bool GetGenerateKeyReferenceStringTable();
+	static void SetGenerateKeyReferenceStringTable(bool bNewGenerateKeyReferenceStringTable);
+	
 	/**
 	 * Get/Set if the preview should be displayed on UI.
 	 */
@@ -99,7 +102,10 @@ private:
 
 	UPROPERTY(config)
 	bool bReimportAtEditorStartup = false;
-
+	
+	UPROPERTY(config)
+	bool bGenerateKeyReferenceStringTable = false;
+	
 	UPROPERTY(config)
 	bool bPreviewInUI = true;
 

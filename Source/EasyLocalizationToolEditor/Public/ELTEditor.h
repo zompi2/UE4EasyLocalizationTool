@@ -145,6 +145,11 @@ private:
 	void OnFallbackWhenEmptyChanged(const FString& NewFallback);
 
 	/**
+	 * Called when "GenerateKeyReferenceStringTable" option has been changed in the Widget.
+	 */
+	void OnGenerateKeyReferenceStringTableChanged(bool bNewGenerateKeyReferenceStringTable);
+	
+	/**
 	 * Called when "LogDebug" option has been changed in the Widget.
 	 */
 	void OnLogDebugChanged(bool bNewLogDebug);

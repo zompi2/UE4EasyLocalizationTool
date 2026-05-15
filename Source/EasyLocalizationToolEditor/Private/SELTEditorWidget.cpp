@@ -476,6 +476,43 @@ KEY - use the key of this entry"))
 							]
 						]
 					]
+					// > Generate Key Reference String Table on Import Box ================
+					+SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
+					[
+						SNew(SHorizontalBox)
+						.ToolTipText(INVTEXT("\
+On CSV Import, a String Table filled with Key References will be generated PER namespace.\n\
+These String Table can be used to easily assign keys to FText properties.\n\n\
+The String Table will be generated in the Localization Folder path and IS OVERRIDDEN if it already exists."))
+					// >>>> Generate Key Reference String Table CSV Import Label
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(STextBlock)
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Text(INVTEXT("Generate Key Reference String Table on Import:"))
+						]
+					// >>>> Generate Key Reference String Table on Import checkbox
+						+SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(SCheckBox)
+								.IsChecked_Lambda([this]() -> ECheckBoxState
+								{
+									return bGenerateKeyReferenceStringTable_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+								})
+								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+								{
+									bGenerateKeyReferenceStringTable_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+									if (WidgetController.IsValid())
+									{
+										WidgetController->OnGenerateKeyReferenceStringTableChanged(bGenerateKeyReferenceStringTable_Chkbox);
+									}
+								})
+						]
+					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
@@ -817,6 +854,11 @@ void SELTEditorWidget::SetFallbackWhenEmpty(const FString& FallbackWhenEmpty)
 	{
 		SelectedFallbackWhenEmpty = *FoundFallbackWhenEmpty;
 	}
+}
+
+void SELTEditorWidget::SetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable)
+{
+	bGenerateKeyReferenceStringTable_Chkbox = bGenerateKeyReferenceStringTable;
 }
 
 void SELTEditorWidget::SetLogDebug(bool bLogDebug)

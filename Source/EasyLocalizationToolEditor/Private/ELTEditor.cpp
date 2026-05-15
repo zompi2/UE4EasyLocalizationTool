@@ -1,14 +1,18 @@
 // Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditor.h"
+#include "AssetToolsModule.h"
 #include "Internationalization/TextLocalizationResource.h"
 #include "Internationalization/TextLocalizationManager.h"
+#include "Internationalization/StringTableCore.h"
+#include "Internationalization/StringTable.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
 #include "ELTEditorSettings.h"
 #include "ELTEditorWidget.h"
 #include "ELTSettings.h"
+#include "UObject/SavePackage.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -162,6 +166,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
 	EditorWidget->OnFallbackWhenEmptyChangedDelegate.BindUObject(this, &UELTEditor::OnFallbackWhenEmptyChanged);
+	EditorWidget->OnGenerateKeyReferenceStringTableChangedDelegate.BindUObject(this, &UELTEditor::OnGenerateKeyReferenceStringTableChanged);
 	EditorWidget->OnLogDebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 	EditorWidget->OnPreviewInUIChangedDelegate.BindUObject(this, &UELTEditor::OnPreviewInUIChanged);
 
@@ -198,6 +203,9 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->CallSetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->CallSetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
+	// Set the Generate Key Reference String Table current value to the Widget.
+	EditorWidget->CallSetGenerateKeyReferenceStringTable(UELTEditorSettings::GetGenerateKeyReferenceStringTable());
+	
 	// Set LogDebug value to the Widget.
 	EditorWidget->CallSetLogDebug(UELTEditorSettings::GetLogDebug());
 
@@ -357,6 +365,11 @@ void UELTEditor::OnFallbackWhenEmptyChanged(const FString& NewFallback)
 	UELTEditorSettings::SetFallbackWhenEmpty(NewFallback);
 }
 
+void UELTEditor::OnGenerateKeyReferenceStringTableChanged(bool bNewGenerateKeyReferenceStringTable)
+{
+	UELTEditorSettings::SetGenerateKeyReferenceStringTable(bNewGenerateKeyReferenceStringTable);
+}
+
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// "Log Debug" flag has been changed in the Widget. Save this setting.
@@ -502,8 +515,12 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	const bool bLogDebug = UELTEditorSettings::GetLogDebug();
+	const bool bGenerateStringTable = UELTEditorSettings::GetGenerateKeyReferenceStringTable();
+	
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
+	TMap<FString, TSet<FString>> NamespaceToKeysMap;
+
 	for (const FString& CSVPath : CSVPaths)
 	{
 		const FString CSVFilePath = FPaths::ConvertRelativePathToFull(CSVPath);
@@ -636,6 +653,11 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								Keys.Values[Key],
 								LocalizedString,
 								0);
+
+							if (bGenerateStringTable && !Keys.Values[Key].IsEmpty())
+							{
+								NamespaceToKeysMap.FindOrAdd(Namespace).Add(Keys.Values[Key]);
+							}
 						}
 					}
 				}
@@ -672,6 +694,78 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
 		}
 		LocRes.Value.SaveToFile(LocFileName);
+	}
+
+	// Generate Key Reference String Table
+	if (bGenerateStringTable && NamespaceToKeysMap.Num() > 0)
+	{
+		FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+
+		for (const auto& KVP : NamespaceToKeysMap)
+		{
+			const FString& Namespace = KVP.Key;
+			const TSet<FString>& Keys = KVP.Value;
+
+			FString AssetName = FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
+			FString VirtualPath = LocPath.StartsWith(TEXT("/Game")) ? LocPath : FPackageName::FilenameToLongPackageName(LocPath);
+			FString PackagePath = FPaths::Combine(VirtualPath, AssetName);
+			FPaths::NormalizeFilename(PackagePath);
+
+			if (!PackagePath.StartsWith(TEXT("/")))
+			{
+				PackagePath = TEXT("/") + PackagePath;
+			}
+
+			UPackage* Package = CreatePackage(*PackagePath);
+			if (!Package)
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to create package path for StringTable: %s"), *PackagePath);
+				return false;
+			}
+
+			UStringTable* StringTableAsset = Cast<UStringTable>(StaticFindObject(UStringTable::StaticClass(), Package, *AssetName));
+			if (!StringTableAsset)
+			{
+				StringTableAsset = Cast<UStringTable>(AssetToolsModule.Get().CreateAsset(
+					AssetName, 
+					VirtualPath, 
+					UStringTable::StaticClass(), 
+					nullptr
+				));
+			}
+
+			if (!StringTableAsset)
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to create StringTable asset: %s"), *AssetName);
+				return false;
+			}
+
+			FStringTableRef StringTableRef = StringTableAsset->GetMutableStringTable();
+			StringTableRef->SetNamespace(Namespace);
+
+			for (const FString& Key : Keys)
+			{
+				StringTableRef->SetSourceString(FTextKey(Key), Key);
+			}
+
+			Package->MarkPackageDirty();
+
+			FString PackageFileName = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			SaveArgs.Error = GError;
+			
+			if (!UPackage::SavePackage(Package, StringTableAsset, *PackageFileName, SaveArgs))
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to save StringTable package file to disk path: %s"), *PackageFileName);
+				return false;
+			}
+
+			if (bLogDebug)
+			{
+				UE_LOG(ELTEditorLog, Log, TEXT("Saved String Table Asset: %s"), *PackageFileName);
+			}
+		}
 	}
 
 	OutMessage = TEXT("SUCCESS: Localization import complete!");
