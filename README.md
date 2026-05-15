@@ -48,6 +48,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Import](#import)
 - [Adding Localization Directories](#adding-localization-directories)
 - [Using Localizations](#using-localizations)
+- [String Tables](#string-tables)
 - [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
@@ -180,6 +181,16 @@ To use it in a c++ code use the following macro:
 ``` cpp
 NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
+
+[Back to top](#table-of-content)
+
+## String tables
+
+Localization can be used in **String Tables**. Remember to set the **Key** and **Source String** to be the same value and set the **Namespace**
+<img width="918" height="244" alt="stabledefine" src="https://github.com/user-attachments/assets/05cd8c8a-bf22-4c4e-9455-86bd10fcb00d" />  
+
+Then, use them like standard **String Tables** in Text properties.  
+<img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
 
 [Back to top](#table-of-content)
 
