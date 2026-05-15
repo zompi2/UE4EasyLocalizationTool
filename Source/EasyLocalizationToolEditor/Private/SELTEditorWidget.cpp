@@ -16,7 +16,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("KEY"))));
 	SelectedFallbackWhenEmpty = FallbackWhenEmptyAvailable[0];
 
-	SpacerBrush.SetImageSize(FVector2D(350.f, 1.f));
+	SpacerBrush.SetImageSize(FVector2D(450.f, 1.f));
 	SpacerBrush.TintColor = FSlateColor(FLinearColor(.62f,.62f,.62f,1.f));
 
 	SUserWidget::Construct(SUserWidget::FArguments()
@@ -53,7 +53,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, 15.f, 0.f, 15.f))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -65,8 +65,36 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SVerticalBox)
 							.ToolTipText(INVTEXT("Name of currently selected Localization. The game can have multiple localization directories."))
+					// >>>> Localization Name box
+							+SVerticalBox::Slot()
+							.AutoHeight()
+							[
+								SNew(SHorizontalBox)
+					// >>>>>>>> Localization Name label
+								+SHorizontalBox::Slot()
+								.AutoWidth()
+								.Padding(FMargin(0.f, 5.f, 20.f, 0.f))
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
+										.Text(INVTEXT("Localization name:"))
+								]
+					// >>>>>>>> Localization Name value
+								+SHorizontalBox::Slot()
+								.AutoWidth()
+								.Padding(FMargin(0.f, 5.f, 20.f, 0.f))
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Bold", 11))
+										.Text_Lambda([this]() -> FText
+										{
+											return FText::FromString(CurrentLocName);
+										})
+								]
+							]
 					// >>>> Localization Path selection list
 							+SVerticalBox::Slot()
+							.Padding(FMargin(0.f, 3.f, 0.f, 0.f))
 							.AutoHeight()
 							.HAlign(EHorizontalAlignment::HAlign_Left)
 							[
@@ -97,38 +125,11 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 										})
 								]
 							]
-					// >>>> Localization Name box
-							+SVerticalBox::Slot()
-							.AutoHeight()
-							[
-								SNew(SHorizontalBox)
-					// >>>>>>>> Localization Name label
-								+SHorizontalBox::Slot()
-								.AutoWidth()
-								.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
-								[
-									SNew(STextBlock)
-										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-										.Text(INVTEXT("Localization name:"))
-								]
-					// >>>>>>>> Localization Name value
-								+SHorizontalBox::Slot()
-								.AutoWidth()
-								.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
-								[
-									SNew(STextBlock)
-										.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
-										.Text_Lambda([this]() -> FText
-										{
-											return FText::FromString(CurrentLocName);
-										})
-								]
-							]
 					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, 15.f, 0.f, 15.f))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -145,7 +146,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 						.AutoHeight()
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Available Languages In Selected Localization:"))
 						]
 					// >>>> Available Langs In Selected Localization Value
@@ -153,7 +154,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 						.AutoHeight()
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Bold", 11))
 								.Text_Lambda([this]() -> FText
 								{
 									return FText::FromString(AvailableLangsInLocFile);
@@ -168,10 +169,11 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 						.ToolTipText(INVTEXT("List of language codes that are implemented by every localization directory."))
 					// >>>> Available Langs Label
 						+SVerticalBox::Slot()
+						.Padding(FMargin(0.f, 10.f, 0.f, 0))
 						.AutoHeight()
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Available Languages:"))
 						]
 					// >>>> Localization Names value
@@ -179,7 +181,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 						.AutoHeight()
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Bold", 11))
 								.Text_Lambda([this]() -> FText
 								{
 									return FText::FromString(AvailableLangs);
@@ -189,7 +191,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, 15.f, 0.f, 15.f))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -198,20 +200,24 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Reimport on editor startup Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("Reimports the lastly selected localization with the last used CSV file when editor starts."))
 					// >>>> Reimport on editor startup Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Reimport on editor startup:"))
 						]
 					// >>>> Reimport on editor startup checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -231,20 +237,24 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Localization Preview Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("Enabled the preview of the localization in the editor."))
 					// >>>> Localization Preview Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Localization Preview:"))
 						]
 					// >>>> Localization Preview Checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -263,6 +273,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Localization Preview List
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SComboBox<TSharedPtr<FString>>)
 								.OptionsSource(&PreviewsAvailables)
@@ -295,20 +306,24 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Manually Set Last Language Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("If enabled it won't save and load lastly set language automatically."))
 					// >>>> Manually Set Last Language Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Manually Set Last Language:"))
 						]
 					// >>>> Manually Set Last Language checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -328,20 +343,24 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Override Language on Startup Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("If enabled, when the game starts for the very first time the selected language will be used.\nNormally, the system language will be used or it will fallback to \"en\"."))
 					// >>>> Override Language on Startup Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Override Language on Startup:"))
 						]
 					// >>>> Override Language on Startup Checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -360,6 +379,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// >>>> Override Language on Startup List
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SComboBox<TSharedPtr<FString>>)
 								.OptionsSource(&LanguageOverridesAvailable)
@@ -392,25 +412,28 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Separator Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
-						SNew(SVerticalBox)
+						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("A CSV column separator. It's \",\" by default, but it can be any other single character."))
 					// >>>> Separator Label
-						+SVerticalBox::Slot()
-						.AutoHeight()
+						+SHorizontalBox::Slot()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Separator:"))
 						]
 					// >>>> Separator Value
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						.HAlign(EHorizontalAlignment::HAlign_Left)
+						+SHorizontalBox::Slot()
+						.FillContentWidth(1)
+						.MaxWidth(200.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SEditableTextBox)
-								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
-								.MinDesiredWidth(256.f)
+								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 11))
 								.Text_Lambda([this]() -> FText
 								{
 									return FText::FromString(SeparatorValue);
@@ -428,7 +451,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Fallback when empty Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("\
@@ -438,15 +461,18 @@ FIRST_LANG - use value of the first language.If that value is empty use Key\n\
 KEY - use the key of this entry"))
 					// >>>> Fallback when empty Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Fallback when empty:"))
 						]
 					// >>>> Fallback when empty List
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SComboBox<TSharedPtr<FString>>)
 								.OptionsSource(&FallbackWhenEmptyAvailable)
@@ -516,7 +542,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, 15.f, 0.f, 15.f))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -527,7 +553,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					.AutoHeight()
 					[
 						SNew(SVerticalBox)
-						.ToolTipText(INVTEXT("CSV files to import. You can import mutliple files at once to the same Localization."))
+						.ToolTipText(INVTEXT("CSV files to import. You can import multiple files at once to the same Localization."))
 					// >>>> CSV files list box
 						+SVerticalBox::Slot()
 						.AutoHeight()
@@ -538,7 +564,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 							.AutoHeight()
 							[
 								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+									.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 									.Text(INVTEXT("CSV file:"))
 							]
 					// >>>>>>> CSV files list value
@@ -546,7 +572,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 							.AutoHeight()
 							[
 								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
+									.Font(FCoreStyle::GetDefaultFontStyle("Bold", 11))
 									.Text_Lambda([this]() -> FText
 									{
 										return FText::FromString(CSVFiles);
@@ -556,6 +582,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 						+SVerticalBox::Slot()
 					// >>>> CSV select files box
 						.AutoHeight()
+						.Padding(FMargin(0.f, 5.f, 0.f, 0.f))
 						[
 							SNew(SHorizontalBox)
 					// >>>>>>> CSV select files button
@@ -593,24 +620,29 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// > Global namespace box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
+					.Padding(FMargin(0.f, 15.f, 0.f, 0.f))
 					[
-						SNew(SVerticalBox)
+						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("This namespace will be assigned to every key in localization."))
 					// >>>> Global namespace label ================
-						+SVerticalBox::Slot()
-						.AutoHeight()
+						+SHorizontalBox::Slot()
+						.FillContentWidth(1)
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Global namespace:"))
 						]
 					// >>>> Global namespace value ================
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						.HAlign(EHorizontalAlignment::HAlign_Left)
+						+SHorizontalBox::Slot()
+						.FillContentWidth(1)
+						.MaxWidth(200.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SEditableTextBox)
-								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 11))
 								.MinDesiredWidth(256.f)
 								.Text_Lambda([this]() -> FText
 								{
@@ -629,7 +661,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, 15.f, 0.f, 15.f))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -638,20 +670,23 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// > Log Debug Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("Select this option to see additional informations in Output Log.\nBe aware that big CSVs might generate a lot of logs."))
 					// >>>> Log Debug Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Log Debug:"))
 						]
 					// >>>> Log Debug checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
@@ -671,6 +706,7 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 					// > Preview In UI Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.MinHeight(24.f)
 					[
 						SNew(SHorizontalBox)
 						.ToolTipText(INVTEXT("Select this option to show a localization preview under the Text fields in the Editor UI."))
@@ -687,15 +723,17 @@ The String Table will be generated in the Localization Folder path and IS OVERRI
 						})
 					// >>>> Preview In UI Label
 						+SHorizontalBox::Slot()
-						.AutoWidth()
+						.MaxWidth(250.0f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+								.Font(FCoreStyle::GetDefaultFontStyle("Light", 11))
 								.Text(INVTEXT("Show preview in UI:"))
 						]
 					// >>>> Preview In UI checkbox
 						+SHorizontalBox::Slot()
 						.AutoWidth()
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SCheckBox)
 								.IsChecked_Lambda([this]() -> ECheckBoxState
