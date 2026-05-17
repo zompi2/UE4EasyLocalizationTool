@@ -478,12 +478,12 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 	}
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), UELTEditorSettings::GetGenerateKeyReferenceStringTable(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage)
 {
-	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, OutMessage);
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, bGenerateStringTables, OutMessage);
 }
 
 // Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
@@ -494,7 +494,7 @@ enum class EFallbackWhenEmptyType : uint8
 	KEY
 };
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage)
 {
 	if (Separator.Len() != 1)
 	{
@@ -515,11 +515,13 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	const bool bLogDebug = UELTEditorSettings::GetLogDebug();
-	const bool bGenerateStringTable = UELTEditorSettings::GetGenerateKeyReferenceStringTable();
 	
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
 	TMap<FString, TSet<FString>> NamespaceToKeysMap;
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+	TMap<FString, TMap<FString, FString>> NamespaceToKeysToNotesMap; 
+#endif
 
 	for (const FString& CSVPath : CSVPaths)
 	{
@@ -531,28 +533,46 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		FCSVReader Reader;
 		if (Reader.LoadFromFile(CSVFilePath, (*Separator)[0], OutMessage))
 		{
-			int32 FirstColumn = 0;
-			bool bHasNamespaces = false;
+			int32 CurrentColumn = 0;
+			int32 FirstLangColumn = 0;
+
+			int32 NamespaceColumn = INDEX_NONE;
+			int32 DevNotesColumn = INDEX_NONE;
 
 			const TArray<FCSVColumn> Columns = Reader.Columns;
 			for (const FCSVColumn& Column : Columns)
 			{
 				if (Column.Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase))
 				{
-					bHasNamespaces=true;
-					break;
+					NamespaceColumn = CurrentColumn;
+					++CurrentColumn;
+					++FirstLangColumn;
+					continue;
+				}
+				if (Column.Values[0].Equals(TEXT("devnotes"), ESearchCase::IgnoreCase))
+				{
+					DevNotesColumn = CurrentColumn;
+					++CurrentColumn;
+					++FirstLangColumn;
+					continue;
 				}
 				if (Column.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase))
 				{
+					++FirstLangColumn;
 					break;
 				}
-				++FirstColumn;
+				if ((NamespaceColumn != INDEX_NONE) || (DevNotesColumn != INDEX_NONE))
+				{
+					OutMessage = TEXT("ERROR: Invalid CSV! The 'namespace' and 'devnotes' columns must be before the 'key' column!");
+					return false;
+				}
+				++CurrentColumn;
 			}
 
-			if (Columns.Num() > (FirstColumn + 1))
+			if (Columns.Num() > (CurrentColumn + 1))
 			{
-				const int32 NumOfValues = Columns[FirstColumn].Values.Num();
-				for (int32 CIdx = FirstColumn + 1; CIdx < Columns.Num(); CIdx++)
+				const int32 NumOfValues = Columns[CurrentColumn].Values.Num();
+				for (int32 CIdx = CurrentColumn + 1; CIdx < Columns.Num(); CIdx++)
 				{
 					if (Columns[CIdx].Values.Num() != NumOfValues)
 					{
@@ -562,16 +582,19 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				}
 
 				// Potential place for namespaces.
-				const FCSVColumn& Namespaces = Columns[FirstColumn];
+				const FCSVColumn& Namespaces = (NamespaceColumn != INDEX_NONE) ? Columns[NamespaceColumn] : Columns[0];
 
 				// Check if we have namespaces defined for every key or to use global value.
-				const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
+				const bool bUseGlobalNamespace = (NamespaceColumn == INDEX_NONE) && (GlobalNamespace.IsEmpty() == false);
 
-				if (bUseGlobalNamespace == false && bHasNamespaces == false)
+				if (bUseGlobalNamespace == false && (NamespaceColumn == INDEX_NONE))
 				{
 					OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
 					return false;
 				}
+
+				// Potential place for devnotes.
+				const FCSVColumn& DevNotes = (DevNotesColumn != INDEX_NONE) ? Columns[DevNotesColumn] : Columns[0];
 
 				// Clear the localization directory first.
 				if (bFirstCSV)
@@ -583,13 +606,41 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					}
 				}
 
-				// Keys will be in first row if not having namespaces.
-				const FCSVColumn& Keys = Columns[bHasNamespaces ? FirstColumn+1 : FirstColumn];
+				// Get the keys column and check if it is valid.
+				const FCSVColumn& Keys = Columns[FirstLangColumn];
 				if (Keys.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase) == false)
 				{
 					OutMessage = TEXT("ERROR: Key column in CSV not found!");
 					return false;
 				}
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+				// Gather Dev Notes if available
+				if (DevNotesColumn != INDEX_NONE)
+				{
+					if (DevNotes.Values[0].Equals(TEXT("devnotes"), ESearchCase::IgnoreCase) == false)
+					{
+						OutMessage = TEXT("ERROR: Dev Notes column in CSV not found!");
+						return false;
+					}
+
+					for (int32 Key = 1; Key < Keys.Values.Num(); Key++)
+					{
+						FString DevNote = DevNotes.Values[Key];
+						if (DevNote.IsEmpty() == false)
+						{
+							const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
+							if (Namespace.IsEmpty())
+							{
+								OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) for dev note is empty!"), Key);
+								return false;
+							}
+							TMap<FString, FString>& DevNotesList = NamespaceToKeysToNotesMap.FindOrAdd(Namespace);
+							DevNotesList.Add(Keys.Values[Key], DevNote);
+						}
+					}
+				}
+#endif
 
 				if (bLogDebug)
 				{
@@ -597,7 +648,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 				}
 
-				const int32 FirstLangColumn = bHasNamespaces ? (FirstColumn + 2) : (FirstColumn + 1);
 				for (int32 Column = FirstLangColumn; Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
@@ -654,7 +704,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								LocalizedString,
 								0);
 
-							if (bGenerateStringTable && !Keys.Values[Key].IsEmpty())
+							if (bGenerateStringTables && (Keys.Values[Key].IsEmpty() == false))
 							{
 								NamespaceToKeysMap.FindOrAdd(Namespace).Add(Keys.Values[Key]);
 							}
@@ -697,7 +747,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 	}
 
 	// Generate Key Reference String Table
-	if (bGenerateStringTable && NamespaceToKeysMap.Num() > 0)
+	if (bGenerateStringTables && NamespaceToKeysMap.Num() > 0)
 	{
 		FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 
@@ -707,55 +757,52 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			const TSet<FString>& Keys = KVP.Value;
 
 			FString AssetName = FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
-			FString VirtualPath = LocPath.StartsWith(TEXT("/Game")) ? LocPath : FPackageName::FilenameToLongPackageName(LocPath);
-			FString PackagePath = FPaths::Combine(VirtualPath, AssetName);
-			FPaths::NormalizeFilename(PackagePath);
+			FString PackagePath = FPackageName::FilenameToLongPackageName(LocPath / AssetName);
 
-			if (!PackagePath.StartsWith(TEXT("/")))
-			{
-				PackagePath = TEXT("/") + PackagePath;
-			}
-
-			UPackage* Package = CreatePackage(*PackagePath);
-			if (!Package)
+			UPackage* Package = FPackageName::DoesPackageExist(*PackagePath) ? LoadPackage(nullptr, *PackagePath, LOAD_None) : CreatePackage(*PackagePath);
+			if (Package == nullptr)
 			{
 				OutMessage = FString::Printf(TEXT("ERROR: Failed to create package path for StringTable: %s"), *PackagePath);
 				return false;
 			}
 
-			UStringTable* StringTableAsset = Cast<UStringTable>(StaticFindObject(UStringTable::StaticClass(), Package, *AssetName));
-			if (!StringTableAsset)
-			{
-				StringTableAsset = Cast<UStringTable>(AssetToolsModule.Get().CreateAsset(
-					AssetName, 
-					VirtualPath, 
-					UStringTable::StaticClass(), 
-					nullptr
-				));
-			}
-
-			if (!StringTableAsset)
+			UStringTable* StringTableAsset = NewObject<UStringTable>(Package, UStringTable::StaticClass(), FName(*AssetName), (RF_Public | RF_Standalone | RF_Transactional));
+			if (StringTableAsset == nullptr)
 			{
 				OutMessage = FString::Printf(TEXT("ERROR: Failed to create StringTable asset: %s"), *AssetName);
 				return false;
 			}
 
+			FAssetRegistryModule::AssetCreated(StringTableAsset);
+			Package->MarkPackageDirty();
+
 			FStringTableRef StringTableRef = StringTableAsset->GetMutableStringTable();
 			StringTableRef->SetNamespace(Namespace);
 
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+			TMap<FString, FString>* KeysToNotes = NamespaceToKeysToNotesMap.Find(Namespace);
+			for (const FString& Key : Keys)
+			{
+				FString DevNotes = TEXT("");
+				if (FString* Note = KeysToNotes ? KeysToNotes->Find(Key) : nullptr)
+				{
+					DevNotes = *Note;
+				}
+
+				StringTableRef->SetSourceString(FTextKey(Key), Key, DevNotes);
+			}
+#else
 			for (const FString& Key : Keys)
 			{
 				StringTableRef->SetSourceString(FTextKey(Key), Key);
 			}
-
-			Package->MarkPackageDirty();
+#endif
 
 			FString PackageFileName = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
 			FSavePackageArgs SaveArgs;
 			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
 			SaveArgs.Error = GError;
-			
-			if (!UPackage::SavePackage(Package, StringTableAsset, *PackageFileName, SaveArgs))
+			if (UPackage::SavePackage(Package, StringTableAsset, *PackageFileName, SaveArgs) == false)
 			{
 				OutMessage = FString::Printf(TEXT("ERROR: Failed to save StringTable package file to disk path: %s"), *PackageFileName);
 				return false;

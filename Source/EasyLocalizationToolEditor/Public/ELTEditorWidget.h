@@ -200,8 +200,6 @@ public:
 	/**
 	 * Set "Generate Key Reference String Table On CSV Import" to the Widget.
 	 */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Easy Localization Tool Editor")
-	void SetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable);
 	void CallSetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable);
 	
 	/**

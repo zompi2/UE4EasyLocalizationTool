@@ -155,14 +155,10 @@ void UELTEditorWidget::CallSetLocalizationOnFirstRun(bool LocalizationOnFirstRun
 
 void UELTEditorWidget::CallSetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable)
 {
-#if ELTEDITOR_USE_SLATE_EDITOR_UI
 	if (MyWidget.IsValid())
 	{
 		MyWidget->SetGenerateKeyReferenceStringTable(bGenerateKeyReferenceStringTable);
 	}
-#else
-	SetReimportAtEditorStartup(bReimportAtEditorStartup);
-#endif
 }
 
 void UELTEditorWidget::CallSetLocalizationOnFirstRunLang(const FString& OnFirstRunLang)
