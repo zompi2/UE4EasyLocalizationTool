@@ -1,3 +1,10 @@
+# THIS IS EXPERIMENTAL BRANCH
+
+It has some experimental features to test, like:
+* Localization Audit
+
+If you're interested with stable releases - check main branch.
+
 # Easy Localization Tool for Unreal Engine
 
 This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
