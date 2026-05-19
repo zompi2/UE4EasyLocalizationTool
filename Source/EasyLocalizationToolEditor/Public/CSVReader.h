@@ -15,6 +15,7 @@
 struct FCSVColumn
 {
 	TArray<FString> Values;
+	FCSVColumn() = default;
 	FCSVColumn(const FString& FirstValue)
 	{
 		Values.Add(FirstValue);
