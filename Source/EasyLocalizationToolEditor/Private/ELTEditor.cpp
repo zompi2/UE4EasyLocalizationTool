@@ -1,14 +1,19 @@
 // Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "ELTEditor.h"
+#include "AssetToolsModule.h"
 #include "Internationalization/TextLocalizationResource.h"
 #include "Internationalization/TextLocalizationManager.h"
+#include "Internationalization/StringTableCore.h"
+#include "Internationalization/StringTable.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
 #include "ELTEditorSettings.h"
 #include "ELTEditorWidget.h"
+#include "ELTEditorAuditWidget.h"
 #include "ELTSettings.h"
+#include "UObject/SavePackage.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -37,6 +42,10 @@ void UELTEditor::Init()
 	CSVPaths		= UELTEditorSettings::GetCSVPaths();
 	CurrentLocPath	= UELTEditorSettings::GetLocalizationPath();
 
+	// Bind the audit widget's Reimport CSV button to this editor's generate function.
+	// Done here rather than InitializeTheWidget, as that requires ELT tool widget opened.
+	UELTEditorAuditWidget::OnReimportCSVDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
+
 	// Reimport localizations (if this option is enabled).
 	if (UELTEditorSettings::GetReimportAtEditorStartup())
 	{
@@ -45,7 +54,7 @@ void UELTEditor::Init()
 	}
 
 	// Refresh information about available localizations.
-	RefreshAvailableLangs(false);
+	RefreshAvailableLangs(ERefreshUIFlags::None);
 
 	// Set preview language (if the option is enabled).
 	SetLanguagePreview();
@@ -147,7 +156,7 @@ void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 void UELTEditor::InitializeTheWidget()
 {
 	// Check available languages (based on files in Localization directory)
-	RefreshAvailableLangs(true);
+	RefreshAvailableLangs(ERefreshUIFlags::All);
 
 	// Bind all required delegates to the Widget.
 	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
@@ -162,6 +171,7 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->OnGlobalNamespaceChangedDelegate.BindUObject(this, &UELTEditor::OnGlobalNamespaceChanged);
 	EditorWidget->OnSeparatorChangedDelegate.BindUObject(this, &UELTEditor::OnSeparatorChanged);
 	EditorWidget->OnFallbackWhenEmptyChangedDelegate.BindUObject(this, &UELTEditor::OnFallbackWhenEmptyChanged);
+	EditorWidget->OnGenerateKeyReferenceStringTableChangedDelegate.BindUObject(this, &UELTEditor::OnGenerateKeyReferenceStringTableChanged);
 	EditorWidget->OnLogDebugChangedDelegate.BindUObject(this, &UELTEditor::OnLogDebugChanged);
 	EditorWidget->OnPreviewInUIChangedDelegate.BindUObject(this, &UELTEditor::OnPreviewInUIChanged);
 
@@ -198,6 +208,9 @@ void UELTEditor::InitializeTheWidget()
 	EditorWidget->CallSetLocalizationOnFirstRun(UELTSettings::GetOverrideLanguageAtFirstLaunch());
 	EditorWidget->CallSetLocalizationOnFirstRunLang(UELTSettings::GetLanguageToOverrideAtFirstLaunch());
 
+	// Set the Generate Key Reference String Table current value to the Widget.
+	EditorWidget->CallSetGenerateKeyReferenceStringTable(UELTEditorSettings::GetGenerateKeyReferenceStringTable());
+	
 	// Set LogDebug value to the Widget.
 	EditorWidget->CallSetLogDebug(UELTEditorSettings::GetLogDebug());
 
@@ -236,7 +249,7 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
-	RefreshAvailableLangs(false);
+	RefreshAvailableLangs(ERefreshUIFlags::None);
 	EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
 	// Set Global Namespace for this Localization directory to the Widget.
@@ -266,12 +279,13 @@ void UELTEditor::OnGenerateLocFiles()
 	const bool bSuccess = GenerateLocFiles(ReturnMessage);
 	if (bSuccess)
 	{
-		RefreshAvailableLangs(true);
+		const ERefreshUIFlags Flags = EditorWidget ? ERefreshUIFlags::All : ERefreshUIFlags::AuditWidget;
+		RefreshAvailableLangs(Flags);
 		SetLanguagePreview();
 	}
-	
+
 	// Display a Dialog Window to inform user that the localization generation has been finished.
-#if (ENGINE_MAJOR_VERSION == 5)
+#if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #else
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
@@ -357,6 +371,11 @@ void UELTEditor::OnFallbackWhenEmptyChanged(const FString& NewFallback)
 	UELTEditorSettings::SetFallbackWhenEmpty(NewFallback);
 }
 
+void UELTEditor::OnGenerateKeyReferenceStringTableChanged(bool bNewGenerateKeyReferenceStringTable)
+{
+	UELTEditorSettings::SetGenerateKeyReferenceStringTable(bNewGenerateKeyReferenceStringTable);
+}
+
 void UELTEditor::OnLogDebugChanged(bool bNewLogDebug)
 {
 	// "Log Debug" flag has been changed in the Widget. Save this setting.
@@ -385,7 +404,7 @@ void UELTEditor::SetLanguagePreview()
 	}
 }
 
-void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
+void UELTEditor::RefreshAvailableLangs(ERefreshUIFlags UIFlags)
 {
 	// Get all available languages by reading the localization directory.
 	// Languages in current localization directory put into the separate array too.
@@ -413,7 +432,10 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 	}
 
-	if (bRefreshUI)
+	const bool bRefreshELTWidget   = EnumHasAnyFlags(UIFlags, ERefreshUIFlags::ToolWidget);
+	const bool bRefreshAuditWidget = EnumHasAnyFlags(UIFlags, ERefreshUIFlags::AuditWidget);
+
+	if (bRefreshELTWidget && EditorWidget)
 	{
 		// If the RefreshUI has been requested - set the available languages on the Widget.
 		EditorWidget->CallFillAvailableLangs(CurrentAvailableLangs);
@@ -444,6 +466,11 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 	}
 
+	if (bRefreshAuditWidget)
+	{
+		UELTEditorAuditWidget::UpdateAvailableLanguages(CurrentAvailableLangs);
+	}
+
 	// Set available languages to the game settings.
 	UELTSettings::SetAvailableLanguages(CurrentAvailableLangs);
 }
@@ -465,12 +492,12 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 	}
 	const TArray<FString>& CSVFilePaths = PathsStringToList(GetCurrentCSVPath());
 	const FString LocPath = FPaths::ConvertRelativePathToFull(CurrentLocPath);
-	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), OutMessage);
+	return GenerateLocFilesImpl(CSVFilePaths, LocPath, GetCurrentLocName(), GetCurrentGlobalNamespace(), UELTEditorSettings::GetSeparator(), UELTEditorSettings::GetFallbackWhenEmpty(), UELTEditorSettings::GetGenerateKeyReferenceStringTable(), OutMessage);
 }
 
-bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage)
 {
-	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, OutMessage);
+	return GenerateLocFilesImpl(PathsStringToList(CSVPaths), LocPath, LocName, GlobalNamespace, Separator, FallbackWhenEmpty, bGenerateStringTables, OutMessage);
 }
 
 // Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
@@ -481,7 +508,7 @@ enum class EFallbackWhenEmptyType : uint8
 	KEY
 };
 
-bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage)
+bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage)
 {
 	if (Separator.Len() != 1)
 	{
@@ -502,8 +529,14 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 	const FString MetaFileName = LocPath / LocName + TEXT(".locmeta");
 	const bool bLogDebug = UELTEditorSettings::GetLogDebug();
+	
 	bool bFirstCSV = true;
 	TMap<FString, FTextLocalizationResource> LocReses;
+	TMap<FString, TSet<FString>> NamespaceToKeysMap;
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+	TMap<FString, TMap<FString, FString>> NamespaceToKeysToNotesMap; 
+#endif
+
 	for (const FString& CSVPath : CSVPaths)
 	{
 		const FString CSVFilePath = FPaths::ConvertRelativePathToFull(CSVPath);
@@ -514,28 +547,46 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		FCSVReader Reader;
 		if (Reader.LoadFromFile(CSVFilePath, (*Separator)[0], OutMessage))
 		{
-			int32 FirstColumn = 0;
-			bool bHasNamespaces = false;
+			int32 CurrentColumn = 0;
+			int32 FirstLangColumn = 0;
+
+			int32 NamespaceColumn = INDEX_NONE;
+			int32 DevNotesColumn = INDEX_NONE;
 
 			const TArray<FCSVColumn> Columns = Reader.Columns;
 			for (const FCSVColumn& Column : Columns)
 			{
 				if (Column.Values[0].Equals(TEXT("namespace"), ESearchCase::IgnoreCase))
 				{
-					bHasNamespaces=true;
-					break;
+					NamespaceColumn = CurrentColumn;
+					++CurrentColumn;
+					++FirstLangColumn;
+					continue;
+				}
+				if (Column.Values[0].Equals(TEXT("devnotes"), ESearchCase::IgnoreCase))
+				{
+					DevNotesColumn = CurrentColumn;
+					++CurrentColumn;
+					++FirstLangColumn;
+					continue;
 				}
 				if (Column.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase))
 				{
+					++FirstLangColumn;
 					break;
 				}
-				++FirstColumn;
+				if ((NamespaceColumn != INDEX_NONE) || (DevNotesColumn != INDEX_NONE))
+				{
+					OutMessage = TEXT("ERROR: Invalid CSV! The 'namespace' and 'devnotes' columns must be before the 'key' column!");
+					return false;
+				}
+				++CurrentColumn;
 			}
 
-			if (Columns.Num() > (FirstColumn + 1))
+			if (Columns.Num() > (CurrentColumn + 1))
 			{
-				const int32 NumOfValues = Columns[FirstColumn].Values.Num();
-				for (int32 CIdx = FirstColumn + 1; CIdx < Columns.Num(); CIdx++)
+				const int32 NumOfValues = Columns[CurrentColumn].Values.Num();
+				for (int32 CIdx = CurrentColumn + 1; CIdx < Columns.Num(); CIdx++)
 				{
 					if (Columns[CIdx].Values.Num() != NumOfValues)
 					{
@@ -545,34 +596,74 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				}
 
 				// Potential place for namespaces.
-				const FCSVColumn& Namespaces = Columns[FirstColumn];
+				const FCSVColumn& Namespaces = (NamespaceColumn != INDEX_NONE) ? Columns[NamespaceColumn] : Columns[0];
 
 				// Check if we have namespaces defined for every key or to use global value.
-				const bool bUseGlobalNamespace = (bHasNamespaces == false) && (GlobalNamespace.IsEmpty() == false);
+				const bool bUseGlobalNamespace = (NamespaceColumn == INDEX_NONE) && (GlobalNamespace.IsEmpty() == false);
 
-				if (bUseGlobalNamespace == false && bHasNamespaces == false)
+				if (bUseGlobalNamespace == false && (NamespaceColumn == INDEX_NONE))
 				{
 					OutMessage = TEXT("ERROR: Namespaces in CSV not found!");
 					return false;
 				}
 
-				// Clear the localization directory first.
+				// Potential place for devnotes.
+				const FCSVColumn& DevNotes = (DevNotesColumn != INDEX_NONE) ? Columns[DevNotesColumn] : Columns[0];
+
+				// Clear the localization directory first, preserving any .uasset files (e.g. string table assets). 
+				// Deleting .uasset files while the corresponding UPackage is still in memory invalidates the async loader's package tracking and causes an assertion on the next reimport.
 				if (bFirstCSV)
 				{
 					// Ensure we are not deleting any important files by checking if we are in Content directory and the Meta file is there exists.
 					if (LocPath.Contains("Content") && IFileManager::Get().FileExists(*MetaFileName))
 					{
-						IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+						TArray<FString> FilesToDelete;
+						IFileManager::Get().FindFilesRecursive(FilesToDelete, *LocPath, TEXT("*"), true, false);
+						for (const FString& File : FilesToDelete)
+						{
+							if (File.EndsWith(TEXT(".uasset")) == false)
+							{
+								IFileManager::Get().Delete(*File);
+							}
+						}
 					}
 				}
 
-				// Keys will be in first row if not having namespaces.
-				const FCSVColumn& Keys = Columns[bHasNamespaces ? FirstColumn+1 : FirstColumn];
+				// Get the keys column and check if it is valid.
+				const FCSVColumn& Keys = Columns[FirstLangColumn-1];
 				if (Keys.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase) == false)
 				{
 					OutMessage = TEXT("ERROR: Key column in CSV not found!");
 					return false;
 				}
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+				// Gather Dev Notes if available
+				if (DevNotesColumn != INDEX_NONE)
+				{
+					if (DevNotes.Values[0].Equals(TEXT("devnotes"), ESearchCase::IgnoreCase) == false)
+					{
+						OutMessage = TEXT("ERROR: Dev Notes column in CSV not found!");
+						return false;
+					}
+
+					for (int32 Key = 1; Key < Keys.Values.Num(); Key++)
+					{
+						FString DevNote = DevNotes.Values[Key];
+						if (DevNote.IsEmpty() == false)
+						{
+							const FString& Namespace = (bUseGlobalNamespace || Namespaces.Values[Key].IsEmpty()) ? GlobalNamespace : Namespaces.Values[Key];
+							if (Namespace.IsEmpty())
+							{
+								OutMessage = FString::Printf(TEXT("ERROR: Namespace in row %i (counting from 1) for dev note is empty!"), Key);
+								return false;
+							}
+							TMap<FString, FString>& DevNotesList = NamespaceToKeysToNotesMap.FindOrAdd(Namespace);
+							DevNotesList.Add(Keys.Values[Key], DevNote);
+						}
+					}
+				}
+#endif
 
 				if (bLogDebug)
 				{
@@ -580,7 +671,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 					UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 				}
 
-				const int32 FirstLangColumn = bHasNamespaces ? (FirstColumn + 2) : (FirstColumn + 1);
 				for (int32 Column = FirstLangColumn; Column < Columns.Num(); Column++)
 				{
 					const FCSVColumn& Locs = Columns[Column];
@@ -636,6 +726,11 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 								Keys.Values[Key],
 								LocalizedString,
 								0);
+
+							if (bGenerateStringTables && (Keys.Values[Key].IsEmpty() == false))
+							{
+								NamespaceToKeysMap.FindOrAdd(Namespace).Add(Keys.Values[Key]);
+							}
 						}
 					}
 				}
@@ -672,6 +767,93 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			UE_LOG(ELTEditorLog, Log, TEXT("Saved Loc File: %s"), *LocFileName);
 		}
 		LocRes.Value.SaveToFile(LocFileName);
+	}
+
+	// Generate Key Reference String Table
+	if (bGenerateStringTables && NamespaceToKeysMap.Num() > 0)
+	{
+		FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+
+		for (const auto& KVP : NamespaceToKeysMap)
+		{
+			const FString& Namespace = KVP.Key;
+			const TSet<FString>& Keys = KVP.Value;
+
+			FString AssetName = FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
+			FString PackagePath = FPackageName::FilenameToLongPackageName(LocPath / AssetName);
+
+			// If the package is already in memory (e.g. from a previous reimport), use it directly.
+			UPackage* Package = FindPackage(nullptr, *PackagePath);
+			if (Package == nullptr)
+			{
+				if (FPackageName::DoesPackageExist(*PackagePath))
+				{
+					Package = LoadPackage(nullptr, *PackagePath, LOAD_None);
+				} else
+				{
+					Package = CreatePackage(*PackagePath);
+				}
+			}
+			if (Package == nullptr)
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to create package path for StringTable: %s"), *PackagePath);
+				return false;
+			}
+			
+			// Clear any existing StringTable from the package before creating a new one.
+			if (UStringTable* Existing = FindObject<UStringTable>(Package, *AssetName))
+			{
+				Existing->ClearFlags(RF_Public | RF_Standalone);
+				Existing->MarkAsGarbage();
+			}
+			
+			UStringTable* StringTableAsset = NewObject<UStringTable>(Package, UStringTable::StaticClass(), FName(*AssetName), (RF_Public | RF_Standalone | RF_Transactional));
+			if (StringTableAsset == nullptr)
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to create StringTable asset: %s"), *AssetName);
+				return false;
+			}
+
+			FAssetRegistryModule::AssetCreated(StringTableAsset);
+			Package->MarkPackageDirty();
+
+			FStringTableRef StringTableRef = StringTableAsset->GetMutableStringTable();
+			StringTableRef->SetNamespace(Namespace);
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+			TMap<FString, FString>* KeysToNotes = NamespaceToKeysToNotesMap.Find(Namespace);
+			for (const FString& Key : Keys)
+			{
+				FString DevNotes = TEXT("");
+				if (FString* Note = KeysToNotes ? KeysToNotes->Find(Key) : nullptr)
+				{
+					DevNotes = *Note;
+				}
+
+				StringTableRef->SetSourceString(FTextKey(Key), Key, DevNotes);
+			}
+#else
+			for (const FString& Key : Keys)
+			{
+				StringTableRef->SetSourceString(FTextKey(Key), Key);
+			}
+#endif
+
+			FString PackageFileName = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			SaveArgs.Error = GError;
+			if (UPackage::SavePackage(Package, StringTableAsset, *PackageFileName, SaveArgs) == false)
+			{
+				OutMessage = FString::Printf(TEXT("ERROR: Failed to save StringTable package file to disk path: %s"), *PackageFileName);
+				return false;
+			}
+
+			if (bLogDebug)
+			{
+				UE_LOG(ELTEditorLog, Log, TEXT("Saved String Table Asset: %s"), *PackageFileName);
+			}
+		}
 	}
 
 	OutMessage = TEXT("SUCCESS: Localization import complete!");

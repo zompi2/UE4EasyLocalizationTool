@@ -20,4 +20,5 @@ public:
 	void RegisterCommands() override;
 	
 	TSharedPtr<FUICommandInfo> OpenELTMenu;
+	TSharedPtr<FUICommandInfo> RunELTAudit;
 };

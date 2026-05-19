@@ -40,6 +40,10 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"EditorWidgets",
 				"BlueprintGraph",
 				"PropertyEditor",
+				"ContentBrowser",
+				"AssetRegistry",
+				"Kismet",
+				"ApplicationCore",
             }
 		);
 

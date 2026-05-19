@@ -49,8 +49,8 @@ public:
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
-	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
 
 private:
 
@@ -145,6 +145,11 @@ private:
 	void OnFallbackWhenEmptyChanged(const FString& NewFallback);
 
 	/**
+	 * Called when "GenerateKeyReferenceStringTable" option has been changed in the Widget.
+	 */
+	void OnGenerateKeyReferenceStringTableChanged(bool bNewGenerateKeyReferenceStringTable);
+	
+	/**
 	 * Called when "LogDebug" option has been changed in the Widget.
 	 */
 	void OnLogDebugChanged(bool bNewLogDebug);
@@ -163,10 +168,22 @@ private:
 	void SetLanguagePreview();
 
 	/**
-	 * Refresh the list of available languages based on the files that exists in Localization directory.
-	 * It can optionally RefreshUI.
+	 * Controls which UI elements are updated when RefreshAvailableLangs is called.
 	 */
-	void RefreshAvailableLangs(bool bRefreshUI);
+	enum class ERefreshUIFlags : uint8
+	{
+		None        = 0,
+		ToolWidget  = 1 << 0,
+		AuditWidget = 1 << 1,
+		All         = ToolWidget | AuditWidget,
+	};
+	FRIEND_ENUM_CLASS_FLAGS(ERefreshUIFlags);
+
+	/**
+	 * Refresh the list of available languages based on the files that exists in Localization directory.
+	 * UIFlags controls which widgets are updated
+	 */
+	void RefreshAvailableLangs(ERefreshUIFlags UIFlags);
 
 	/**
 	 * Generates Localization Files based on the given CSV path and Global Namespace.

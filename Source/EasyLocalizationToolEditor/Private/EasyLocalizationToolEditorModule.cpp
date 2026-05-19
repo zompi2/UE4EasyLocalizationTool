@@ -14,10 +14,19 @@
 #include "PropertyEditorModule.h"
 #include "LevelEditor.h"
 
-#include "BlueprintEditorModule.h"
+#include "ContentBrowserModule.h"
+#include "ContentBrowserDelegates.h"
+#include "IContentBrowserSingleton.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "ELTEditorAuditor.h"
+#include "Subsystems/AssetEditorSubsystem.h"
+#include "Toolkits/AssetEditorToolkit.h"
+#include "Editor.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
 #include "ToolMenu.h"
+#include "Toolkits/AssetEditorToolkitMenuContext.h"
+#include "Toolkits/AssetEditorToolkit.h"
 #endif
 
 IMPLEMENT_MODULE(FEasyLocalizationToolEditorModule, EasyLocalizationToolEditor)
@@ -61,6 +70,105 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	GraphPanelPinFactory = MakeShared<FTextPreviewGraphPanelPinFactory>();
 	FEdGraphUtilities::RegisterVisualPinFactory(GraphPanelPinFactory);
 #endif
+
+	// Register the Localization Audit action in the Content Browser context menu.
+	FContentBrowserMenuExtender_SelectedAssets AuditExtender = FContentBrowserMenuExtender_SelectedAssets::CreateLambda(
+		[](const TArray<FAssetData>& SelectedAssets) -> TSharedRef<FExtender>
+		{
+			TSharedRef<FExtender> Extender = MakeShared<FExtender>();
+			Extender->AddMenuExtension(
+				"CommonAssetActions",
+				EExtensionHook::After,
+				nullptr,
+				FMenuExtensionDelegate::CreateLambda([](FMenuBuilder& MenuBuilder)
+				{
+					MenuBuilder.BeginSection("ELTLocalizationAudit", FText::FromString("Easy Localization Tool"));
+					MenuBuilder.AddMenuEntry(
+						FText::FromString("Localization Audit"),
+						FText::FromString("\
+Scans asset(s) for all FText properties marked to be localize, and returns them in a list.\n\n\
+They are tested for the following issues:\n\
+1. Empty Text Value\n\
+2. Invalid String Table Key Reference\n\
+3. Not Yet Localized (Value and Localization Key do not match)\n\
+4. Invalid Localization (Value and Localization Key matches, but does not return a valid localization string)"),
+						FSlateIcon(),
+						FUIAction(FExecuteAction::CreateLambda([]()
+						{
+							GetMutableDefault<UELTEditorAuditor>()->AuditSelectedAssets();
+						}))
+					);
+					MenuBuilder.EndSection();
+				})
+			);
+			return Extender;
+		}
+	);
+	ContentBrowserExtenderHandle = AuditExtender.GetHandle();
+	FModuleManager::LoadModuleChecked<FContentBrowserModule>(TEXT("ContentBrowser"))
+		.GetAllAssetViewContextMenuExtenders().Add(MoveTemp(AuditExtender));
+
+	FContentBrowserMenuExtender_SelectedPaths FolderAuditExtender = FContentBrowserMenuExtender_SelectedPaths::CreateLambda(
+		[](const TArray<FString>& SelectedPaths) -> TSharedRef<FExtender>
+		{
+			TSharedRef<FExtender> Extender = MakeShared<FExtender>();
+			Extender->AddMenuExtension(
+				"PathViewFolderOptions",
+				EExtensionHook::After,
+				nullptr,
+				FMenuExtensionDelegate::CreateLambda([SelectedPaths](FMenuBuilder& MenuBuilder)
+				{
+					MenuBuilder.BeginSection("ELTLocalizationAudit", FText::FromString("Easy Localization Tool"));
+					MenuBuilder.AddMenuEntry(
+						FText::FromString("Localization Audit"),
+						FText::FromString("Scans all assets in the selected folder(s) for FText localization issues."),
+						FSlateIcon(),
+						FUIAction(FExecuteAction::CreateLambda([SelectedPaths]()
+						{
+							FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+							IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+							FARFilter Filter;
+							Filter.bRecursivePaths = true;
+							for (const FString& Path : SelectedPaths)
+							{
+								// GetAllPathViewContextMenuExtenders also returns /All-prefixed
+								// virtual paths — strip to get the real package path.
+								FString PackagePath = Path;
+								const FString AllPrefix = TEXT("/All");
+								if (PackagePath.StartsWith(AllPrefix))
+								{
+									PackagePath = PackagePath.RightChop(AllPrefix.Len());
+								}
+								Filter.PackagePaths.Add(FName(*PackagePath));
+							}
+
+							TArray<FAssetData> Assets;
+							AssetRegistry.GetAssets(Filter, Assets);
+
+							// Also include any assets selected in the asset view — the path view
+							// extender fires when right-clicking a folder regardless of asset selection,
+							// so we need to merge both selections manually.
+							TArray<FAssetData> SelectedAssets;
+							FModuleManager::LoadModuleChecked<FContentBrowserModule>(TEXT("ContentBrowser"))
+								.Get().GetSelectedAssets(SelectedAssets);
+							for (const FAssetData& SelectedAsset : SelectedAssets)
+							{
+								Assets.AddUnique(SelectedAsset);
+							}
+
+							GetMutableDefault<UELTEditorAuditor>()->AuditAssets(Assets);
+						}))
+					);
+					MenuBuilder.EndSection();
+				})
+			);
+			return Extender;
+		}
+	);
+	PathViewExtenderHandle = FolderAuditExtender.GetHandle();
+	FModuleManager::LoadModuleChecked<FContentBrowserModule>(TEXT("ContentBrowser"))
+		.GetAllPathViewContextMenuExtenders().Add(MoveTemp(FolderAuditExtender));
 }
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
@@ -79,6 +187,23 @@ void FEasyLocalizationToolEditorModule::ShutdownModule()
 #if USE_STABLE_LOCALIZATION_KEYS
 	PropertyModule.UnregisterCustomClassLayout(UObject::StaticClass()->GetFName());
 #endif
+
+	// Unregister the Localization Audit content browser extender.
+	if (FContentBrowserModule* CBModule = FModuleManager::GetModulePtr<FContentBrowserModule>(TEXT("ContentBrowser")))
+	{
+		CBModule->GetAllAssetViewContextMenuExtenders().RemoveAll(
+			[this](const FContentBrowserMenuExtender_SelectedAssets& Delegate)
+			{
+				return Delegate.GetHandle() == ContentBrowserExtenderHandle;
+			}
+		);
+		CBModule->GetAllPathViewContextMenuExtenders().RemoveAll(
+			[this](const FContentBrowserMenuExtender_SelectedPaths& Delegate)
+			{
+				return Delegate.GetHandle() == PathViewExtenderHandle;
+			}
+		);
+	}
 
 	// Unregister Tab Spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ELTTabId);
@@ -100,6 +225,82 @@ void FEasyLocalizationToolEditorModule::ShutdownModule()
 	FELTEditorStyle::Shutdown();
 }
 
+void FEasyLocalizationToolEditorModule::RunAuditCommand()
+{
+	if (!FSlateApplication::IsInitialized() || !GEditor)
+	{
+		return;
+	}
+
+	TArray<FAssetData> AssetsToAudit;
+	bool bContentBrowserHasFocus = false;
+
+	// Check if the active window/widget is a Content Browser or Content Drawer
+	TSharedPtr<SWidget> FocusedWidget = FSlateApplication::Get().GetUserFocusedWidget(0);
+	if (FocusedWidget.IsValid())
+	{
+		FWidgetPath FocusedWidgetPath;
+		if (FSlateApplication::Get().GeneratePathToWidgetUnchecked(FocusedWidget.ToSharedRef(), FocusedWidgetPath))
+		{
+			for (int32 i = FocusedWidgetPath.Widgets.Num() - 1; i >= 0; --i)
+			{
+				FString WidgetType = FocusedWidgetPath.Widgets[i].Widget->GetTypeAsString();
+
+				// This catches active standalone content browsers and the pop-up content drawer
+				if (WidgetType.Contains("SContentBrowser") || WidgetType.Contains("SContentDrawer"))
+				{
+					bContentBrowserHasFocus = true;
+					break;
+				}
+			}
+		}
+	}
+
+	// If bContentBrowserHasFocus is true, audit selected assets and folders. Does nothing if nothing is selected.
+	if (bContentBrowserHasFocus)
+	{
+		GetMutableDefault<UELTEditorAuditor>()->AuditSelectedAssets();
+		return;
+	}
+
+	// Check if the active window is an asset, audit it if true.
+	UAssetEditorSubsystem* AssetEditorSubsystem = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
+	if (AssetEditorSubsystem == nullptr)
+	{
+		return;
+	}
+	
+	// Loop through all opened assets and check if the asset window is current tab. 
+	for (UObject* Asset : AssetEditorSubsystem->GetAllEditedAssets())
+	{
+		IAssetEditorInstance* EditorInstance = AssetEditorSubsystem->FindEditorForAsset(Asset, false);
+		if (!EditorInstance)
+		{
+			continue;
+		}
+
+		FAssetEditorToolkit* EditorToolkit = static_cast<FAssetEditorToolkit*>(EditorInstance);
+		if (!EditorToolkit)
+		{
+			continue;
+		}
+
+		TSharedPtr<FTabManager> TabManager = EditorToolkit->GetTabManager();
+		if (!TabManager)
+		{
+			continue;
+		}
+
+		TSharedPtr<SDockTab> OwnerTab = TabManager->GetOwnerTab();
+		if (OwnerTab.IsValid() && OwnerTab->IsForeground())
+		{
+			AssetsToAudit.Add(FAssetData(Asset));
+			GetMutableDefault<UELTEditorAuditor>()->AuditAssets(AssetsToAudit);
+			return;
+		}
+	}
+}
+
 void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 {
 	// This function is for registering UICommand to the engine, so it can be executed via keyboard shortcut.
@@ -119,6 +320,12 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 				FIsActionChecked::CreateRaw(this, &FEasyLocalizationToolEditorModule::IsEditorSpawned)
 			);
 
+			// Map the audit shortcut to RunAuditCommand.
+			Commands->MapAction(
+				FELTEditorCommands::Get().RunELTAudit,
+				FExecuteAction::CreateRaw(this, &FEasyLocalizationToolEditorModule::RunAuditCommand)
+			);
+
 			// Register this UICommandList to the MainFrame.
 			// Otherwise nothing will handle the input to trigger this command.
 			IMainFrameModule& MainFrame = FModuleManager::Get().LoadModuleChecked<IMainFrameModule>("MainFrame");
@@ -126,16 +333,34 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 
 			
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
-			// The Menu Extender doesn't work correctly for new menus in UE5.4 as they don't have proper Hook names as they should...
-			// Attempt to add menu entry with UICommandList of opening ELT Window to the Tools menu.
-			UToolMenu* Menu = UToolMenus::Get()->FindMenu("LevelEditor.MainMenu.Tools");
-			if (Menu)
+			// Add both the ELT window opener and Localization Audit to the same named section
+			// under the Tools menu, so they appear grouped as "Easy Localization Tool" entries.
+			UToolMenu* ToolsMenu = UToolMenus::Get()->ExtendMenu(TEXT("MainFrame.MainMenu.Tools"));
+			if (ToolsMenu)
 			{
-				Menu->AddMenuEntry(NAME_None, FToolMenuEntry::InitMenuEntryWithCommandList(
-					FELTEditorCommands::Get().OpenELTMenu, 
+				FToolMenuSection& Section = ToolsMenu->FindOrAddSection(
+					"ELTLocalizationAudit",
+					FText::FromString(TEXT("Easy Localization Tool"))
+				);
+
+				Section.AddEntry(FToolMenuEntry::InitMenuEntryWithCommandList(
+					FELTEditorCommands::Get().OpenELTMenu,
 					Commands,
 					FText::FromString(TEXT("Easy Localization Tool")),
 					FText::FromString(TEXT("Opens Easy Localization Tool Window")),
+					FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon")));
+
+				Section.AddEntry(FToolMenuEntry::InitMenuEntryWithCommandList(
+					FELTEditorCommands::Get().RunELTAudit,
+					Commands,
+					FText::FromString(TEXT("Localization Audit")),
+					FText::FromString(TEXT("\
+Scans this asset for all FText properties marked to be localize, and returns them in a list.\n\n\
+They are tested for the following issues:\n\
+1. Empty Text Value\n\
+2. Invalid String Table Key Reference\n\
+3. Not Yet Localized (Value and Localization Key do not match)\n\
+4. Invalid Localization (Value and Localization Key matches, but does not return a valid localization string)")),
 					FSlateIcon(FELTEditorStyle::GetStyleSetName(), "ELTEditorStyle.MenuIcon")));
 			}
 #else
