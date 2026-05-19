@@ -283,6 +283,10 @@ void UELTEditor::OnGenerateLocFiles()
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #else
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
+#if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
+FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
+#else
+FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #endif
 }
 
