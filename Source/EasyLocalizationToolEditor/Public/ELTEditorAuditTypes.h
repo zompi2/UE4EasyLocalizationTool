@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
+﻿// Copyright (c) 2026 Crezetique. All rights reserved.
 
 #pragma once
 

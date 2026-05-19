@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
+﻿// Copyright (c) 2026 Crezetique. All rights reserved.
 
 #include "ELTEditorAuditWidget.h"
 #include "ELTEditorAuditor.h"
@@ -108,7 +108,8 @@ bool UELTEditorAuditWidget::bPendingDialogOnSpawn = false;
 		: FString::Printf(TEXT("%d issue(s) found across %d / %d asset(s)."), IssueCount, AffectedAssets.Num(), Results.Num());
 
 #if (ENGINE_MAJOR_VERSION == 5)
-	FMessageDialog::Open(EAppMsgCategory::Success, EAppMsgType::Ok, FText::FromString(Summary), FText::FromString(TEXT("Audit Complete")));
+	const EAppMsgCategory Category = (IssueCount == 0) ? EAppMsgCategory::Success : EAppMsgCategory::Warning;
+	FMessageDialog::Open(Category, EAppMsgType::Ok, FText::FromString(Summary), FText::FromString(TEXT("Audit Complete")));
 #else
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(Summary));
 #endif
