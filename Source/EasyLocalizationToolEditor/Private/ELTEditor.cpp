@@ -279,14 +279,10 @@ void UELTEditor::OnGenerateLocFiles()
 	}
 	
 	// Display a Dialog Window to inform user that the localization generation has been finished.
-#if (ENGINE_MAJOR_VERSION == 5)
+#if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #else
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
-#if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
-FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
-#else
-FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #endif
 }
 
@@ -600,18 +596,27 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				// Potential place for devnotes.
 				const FCSVColumn& DevNotes = (DevNotesColumn != INDEX_NONE) ? Columns[DevNotesColumn] : Columns[0];
 
-				// Clear the localization directory first.
+				// Clear the localization directory first, preserving any .uasset files (e.g. string table assets). 
+				// Deleting .uasset files while the corresponding UPackage is still in memory invalidates the async loader's package tracking and causes an assertion on the next reimport.
 				if (bFirstCSV)
 				{
 					// Ensure we are not deleting any important files by checking if we are in Content directory and the Meta file is there exists.
 					if (LocPath.Contains("Content") && IFileManager::Get().FileExists(*MetaFileName))
 					{
-						IFileManager::Get().DeleteDirectory(*LocPath, false, true);
+						TArray<FString> FilesToDelete;
+						IFileManager::Get().FindFilesRecursive(FilesToDelete, *LocPath, TEXT("*"), true, false);
+						for (const FString& File : FilesToDelete)
+						{
+							if (File.EndsWith(TEXT(".uasset")) == false)
+							{
+								IFileManager::Get().Delete(*File);
+							}
+						}
 					}
 				}
 
 				// Get the keys column and check if it is valid.
-				const FCSVColumn& Keys = Columns[FirstLangColumn];
+				const FCSVColumn& Keys = Columns[FirstLangColumn-1];
 				if (Keys.Values[0].Equals(TEXT("key"), ESearchCase::IgnoreCase) == false)
 				{
 					OutMessage = TEXT("ERROR: Key column in CSV not found!");
@@ -763,13 +768,31 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			FString AssetName = FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
 			FString PackagePath = FPackageName::FilenameToLongPackageName(LocPath / AssetName);
 
-			UPackage* Package = FPackageName::DoesPackageExist(*PackagePath) ? LoadPackage(nullptr, *PackagePath, LOAD_None) : CreatePackage(*PackagePath);
+			// If the package is already in memory (e.g. from a previous reimport), use it directly.
+			UPackage* Package = FindPackage(nullptr, *PackagePath);
+			if (Package == nullptr)
+			{
+				if (FPackageName::DoesPackageExist(*PackagePath))
+				{
+					Package = LoadPackage(nullptr, *PackagePath, LOAD_None);
+				} else
+				{
+					Package = CreatePackage(*PackagePath);
+				}
+			}
 			if (Package == nullptr)
 			{
 				OutMessage = FString::Printf(TEXT("ERROR: Failed to create package path for StringTable: %s"), *PackagePath);
 				return false;
 			}
-
+			
+			// Clear any existing StringTable from the package before creating a new one.
+			if (UStringTable* Existing = FindObject<UStringTable>(Package, *AssetName))
+			{
+				Existing->ClearFlags(RF_Public | RF_Standalone);
+				Existing->MarkAsGarbage();
+			}
+			
 			UStringTable* StringTableAsset = NewObject<UStringTable>(Package, UStringTable::StaticClass(), FName(*AssetName), (RF_Public | RF_Standalone | RF_Transactional));
 			if (StringTableAsset == nullptr)
 			{
