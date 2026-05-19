@@ -54,6 +54,11 @@ private:
 	 * Invokes spawning editor from the command.
 	 */
 	void InvokeEditorSpawn();
+
+	/**
+	 * Audit selected assets if content browser is focused, otherwise audit focused editor window if it is an asset.
+	 */
+	void RunAuditCommand();
 	
 	// Editor object.
 #if (ENGINE_MAJOR_VERSION == 5)
@@ -69,4 +74,7 @@ private:
 	FDelegateHandle OnPostEngineInitDelegateHandle;
 
 	TSharedPtr<struct FTextPreviewGraphPanelPinFactory> GraphPanelPinFactory;
+
+	FDelegateHandle ContentBrowserExtenderHandle;
+	FDelegateHandle PathViewExtenderHandle;
 };

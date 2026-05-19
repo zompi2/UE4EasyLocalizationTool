@@ -11,6 +11,7 @@
 #include "Misc/MessageDialog.h"
 #include "ELTEditorSettings.h"
 #include "ELTEditorWidget.h"
+#include "ELTEditorAuditWidget.h"
 #include "ELTSettings.h"
 #include "UObject/SavePackage.h"
 
@@ -41,6 +42,10 @@ void UELTEditor::Init()
 	CSVPaths		= UELTEditorSettings::GetCSVPaths();
 	CurrentLocPath	= UELTEditorSettings::GetLocalizationPath();
 
+	// Bind the audit widget's Reimport CSV button to this editor's generate function.
+	// Done here rather than InitializeTheWidget, as that requires ELT tool widget opened.
+	UELTEditorAuditWidget::OnReimportCSVDelegate.BindUObject(this, &UELTEditor::OnGenerateLocFiles);
+
 	// Reimport localizations (if this option is enabled).
 	if (UELTEditorSettings::GetReimportAtEditorStartup())
 	{
@@ -49,7 +54,7 @@ void UELTEditor::Init()
 	}
 
 	// Refresh information about available localizations.
-	RefreshAvailableLangs(false);
+	RefreshAvailableLangs(ERefreshUIFlags::None);
 
 	// Set preview language (if the option is enabled).
 	SetLanguagePreview();
@@ -151,7 +156,7 @@ void UELTEditor::ChangeTabWorld(UWorld* World, EMapChangeType MapChangeType)
 void UELTEditor::InitializeTheWidget()
 {
 	// Check available languages (based on files in Localization directory)
-	RefreshAvailableLangs(true);
+	RefreshAvailableLangs(ERefreshUIFlags::All);
 
 	// Bind all required delegates to the Widget.
 	EditorWidget->OnLocalizationPathSelectedDelegate.BindUObject(this, &UELTEditor::OnLocalizationPathChanged);
@@ -244,7 +249,7 @@ void UELTEditor::OnLocalizationPathChanged(const FString& NewPath)
 	EditorWidget->CallFillCSVPath(PathsStringToList(GetCurrentCSVPath()));
 
 	// Refresh available languages for this Localization directory and set them to the Widget.
-	RefreshAvailableLangs(false);
+	RefreshAvailableLangs(ERefreshUIFlags::None);
 	EditorWidget->CallFillAvailableLangsInLocFile(CurrentAvailableLangsForLocFile);
 
 	// Set Global Namespace for this Localization directory to the Widget.
@@ -274,10 +279,11 @@ void UELTEditor::OnGenerateLocFiles()
 	const bool bSuccess = GenerateLocFiles(ReturnMessage);
 	if (bSuccess)
 	{
-		RefreshAvailableLangs(true);
+		const ERefreshUIFlags Flags = EditorWidget ? ERefreshUIFlags::All : ERefreshUIFlags::AuditWidget;
+		RefreshAvailableLangs(Flags);
 		SetLanguagePreview();
 	}
-	
+
 	// Display a Dialog Window to inform user that the localization generation has been finished.
 #if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
@@ -398,7 +404,7 @@ void UELTEditor::SetLanguagePreview()
 	}
 }
 
-void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
+void UELTEditor::RefreshAvailableLangs(ERefreshUIFlags UIFlags)
 {
 	// Get all available languages by reading the localization directory.
 	// Languages in current localization directory put into the separate array too.
@@ -426,7 +432,10 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		}
 	}
 
-	if (bRefreshUI)
+	const bool bRefreshELTWidget   = EnumHasAnyFlags(UIFlags, ERefreshUIFlags::ToolWidget);
+	const bool bRefreshAuditWidget = EnumHasAnyFlags(UIFlags, ERefreshUIFlags::AuditWidget);
+
+	if (bRefreshELTWidget && EditorWidget)
 	{
 		// If the RefreshUI has been requested - set the available languages on the Widget.
 		EditorWidget->CallFillAvailableLangs(CurrentAvailableLangs);
@@ -455,6 +464,11 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 		{
 			EditorWidget->CallSetLocalizationOnFirstRunLang(LangAtFirstLaunch);
 		}
+	}
+
+	if (bRefreshAuditWidget)
+	{
+		UELTEditorAuditWidget::UpdateAvailableLanguages(CurrentAvailableLangs);
 	}
 
 	// Set available languages to the game settings.

@@ -168,10 +168,22 @@ private:
 	void SetLanguagePreview();
 
 	/**
-	 * Refresh the list of available languages based on the files that exists in Localization directory.
-	 * It can optionally RefreshUI.
+	 * Controls which UI elements are updated when RefreshAvailableLangs is called.
 	 */
-	void RefreshAvailableLangs(bool bRefreshUI);
+	enum class ERefreshUIFlags : uint8
+	{
+		None        = 0,
+		ToolWidget  = 1 << 0,
+		AuditWidget = 1 << 1,
+		All         = ToolWidget | AuditWidget,
+	};
+	FRIEND_ENUM_CLASS_FLAGS(ERefreshUIFlags);
+
+	/**
+	 * Refresh the list of available languages based on the files that exists in Localization directory.
+	 * UIFlags controls which widgets are updated
+	 */
+	void RefreshAvailableLangs(ERefreshUIFlags UIFlags);
 
 	/**
 	 * Generates Localization Files based on the given CSV path and Global Namespace.

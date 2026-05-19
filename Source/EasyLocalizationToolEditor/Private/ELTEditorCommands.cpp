@@ -22,6 +22,7 @@ void FELTEditorCommands::RegisterCommands()
 {
 #define LOCTEXT_NAMESPACE "ELTLoc"
 	UI_COMMAND(OpenELTMenu, "Easy Localization Tool", "Opens Easy Localisation Tool Editor Window", EUserInterfaceActionType::Check, FInputChord(EModifierKey::Shift | EModifierKey::Alt, EKeys::L));
+	UI_COMMAND(RunELTAudit, "Audit Localizations", "Audit selected assets if content browser is focused, otherwise audit focused editor window if it is an asset.", EUserInterfaceActionType::Check, FInputChord(EModifierKey::Control | EModifierKey::Alt, EKeys::L));
 #undef LOCTEXT_NAMESPACE
 }
 
