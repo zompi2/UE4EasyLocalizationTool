@@ -231,6 +231,7 @@ Text parameters are tested for:
 ### Additional Funcitonality
 - `Reaudit Assets` allows you to quickly iterate fixes on the current list of asset(s).
 - `Reimport CSV` will reimport localization CSVs defined within the ELT Tool Widget.
+- `Language Selector` allows you to quickly preview your localizations.
 - `Filter` options
   - Hide Valid Localization: Hide text entries that have no issue
   - Hide Empty: Hide text entries that are empty.
