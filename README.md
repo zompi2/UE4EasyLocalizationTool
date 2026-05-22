@@ -56,6 +56,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Adding Localization Directories](#adding-localization-directories)
 - [Using Localizations](#using-localizations)
 - [String Tables](#string-tables)
+- [Localization Audit](#localization-audit)
 - [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
@@ -198,6 +199,49 @@ Localization can be used in **String Tables**. Remember to set the **Key** and *
 
 Then, use them like standard **String Tables** in Text properties.  
 <img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
+
+[Back to top](#table-of-content)
+
+## Localization Audit
+
+The Localization Audit tool grants you the ability to vet and hightlight issues involving Text Parameters throughout multiple assets. A detailed report is presented, along with helpful actions allows you to quickly iterate and resolve issues. 
+
+<img width="1834" height="1098" alt="image" src="https://github.com/user-attachments/assets/ac0a0b1f-0027-4f16-8f8a-ddb60a1a7b51" />
+
+### Triggering a Localization Audit
+
+You can trigger a Localization Audit through the methods below. They can also be triggered by the configurable hotkey, `Ctrl + Alt + L` by default.
+- Within Content Browser / Drawer
+  - Localization Audit option can be found within an asset Context Menu (Right-Click) in the Content Browser.
+  - You can highlight multiple files to be audited at the same time.
+- Within Editor Asset Window
+  - Localization Audit option can be found within an editor window main menu, under Tools.
+
+### Issue Reporting
+Text parameters are tested for:
+- Empty Value
+  - No text value set. This may be intentional for state or function processing purposes, recommends toggling localize bool.
+- String Table Missing Key
+  - String Table is set, but an invalid key is selected.
+- Not Yet Localized
+  - Unable to fetch a localization string. (Value and Key do not match)
+- Invalid Localization
+  - The localization key does not return a valid localization string.
+
+### Additional Funcitonality
+- `Reaudit Assets` allows you to quickly iterate fixes on the current list of asset(s).
+- `Reimport CSV` will reimport localization CSVs defined within the ELT Tool Widget.
+- `Language Selector` allows you to quickly preview your localizations.
+- `Filter` options
+  - Hide Valid Localization: Hide text entries that have no issue
+  - Hide Empty: Hide text entries that are empty.
+- `Sort` by clicking on table header row.
+- `Quick Action` based on Context Type
+  - Class Variable: Open Asset
+  - Function Variable: Jump to Function
+  - Node Parameter: Jump to Node
+  - Widget Component: Open File
+- `Copy to Clipboard` by clicking on each table cell. Useful for copying Values to input on a separate localization sheet.
 
 [Back to top](#table-of-content)
 
