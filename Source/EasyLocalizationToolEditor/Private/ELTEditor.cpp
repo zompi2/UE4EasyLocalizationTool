@@ -460,6 +460,11 @@ void UELTEditor::RefreshAvailableLangs(bool bRefreshUI)
 	UELTSettings::SetAvailableLanguages(CurrentAvailableLangs);
 }
 
+FString UELTEditor::GetStringTableName(const FString& LocName, const FString& Namespace)
+{
+	return FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
+}
+
 // IMPORTANT.
 // CSV must have the following structure:
 // |Namespace|Key|lang-en|lang-pl|...|
@@ -830,8 +835,8 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			const FString& Namespace = KVP.Key;
 			const TSet<FString>& Keys = KVP.Value;
 
-			FString AssetName = FString::Printf(TEXT("ELT_KeyReferences_%s_%s"), *LocName, *Namespace);
-			FString PackagePath = FPackageName::FilenameToLongPackageName(LocPath / AssetName);
+			const FString AssetName = GetStringTableName(LocName, Namespace);
+			const FString PackagePath = FPackageName::FilenameToLongPackageName(LocPath / AssetName);
 
 			// If the package is already in memory (e.g. from a previous reimport), use it directly.
 			UPackage* Package = FindPackage(nullptr, *PackagePath);
