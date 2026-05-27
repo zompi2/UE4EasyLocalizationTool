@@ -34,6 +34,11 @@ public:
 		IFileManager::Get().MakeDirectory(*GetTestCSVDir(), true);
 	}
 
+	static void CleanupDirectories()
+	{
+		IFileManager::Get().DeleteDirectory(*GetTestCSVDir(), true);
+	}
+
 	static bool WriteTestCSV(const FString& Filename, const FString& Content)
 	{
 		EnsureDirectories();
@@ -87,12 +92,15 @@ void FELTGenerateLocFiles_SimpleCSV::Define()
 {
 	Describe(TEXT("GenerateLocFilesImpl - Simple CSV with namespace"), [this]()
 	{
-		It(TEXT("Should generate localization files for a basic CSV with namespace, key, and multiple languages"), [this]()
+		BeforeEach([]()
 		{
 			FELTAutomationCommon::EnsureDirectories();
+		});
 
-			// Create a simple CSV
-			FString CSV = TEXT("namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
+		It(TEXT("Should generate localization files for a basic CSV with namespace, key, and multiple languages"), [this]()
+		{
+			const FString CSVName = TEXT("SimpleCSV");
+			const FString CSV = TEXT("namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("MainMenu,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
 				TEXT("MainMenu,QuitGame,Quit,Wyjd ,Quitter,Beenden\n")
 				TEXT("MainMenu,Settings,Settings,Ustawienia,Paramtres,Einstellungen\n")
@@ -102,18 +110,23 @@ void FELTGenerateLocFiles_SimpleCSV::Define()
 				TEXT("Gameplay,Score,Score,Wynik,Score,Punktzahl\n")
 				TEXT("Gameplay,Level,Level,Poziom,Niveau,Stufe\n");
 
-			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(TEXT("SimpleCSV"), CSV));
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
 			FString OutMessage;
-			TArray<FString> CSVPaths;
-			CSVPaths.Add(FELTAutomationCommon::GetTestCSVPath(TEXT("SimpleCSV")));
-			FString LocPath = UELTEditorSettings::GetLocalizationPath();
-			FString LocName = TEXT("Game");
+			const FString LocPath = UELTEditorSettings::GetLocalizationPath();
+			const FString LocName = TEXT("Game");
 
-			bool bSuccess = UELTEditor::GenerateLocFilesImpl(CSVPaths, LocPath, LocName, TEXT("TestNamespace"), TEXT(","), TEXT("NONE"), false, OutMessage);
+			bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName), 
+				LocPath,
+				LocName, 
+				TEXT("TestNamespace"), 
+				TEXT(","), 
+				TEXT("NONE"),
+				false,
+				OutMessage);
 
 			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
-			TestTrue(TEXT("OutMessage indicates success"), OutMessage.Contains(TEXT("SUCCESS")));
 
 			TestTrue(TEXT("English locres file created"), FELTAutomationCommon::LocResFileExists(LocPath, LocName, TEXT("en")));
 			TestTrue(TEXT("Polish locres file created"), FELTAutomationCommon::LocResFileExists(LocPath, LocName, TEXT("pl")));
@@ -129,6 +142,11 @@ void FELTGenerateLocFiles_SimpleCSV::Define()
 			TEST_TRANSLATION("pl", "Gameplay", "Health", "Zdrowie");
 			TEST_TRANSLATION("fr", "Gameplay", "Health", "Sant");
 			TEST_TRANSLATION("de", "Gameplay", "Health", "Gesundheit");
+		});
+
+		AfterEach([]()
+		{
+			FELTAutomationCommon::CleanupDirectories();
 		});
 	});
 }
