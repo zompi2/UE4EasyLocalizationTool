@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
+﻿// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "Misc/AutomationTest.h"
 #include "ELTEditor.h"
@@ -8,6 +8,9 @@
 #include "Internationalization/StringTableRegistry.h"
 #include "Internationalization/StringTableCore.h"
 #include "ELTEditorSettings.h"
+#include "ELT.h"
+#include "ELTEditorUtils.h"
+#include "ELTBlueprintLibrary.h"
 
 ELTTESTS_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -646,6 +649,169 @@ void FELTTests::Define()
 				OutMessage); // Out Message
 
 			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+		});
+
+		// ====================== 16. TESTS: CSV WITH SEMICOLON SEPARATOR ======================
+		It(TEXT("CSV WITH SEMICOLON SEPARATOR"), [this]()
+		{
+			const FString CSV = TEXT("namespace;key;lang-en;lang-sv;lang-no\n")
+				TEXT("Navigation;North;North;North_SV;North_NO\n")
+				TEXT("Navigation;South;South;South_SV;South_NO\n")
+				TEXT("Navigation;East;East;East_SV;East_NO\n")
+				TEXT("Navigation;West;West;West_SV;West_NO\n");
+
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+			FString OutMessage;
+			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName),
+				LocPath,
+				LocName,
+				TEXT("GlobalNamespace"),
+				TEXT(";"),
+				TEXT("NONE"),
+				false,
+				OutMessage);
+
+			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+
+			TEST_LOCFILE_EXISTS("en");
+			TEST_LOCFILE_EXISTS("sv");
+			TEST_LOCFILE_EXISTS("no");
+
+			TEST_TRANSLATION("en", "Navigation", "North", "North");
+			TEST_TRANSLATION("sv", "Navigation", "North", "North_SV");
+			TEST_TRANSLATION("no", "Navigation", "East", "East_NO");
+		});
+
+		// ====================== 17. TESTS: CSV WITH TAB SEPARATOR ======================
+		It(TEXT("CSV WITH TAB SEPARATOR"), [this]()
+		{
+			const FString CSV = TEXT("namespace\tkey\tlang-en\tlang-da\tlang-fi\n")
+				TEXT("Weather\tSunny\tSunny\tSunny_DA\tSunny_FI\n")
+				TEXT("Weather\tRainy\tRainy\tRainy_DA\tRainy_FI\n")
+				TEXT("Weather\tSnowy\tSnowy\tSnowy_DA\tSnowy_FI\n");
+
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+			FString OutMessage;
+			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName),
+				LocPath,
+				LocName,
+				TEXT("GlobalNamespace"),
+				TEXT("\t"),
+				TEXT("NONE"),
+				false,
+				OutMessage);
+
+			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+
+			TEST_LOCFILE_EXISTS("en");
+			TEST_LOCFILE_EXISTS("da");
+			TEST_LOCFILE_EXISTS("fi");
+
+			TEST_TRANSLATION("en", "Weather", "Sunny", "Sunny");
+			TEST_TRANSLATION("da", "Weather", "Rainy", "Rainy_DA");
+			TEST_TRANSLATION("fi", "Weather", "Snowy", "Snowy_FI");
+		});
+
+		// ====================== 17. TESTS: CSV WITH MANY LANGUAGES ======================
+		It(TEXT("CSV WITH MANY LANGUAGES"), [this]()
+		{
+			const FString CSV = TEXT("namespace,key,lang-en,lang-es,lang-fr,lang-de,lang-it,lang-pt,lang-ja\n")
+				TEXT("Status,Alive,Alive,Alive_ES,Alive_FR,Alive_DE,Alive_IT,Alive_PT,Alive_JA\n")
+				TEXT("Status,Dead,Dead,Dead_ES,Dead_FR,Dead_DE,Dead_IT,Dead_PT,Dead_JA\n")
+				TEXT("Status,Sleeping,Sleeping,Sleeping_ES,Sleeping_FR,Sleeping_DE,Sleeping_IT,Sleeping_PT,Sleeping_JA\n");
+
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+			FString OutMessage;
+			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName),
+				LocPath,
+				LocName,
+				TEXT("GlobalNamespace"),
+				TEXT(","),
+				TEXT("NONE"),
+				false,
+				OutMessage);
+
+			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+
+			TEST_LOCFILE_EXISTS("en");
+			TEST_LOCFILE_EXISTS("es");
+			TEST_LOCFILE_EXISTS("fr");
+			TEST_LOCFILE_EXISTS("de");
+			TEST_LOCFILE_EXISTS("it");
+			TEST_LOCFILE_EXISTS("pt");
+			TEST_LOCFILE_EXISTS("ja");
+
+			TEST_TRANSLATION("en", "Status", "Alive", "Alive");
+			TEST_TRANSLATION("es", "Status", "Dead", "Dead_ES");
+			TEST_TRANSLATION("fr", "Status", "Sleeping", "Sleeping_FR");
+			TEST_TRANSLATION("de", "Status", "Alive", "Alive_DE");
+			TEST_TRANSLATION("it", "Status", "Dead", "Dead_IT");
+			TEST_TRANSLATION("pt", "Status", "Sleeping", "Sleeping_PT");
+			TEST_TRANSLATION("ja", "Status", "Alive", "Alive_JA");
+		});
+
+		// ====================== 18. TESTS: Util functions ======================
+		It(TEXT("UTILS FUNCTIONS"), [this]()
+		{
+			const FString CSV = TEXT("namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
+				TEXT("MainMenu,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
+				TEXT("MainMenu,QuitGame,Quit,Wyjd ,Quitter,Beenden\n")
+				TEXT("MainMenu,Settings,Settings,Ustawienia,Paramtres,Einstellungen\n")
+				TEXT("MainMenu,Credits,Credits,Napisy,Cr dits,Abspann\n")
+				TEXT("Gameplay,Health,Health,Zdrowie,Sant,Gesundheit\n")
+				TEXT("Gameplay,Damage,Damage,Obra enia,D g ts,Schaden\n")
+				TEXT("Gameplay,Score,Score,Wynik,Score,Punktzahl\n")
+				TEXT("Gameplay,Level,Level,Poziom,Niveau,Stufe\n");
+
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+			FString OutMessage;
+			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName), 
+				LocPath,
+				LocName, 
+				TEXT("GlobalNamespace"), // Global namespace
+				TEXT(","), // Separator
+				TEXT("NONE"), // Empty value fallback
+				false, // Generate String Tables
+				OutMessage); // Out Message
+
+			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+
+			TEST_LOCFILE_EXISTS("en");
+			TEST_LOCFILE_EXISTS("pl");
+			TEST_LOCFILE_EXISTS("fr");
+			TEST_LOCFILE_EXISTS("de");
+
+			FTextLocalizationManager::Get().DisableGameLocalizationPreview();
+			FTextLocalizationManager::Get().EnableGameLocalizationPreview(TEXT("en"));
+
+			const FText LocText = UELT::GetLocalizedText(TEXT("MainMenu"), TEXT("StartGame"));
+			TestTrue(TEXT("LocText valid"), LocText.ToString().Equals(TEXT("Start Game")));
+
+			const FString LocString = UELT::GetLocalizedString(TEXT("MainMenu"), TEXT("StartGame"));
+			TestTrue(TEXT("LocString valid"), LocString.Equals(TEXT("Start Game")));
+
+			TestTrue(TEXT("Validate Text"), UELTEditorUtils::ValidateText(LocText));
+
+			{
+				FString OutPackage, OutNamespace, OutKey, OutSource;
+				UELTBlueprintLibrary::GetTextData(LocText, OutPackage, OutNamespace, OutKey, OutSource);
+				TestTrue(TEXT("Text Namespace test"), OutNamespace.Equals(TEXT("MainMenu")));
+				TestTrue(TEXT("Text Key test"), OutKey.Equals(TEXT("StartGame")));
+				TestTrue(TEXT("Text Source test"), OutSource.Equals(TEXT("StartGame")));
+			}
+	
+			FString Buffer = UELTBlueprintLibrary::GetTextAsBuffer(LocText, false, false);
+			FText OtherText = UELTBlueprintLibrary::MakeTextFromBuffer(Buffer, false);
+			TestTrue(TEXT("Text Buffer 1"), OtherText.ToString().Equals(LocText.ToString()));
+			TestTrue(TEXT("Text Buffer 2"), UELTBlueprintLibrary::AreTextKeysEqual(LocText, OtherText));
 		});
 
 		AfterEach([]()

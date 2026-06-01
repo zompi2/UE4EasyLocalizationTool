@@ -14,6 +14,7 @@ public class EasyLocalizationToolTests : ModuleRules
 			new string[]
 			{
 				"Core",
+                "EasyLocalizationTool",
                 "EasyLocalizationToolEditor"
             }
 		);
