@@ -58,48 +58,181 @@ public:
 	}
 };
 
-#define TEST_TRANSLATION(_Lang, _Namespace, _Key, _Expected) { \
-FTextLocalizationManager::Get().DisableGameLocalizationPreview(); \
-FTextLocalizationManager::Get().EnableGameLocalizationPreview(TEXT(_Lang)); \
-FString Result = NSLOCTEXT(_Namespace, _Key, _Key).ToString(); \
-TestTrue(FString::Printf(TEXT("Test lang "##_Lang" of namespace: "##_Namespace" key: "##_Key" expect: "##_Expected" result: %s"), *Result), Result.Equals(##_Expected)); \
+#if (ENGINE_MAJOR_VERSION == 5)
+#define SWITCH_LANG(_Lang) { \
+	bLangChanged = false; \
+	FTextLocalizationManager::Get().DisableGameLocalizationPreview(); \
+	while (!bLangChanged) { FPlatformProcess::Sleep(0.1f); } \
+	bLangChanged = false; \
+	FTextLocalizationManager::Get().EnableGameLocalizationPreview(TEXT(_Lang)); \
+	while (!bLangChanged) { FPlatformProcess::Sleep(0.1f); } \
 }
+#else
+#define SWITCH_LANG(_Lang) { \
+	FTextLocalizationManager::Get().DisableGameLocalizationPreview(); \
+	FTextLocalizationManager::Get().EnableGameLocalizationPreview(TEXT(_Lang)); \
+}
+#endif
+
+#define TEST_TRANSLATION(_Lang, _Namespace, _Key, _Expected) { \
+	SWITCH_LANG(_Lang) \
+	FString Result = NSLOCTEXT(_Namespace, _Key, _Key).ToString(); \
+	TestTrue( \
+		FString::Printf( \
+			TEXT("Test lang %s of namespace: %s key: %s expect: %s result: %s"), \
+			TEXT(_Lang), TEXT(_Namespace), TEXT(_Key), TEXT(_Expected), *Result \
+		), \
+		Result.Equals(TEXT(_Expected)) \
+	); \
+}
+
+#define GET_STRING_TABLE_NAME(_Namespace) const FString StringTableName = UELTEditor::GetStringTableName(LocName, _Namespace); \
+const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / StringTableName + TEXT(".uasset")) + TEXT(".") + StringTableName;
 
 #define TEST_STRING_TABLE(_Lang, _Namespace, _Key, _Expected) { \
-const FString StringTableName = UELTEditor::GetStringTableName(LocName, _Namespace); \
-const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / StringTableName + TEXT(".uasset")) + TEXT(".") + StringTableName; \
-FTextLocalizationManager::Get().DisableGameLocalizationPreview(); \
-FTextLocalizationManager::Get().EnableGameLocalizationPreview(_Lang); \
-FText LocalizedText = FText::FromStringTable(FName(StringTableID), TEXT(_Key), EStringTableLoadingPolicy::FindOrLoad); \
-FString Result = LocalizedText.ToString(); \
-TestTrue(FString::Printf(TEXT("Test String Table: %s lang "##_Lang" key: "##_Key" expect: "##_Expected" result: %s"), *StringTableID, *Result), Result.Equals(##_Expected)); \
+	GET_STRING_TABLE_NAME(_Namespace) \
+	SWITCH_LANG(_Lang) \
+	FString Result = TEXT(""); \
+	bool bSTDone = false; \
+	AsyncTask(ENamedThreads::GameThread, [this, &StringTableID, &Result, &bSTDone]() \
+	{ \
+		FText LocalizedText = FText::FromStringTable(FName(StringTableID), TEXT(_Key), EStringTableLoadingPolicy::FindOrLoad); \
+		Result = LocalizedText.ToString(); \
+		bSTDone = true; \
+	}); \
+	while (bSTDone == false) { FPlatformProcess::Sleep(0.1f); } \
+	TestTrue( \
+		FString::Printf( \
+			TEXT("Test String Table: %s lang %s key: %s expect: %s result: %s"), \
+			*StringTableID, TEXT(_Lang), TEXT(_Key), TEXT(_Expected), *Result \
+		), \
+		Result.Equals(TEXT(_Expected)) \
+	); \
 }
 
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#define TEST_STRING_TABLE_DEVNOTE(_Namespace, _Key, _Expected) { \
+	GET_STRING_TABLE_NAME(_Namespace) \
+	bool bResult = false; \
+	FString DevNote = TEXT(""); \
+	FStringTableConstPtr StringTable = FStringTableRegistry::Get().FindStringTable(*StringTableID); \
+	if (StringTable) \
+	{ \
+		FStringTableEntryConstPtr Entry = StringTable->FindEntry(FTextKey(_Key)); \
+		if (Entry) \
+		{ \
+			DevNote = Entry->GetDevNotes(); \
+			bResult = DevNote.Equals(TEXT(_Expected)); \
+		} \
+	} \
+	TestTrue( \
+		FString::Printf( \
+			TEXT("Test String Table DevNote: %s key: %s expect: %s result: %s"), \
+			*StringTableID, TEXT(_Key), TEXT(_Expected), *DevNote \
+		), \
+		bResult \
+	); \
+}
+#endif
+
 #define TEST_LOCFILE_EXISTS(_Lang) { \
-TestTrue(TEXT(#_Lang" exists"), FELTAutomationCommon::LocResFileExists(LocPath, LocName, _Lang)); \
+	TestTrue(TEXT(#_Lang" exists"), FELTAutomationCommon::LocResFileExists(LocPath, LocName, _Lang)); \
 }
 
 #define TEST_STRING_TABLE_EXISTS(_Namespace) { \
-TestTrue(TEXT(#_Namespace" string table exists"), FELTAutomationCommon::StringTableFileExists(LocPath, LocName, TEXT(_Namespace))); \
+	TestTrue(TEXT(#_Namespace" string table exists"), FELTAutomationCommon::StringTableFileExists(LocPath, LocName, TEXT(_Namespace))); \
 }
 
-BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+#define IMPORT_CSV_ASYNC(_Namespace, _Separator, _Fallback, _GenStringTable, _ExpectTrue) {\
+	bool bSuccess = false; \
+	bool bDone = false; \
+	AsyncTask(ENamedThreads::GameThread, [this, &bSuccess, &bDone]() \
+	{ \
+		FString OutMessage; \
+		bSuccess = UELTEditor::GenerateLocFilesImpl( \
+			FELTAutomationCommon::GetTestCSVPath(CSVName), \
+			LocPath, \
+			LocName, \
+			TEXT(_Namespace), \
+			TEXT(_Separator), \
+			TEXT(_Fallback), \
+			_GenStringTable, \
+			OutMessage); \
+		bDone = true; \
+	}); \
+	while (bDone == false) { FPlatformProcess::Sleep(0.1f); } \
+	if (_ExpectTrue) TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess); \
+	else TestFalse(TEXT("GenerateLocFilesImpl failed (and it's good)"), bSuccess); \
+}
+
+BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
 FString LocName = TEXT("Game");
 FString LocPath = UELTEditorSettings::GetLocalizationPath();
 FString CSVName = TEXT("CSVTest");
+#if (ENGINE_MAJOR_VERSION == 5)
+bool bLangChanged = false;
+FDelegateHandle OnLangChangedHandle;
+#endif
 END_DEFINE_SPEC(FELTTests)
 
 void FELTTests::Define()
 {
+	Describe(TEXT("ELT - PRE PASS"), [this]()
+	{
+		It(TEXT("Just Runs a Pre Run"), [this]()
+		{
+			const FString CSV = TEXT("namespace,key,lang-en,lang-es,lang-fr,lang-de,lang-it,lang-pt,lang-ja\n")
+				TEXT("Status,Alive,Alive,Alive_ES,Alive_FR,Alive_DE,Alive_IT,Alive_PT,Alive_JA\n")
+				TEXT("Status,Dead,Dead,Dead_ES,Dead_FR,Dead_DE,Dead_IT,Dead_PT,Dead_JA\n")
+				TEXT("Status,Sleeping,Sleeping,Sleeping_ES,Sleeping_FR,Sleeping_DE,Sleeping_IT,Sleeping_PT,Sleeping_JA\n");
+
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+			FString OutMessage;
+			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
+				FELTAutomationCommon::GetTestCSVPath(CSVName), 
+				LocPath, 
+				LocName, 
+				TEXT(""),
+				TEXT(","),
+				TEXT("NONE"),
+				false, 
+				OutMessage); 
+			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+
+			TEST_LOCFILE_EXISTS("en");
+			TEST_LOCFILE_EXISTS("es");
+			TEST_LOCFILE_EXISTS("fr");
+			TEST_LOCFILE_EXISTS("de");
+			TEST_LOCFILE_EXISTS("it");
+			TEST_LOCFILE_EXISTS("pt");
+			TEST_LOCFILE_EXISTS("ja");
+		});
+	});
+
 	Describe(TEXT("ELT - Import Tests"), [this]()
 	{
-		BeforeEach([]()
+		BeforeEach([this]()
 		{
 			FELTAutomationCommon::MakeTestDirectory();
+#if (ENGINE_MAJOR_VERSION == 5)
+			OnLangChangedHandle = FTextLocalizationManager::Get().OnTextRevisionChangedEvent.AddLambda([this]()
+			{
+				bLangChanged = true;
+			});
+#endif
+		});
+
+		AfterEach([this]()
+		{
+			FELTAutomationCommon::CleanTestDirectory();
+#if (ENGINE_MAJOR_VERSION == 5)
+			FTextLocalizationManager::Get().OnTextRevisionChangedEvent.Remove(OnLangChangedHandle);
+#endif
 		});
 
 		// ====================== 1. TESTS: VALID CSV WITH NAMESPACE ======================
-		It(TEXT("VALID CSV WITH NAMESPACE"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("MainMenu,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -113,18 +246,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName), 
-				LocPath,
-				LocName, 
-				TEXT("GlobalNamespace"), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -140,10 +262,12 @@ void FELTTests::Define()
 			TEST_TRANSLATION("pl", "Gameplay", "Health", "Zdrowie");
 			TEST_TRANSLATION("fr", "Gameplay", "Health", "Sant");
 			TEST_TRANSLATION("de", "Gameplay", "Health", "Gesundheit");
+
+			TestDone.Execute();
 		});
 
 		// ====================== 2. TESTS: VALID CSV WITHOUT NAMESPACE ======================
-		It(TEXT("VALID CSV WITHOUT NAMESPACE"), [this]()
+		LatentIt(TEXT("VALID CSV WITHOUT NAMESPACE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -157,18 +281,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName), 
-				LocPath,
-				LocName, 
-				TEXT("GlobalNamespace"), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -184,10 +297,12 @@ void FELTTests::Define()
 			TEST_TRANSLATION("pl", "GlobalNamespace", "Health", "Zdrowie");
 			TEST_TRANSLATION("fr", "GlobalNamespace", "Health", "Sant");
 			TEST_TRANSLATION("de", "GlobalNamespace", "Health", "Gesundheit");
+
+			TestDone.Execute();
 		});
 
 		// ====================== 3. TESTS: VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLE ======================
-		It(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLE"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,devnotes,key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("MainMenu,DevNote_1,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -201,18 +316,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("NONE"), // Empty value fallback
-					true, // Generate String Tables
-					OutMessage); // Out Message
-
-				TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -237,19 +341,17 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-				// For 5.8 and later - test if devnotes are properly imported into string table metadata
-				/*
-				FString StringTableName = UELTEditor::GetStringTableName(LocName, TEXT("MainMenu"));
-				TSharedPtr<FStringTable> StringTable = FStringTableRegistry::Get().FindStringTable(*StringTableName);
-				TestTrue(TEXT("String Table found in registry"), StringTable.IsValid());
-				FString DevNote;
-				TestTrue(TEXT("DevNote_1 metadata exists for StartGame key"), StringTable->GetMetaData(TEXT("StartGame"), TEXT("DevNote_1"), DevNote));
-				TestTrue(TEXT("DevNote_1 metadata value is correct"), DevNote.Equals(TEXT("DevNote_1")));
-				*/
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
+				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
+#endif
+
+				TestDone.Execute();
 		});
 
 		// ====================== 4. TESTS: VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES IN OTHER ORDER ======================
-		It(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES IN OTHER ORDER"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES IN OTHER ORDER"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("devnotes,namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("DevNote_1,MainMenu,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -263,18 +365,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("NONE"), // Empty value fallback
-					true, // Generate String Tables
-					OutMessage); // Out Message
-
-				TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -299,19 +390,16 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-				// For 5.8 and later - test if devnotes are properly imported into string table metadata
-				/*
-				FString StringTableName = UELTEditor::GetStringTableName(LocName, TEXT("MainMenu"));
-				TSharedPtr<FStringTable> StringTable = FStringTableRegistry::Get().FindStringTable(*StringTableName);
-				TestTrue(TEXT("String Table found in registry"), StringTable.IsValid());
-				FString DevNote;
-				TestTrue(TEXT("DevNote_1 metadata exists for StartGame key"), StringTable->GetMetaData(TEXT("StartGame"), TEXT("DevNote_1"), DevNote));
-				TestTrue(TEXT("DevNote_1 metadata value is correct"), DevNote.Equals(TEXT("DevNote_1")));
-				*/
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
+				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
+#endif
+				TestDone.Execute();
 		});
 
 		// ====================== 5. TESTS: INVALID CSV WITH NAMESPACE AND DEVNOTES IN BAD PLACE ======================
-		It(TEXT("INVALID CSV WITH NAMESPACE AND DEVNOTES IN BAD PLACE"), [this]()
+		LatentIt(TEXT("INVALID CSV WITH NAMESPACE AND DEVNOTES IN BAD PLACE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("devnotes,key,namespace,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("DevNote_1,StartGame,MainMenu,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -323,24 +411,15 @@ void FELTTests::Define()
 				TEXT("DevNote_7,Score,Gameplay,Score,Wynik,Score,Punktzahl\n")
 				TEXT("DevNote_8,Level,Gameplay,Level,Poziom,Niveau,Stufe\n");
 
-				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("NONE"), // Empty value fallback
-					false, // Generate String Tables
-					OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, false);
 
-				TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 6. TESTS: INVALID CSV WITHOUT NAMESPACE AND NO GLOBAL NAMESPACE ======================
-		It(TEXT("INVALID CSV WITHOUT NAMESPACE AND NO GLOBAL NAMESPACE"), [this]()
+		LatentIt(TEXT("INVALID CSV WITHOUT NAMESPACE AND NO GLOBAL NAMESPACE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -354,22 +433,13 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 7. TESTS: VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH FALLBACK ======================
-		It(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH FALLBACK"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH FALLBACK"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("devnotes,namespace,key,lang-en,lang-ja,lang-zh\n")
 				TEXT("Button prompt for attacking,Combat,Attack,Attack,,\n")
@@ -383,18 +453,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("FIRST_LANG"), // Fallback
-					true, // Generate String Tables
-					OutMessage); // Out Message
-
-				TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true);
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -411,10 +470,12 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("en", "Combat", "Attack", "Attack");
 				TEST_STRING_TABLE("ja", "Items", "Sword", "Legendary Sword");
 				TEST_STRING_TABLE("zh", "Dialogue", "Greeting", "Greetings traveler");
+
+				TestDone.Execute();
 		});
 
 		// ====================== 8. TESTS: VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH FALLBACK ======================
-		It(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITHOUT FALLBACK"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITHOUT FALLBACK"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("devnotes,namespace,key,lang-en,lang-ja,lang-zh\n")
 				TEXT("Button prompt for attacking,Combat,Attack,Attack,,\n")
@@ -428,18 +489,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("NONE"), // Fallback
-					true, // Generate String Tables
-					OutMessage); // Out Message
-
-				TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -456,10 +506,12 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("en", "Combat", "Attack", "Attack");
 				TEST_STRING_TABLE("ja", "Items", "Sword", "");
 				TEST_STRING_TABLE("zh", "Dialogue", "Greeting", "");
+
+				TestDone.Execute();
 		});
 
 		// ====================== 9. TESTS: VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH KEY FALLBACK ======================
-		It(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH KEY FALLBACK"), [this]()
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND EMPTY VALUES WITH KEY FALLBACK"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("devnotes,namespace,key,lang-en,lang-ja,lang-zh\n")
 				TEXT("Button prompt for attacking,Combat,Attack,Attack,,\n")
@@ -473,18 +525,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				FString OutMessage;
-				const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-					FELTAutomationCommon::GetTestCSVPath(CSVName),
-					LocPath,
-					LocName,
-					TEXT("GlobalNamespace"), // Global namespace
-					TEXT(","), // Separator
-					TEXT("KEY"), // Fallback
-					true, // Generate String Tables
-					OutMessage); // Out Message
-
-				TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "KEY", true, true);
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -501,10 +542,12 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("en", "Combat", "Attack", "Attack");
 				TEST_STRING_TABLE("ja", "Items", "Sword", "Sword");
 				TEST_STRING_TABLE("zh", "Dialogue", "Greeting", "Greeting");
+
+				TestDone.Execute();
 		});
 
 		// ====================== 10. TESTS: CSV CONVERT UNDERSCORES TO LINES ======================
-		It(TEXT("CSV CONVERT UNDERSCORES TO LINES"), [this]()
+		LatentIt(TEXT("CSV CONVERT UNDERSCORES TO LINES"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,lang_en,lang_pt_br,lang_zh_cn\n")
 				TEXT("UI,ButtonLabel,Click Me,Clique em Mim,\n")
@@ -518,18 +561,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT("GlobalNamespace"), // Global namespace
-				TEXT(","), // Separator
-				TEXT("FIRST_LANG"), // Fallback
-				true, // Generate String Tables
-				OutMessage); // Out Message
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pt-br");
@@ -538,76 +570,51 @@ void FELTTests::Define()
 			TEST_TRANSLATION("en", "UI", "ButtonLabel", "Click Me");
 			TEST_TRANSLATION("pt-br", "Audio", "MusicVolume", "M sica");
 			TEST_TRANSLATION("zh-cn", "Settings", "Brightness", "Brightness");			
+
+			TestDone.Execute();
 		});
 
 		// ====================== 11. TESTS: INVALID CSV DUPLICATED COLUMNS ======================
-		It(TEXT("INVALID CSV DUPLICATED COLUMNS"), [this]()
+		LatentIt(TEXT("INVALID CSV DUPLICATED COLUMNS"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,namespace,lang-en\n")
 				TEXT("Menu,Start,Menu,Start Game\n");
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 12. TESTS: INVALID CSV NO KEY COLUMNS ======================
-		It(TEXT("INVALID CSV NO KEY COLUMNS"), [this]()
+		LatentIt(TEXT("INVALID CSV NO KEY COLUMNS"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,value,lang-en,lang-fr\n")
 				TEXT("MainMenu,Start Game,Commencer\n");
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 13. TESTS: INVALID CSV NO LANG COLUMNS ======================
-		It(TEXT("INVALID CSV NO LANG COLUMNS"), [this]()
+		LatentIt(TEXT("INVALID CSV NO LANG COLUMNS"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key\n")
 				TEXT("MainMenu,Start\n");
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 14. TESTS: INVALID CSV INVALID NUM OF COLUMNS ======================
-		It(TEXT("INVALID CSV INVALID NUM OF COLUMNS"), [this]()
+		LatentIt(TEXT("INVALID CSV INVALID NUM OF COLUMNS"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,lang-en,lang-de\n")
 				TEXT("Menu,Start,Start Game,Spiel starten\n")
@@ -615,44 +622,26 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 15. TESTS: INVALID CSV INVALID SEPARATOR ======================
-		It(TEXT("INVALID CSV INVALID SEPARATOR"), [this]()
+		LatentIt(TEXT("INVALID CSV INVALID SEPARATOR"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			FString CSV = TEXT("namespace,key,lang-en,lang-de\n")
 				TEXT("Menu,Start,Start Game,Spiel starten\n");
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT(""), // Global namespace
-				TEXT(";"), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
+			IMPORT_CSV_ASYNC("", ";", "NONE", false, false);
 
-			TestFalse(TEXT("GenerateLocFilesImpl failed"), bSuccess);
+			TestDone.Execute();
 		});
 
 		// ====================== 16. TESTS: CSV WITH SEMICOLON SEPARATOR ======================
-		It(TEXT("CSV WITH SEMICOLON SEPARATOR"), [this]()
+		LatentIt(TEXT("CSV WITH SEMICOLON SEPARATOR"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace;key;lang-en;lang-sv;lang-no\n")
 				TEXT("Navigation;North;North;North_SV;North_NO\n")
@@ -662,18 +651,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT("GlobalNamespace"),
-				TEXT(";"),
-				TEXT("NONE"),
-				false,
-				OutMessage);
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("", ";", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("sv");
@@ -682,10 +660,12 @@ void FELTTests::Define()
 			TEST_TRANSLATION("en", "Navigation", "North", "North");
 			TEST_TRANSLATION("sv", "Navigation", "North", "North_SV");
 			TEST_TRANSLATION("no", "Navigation", "East", "East_NO");
+
+			TestDone.Execute();
 		});
 
 		// ====================== 17. TESTS: CSV WITH TAB SEPARATOR ======================
-		It(TEXT("CSV WITH TAB SEPARATOR"), [this]()
+		LatentIt(TEXT("CSV WITH TAB SEPARATOR"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace\tkey\tlang-en\tlang-da\tlang-fi\n")
 				TEXT("Weather\tSunny\tSunny\tSunny_DA\tSunny_FI\n")
@@ -694,18 +674,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT("GlobalNamespace"),
-				TEXT("\t"),
-				TEXT("NONE"),
-				false,
-				OutMessage);
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", "\t", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("da");
@@ -714,10 +683,12 @@ void FELTTests::Define()
 			TEST_TRANSLATION("en", "Weather", "Sunny", "Sunny");
 			TEST_TRANSLATION("da", "Weather", "Rainy", "Rainy_DA");
 			TEST_TRANSLATION("fi", "Weather", "Snowy", "Snowy_FI");
+
+			TestDone.Execute();
 		});
 
 		// ====================== 17. TESTS: CSV WITH MANY LANGUAGES ======================
-		It(TEXT("CSV WITH MANY LANGUAGES"), [this]()
+		LatentIt(TEXT("CSV WITH MANY LANGUAGES"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,lang-en,lang-es,lang-fr,lang-de,lang-it,lang-pt,lang-ja\n")
 				TEXT("Status,Alive,Alive,Alive_ES,Alive_FR,Alive_DE,Alive_IT,Alive_PT,Alive_JA\n")
@@ -726,18 +697,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName),
-				LocPath,
-				LocName,
-				TEXT("GlobalNamespace"),
-				TEXT(","),
-				TEXT("NONE"),
-				false,
-				OutMessage);
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("es");
@@ -753,11 +713,12 @@ void FELTTests::Define()
 			TEST_TRANSLATION("de", "Status", "Alive", "Alive_DE");
 			TEST_TRANSLATION("it", "Status", "Dead", "Dead_IT");
 			TEST_TRANSLATION("pt", "Status", "Sleeping", "Sleeping_PT");
-			TEST_TRANSLATION("ja", "Status", "Alive", "Alive_JA");
+
+			TestDone.Execute();
 		});
 
 		// ====================== 18. TESTS: Util functions ======================
-		It(TEXT("UTILS FUNCTIONS"), [this]()
+		LatentIt(TEXT("UTILS FUNCTIONS"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
 			const FString CSV = TEXT("namespace,key,lang-en,lang-pl,lang-fr,lang-de\n")
 				TEXT("MainMenu,StartGame,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
@@ -771,26 +732,14 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName), 
-				LocPath,
-				LocName, 
-				TEXT("GlobalNamespace"), // Global namespace
-				TEXT(","), // Separator
-				TEXT("NONE"), // Empty value fallback
-				false, // Generate String Tables
-				OutMessage); // Out Message
-
-			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
 			TEST_LOCFILE_EXISTS("fr");
 			TEST_LOCFILE_EXISTS("de");
 
-			FTextLocalizationManager::Get().DisableGameLocalizationPreview();
-			FTextLocalizationManager::Get().EnableGameLocalizationPreview(TEXT("en"));
+			SWITCH_LANG("en");
 
 			const FText LocText = UELT::GetLocalizedText(TEXT("MainMenu"), TEXT("StartGame"));
 			TestTrue(TEXT("LocText valid"), LocText.ToString().Equals(TEXT("Start Game")));
@@ -812,11 +761,8 @@ void FELTTests::Define()
 			FText OtherText = UELTBlueprintLibrary::MakeTextFromBuffer(Buffer, false);
 			TestTrue(TEXT("Text Buffer 1"), OtherText.ToString().Equals(LocText.ToString()));
 			TestTrue(TEXT("Text Buffer 2"), UELTBlueprintLibrary::AreTextKeysEqual(LocText, OtherText));
-		});
 
-		AfterEach([]()
-		{
-			FELTAutomationCommon::CleanTestDirectory();
+			TestDone.Execute();
 		});
 	});
 }

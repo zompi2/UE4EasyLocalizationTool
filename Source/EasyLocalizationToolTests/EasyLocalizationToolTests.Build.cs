@@ -31,7 +31,7 @@ public class EasyLocalizationToolTests : ModuleRules
         PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTTESTS_"));
 
         // Disable optimization for non shipping builds (for easier debugging)
-        bool bDisableOptimization = false;
+        bool bDisableOptimization = true;
         if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
         {
             if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
