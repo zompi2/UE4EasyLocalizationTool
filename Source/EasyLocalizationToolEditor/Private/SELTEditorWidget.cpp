@@ -16,8 +16,13 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 	FallbackWhenEmptyAvailable.Add(MakeShareable(new FString(TEXT("KEY"))));
 	SelectedFallbackWhenEmpty = FallbackWhenEmptyAvailable[0];
 
-	SpacerBrush.SetImageSize(FVector2D(350.f, 1.f));
+	SpacerBrush.SetImageSize(FVector2D(400.f, 1.f));
 	SpacerBrush.TintColor = FSlateColor(FLinearColor(.62f,.62f,.62f,1.f));
+
+	const float WidthMargin = 300.f;
+	const float TextBlockMaxWidth = 100.f;
+	const float SpacerPadding = 8.f;
+	const float BoxesHeight = 24.f;
 
 	SUserWidget::Construct(SUserWidget::FArguments()
 	[
@@ -53,12 +58,39 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, SpacerPadding, 0.f, SpacerPadding))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
 						SNew(SImage).Image(&SpacerBrush)
 					]
+					// >>>> Localization Name box
+						+SVerticalBox::Slot()
+						.AutoHeight()
+						[
+							SNew(SHorizontalBox)
+					// >>>>>>>> Localization Name label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
+							[
+								SNew(STextBlock)
+									.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+									.Text(INVTEXT("Localization name:"))
+							]
+					// >>>>>>>> Localization Name value
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
+							[
+								SNew(STextBlock)
+									.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
+									.Text_Lambda([this]() -> FText
+									{
+										return FText::FromString(CurrentLocName);
+									})
+							]
+						]
 					// > Localization Paths Box
 					+SVerticalBox::Slot()
 					.AutoHeight()
@@ -97,38 +129,11 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 										})
 								]
 							]
-					// >>>> Localization Name box
-							+SVerticalBox::Slot()
-							.AutoHeight()
-							[
-								SNew(SHorizontalBox)
-					// >>>>>>>> Localization Name label
-								+SHorizontalBox::Slot()
-								.AutoWidth()
-								.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
-								[
-									SNew(STextBlock)
-										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-										.Text(INVTEXT("Localization name:"))
-								]
-					// >>>>>>>> Localization Name value
-								+SHorizontalBox::Slot()
-								.AutoWidth()
-								.Padding(FMargin(0.f, 0.f, 20.f, 0.f))
-								[
-									SNew(STextBlock)
-										.Font(FCoreStyle::GetDefaultFontStyle("Bold", 12))
-										.Text_Lambda([this]() -> FText
-										{
-											return FText::FromString(CurrentLocName);
-										})
-								]
-							]
 					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, SpacerPadding, 0.f, SpacerPadding))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -163,6 +168,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Available Langs Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
+					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
 					[
 						SNew(SVerticalBox)
 						.ToolTipText(INVTEXT("List of language codes that are implemented by every localization directory."))
@@ -189,7 +195,7 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, SpacerPadding, 0.f, SpacerPadding))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -199,96 +205,116 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("Reimports the lastly selected localization with the last used CSV file when editor starts."))
-					// >>>> Reimport on editor startup Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Reimport on editor startup:"))
-						]
-					// >>>> Reimport on editor startup checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bReimportAtEditorStartup_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bReimportAtEditorStartup_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("Reimports the lastly selected localization with the last used CSV file when editor starts."))
+							// >>>> Reimport on editor startup Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Reimport on editor startup:"))
+								]
+							]
+
+						
+							// >>>> Reimport on editor startup checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
 									{
-										WidgetController->OnReimportAtEditorStartupChanged(bReimportAtEditorStartup_Chkbox);
-									}
-								})
+										return bReimportAtEditorStartup_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bReimportAtEditorStartup_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnReimportAtEditorStartupChanged(bReimportAtEditorStartup_Chkbox);
+										}
+									})
+							]
 						]
 					]
 					// > Localization Preview Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("Enabled the preview of the localization in the editor."))
-					// >>>> Localization Preview Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Localization Preview:"))
-						]
-					// >>>> Localization Preview Checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bIsLocalisationPreviewEnabled_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bIsLocalisationPreviewEnabled_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnLocalizationPreviewChanged(bIsLocalisationPreviewEnabled_Chkbox);
-									}
-								})
-						]
-					// >>>> Localization Preview List
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SComboBox<TSharedPtr<FString>>)
-								.OptionsSource(&PreviewsAvailables)
-								.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
-								{
-									return SNew(STextBlock).Text(FText::FromString(*InItem));
-								})
-								.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
-								{
-									SelectedPreviewLang = Item;
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnLocalizationPreviewLangChanged(*Item);
-									}
-								})
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("Enabled the preview of the localization in the editor."))
+						// >>>> Localization Preview Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
 							[
-								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
-									.Text_Lambda([this]() -> FText
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Localization Preview:"))
+								]
+							]
+						// >>>> Localization Preview Checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
+									{
+										return bIsLocalisationPreviewEnabled_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bIsLocalisationPreviewEnabled_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
 										{
-											if (SelectedPreviewLang.IsValid())
+											WidgetController->OnLocalizationPreviewChanged(bIsLocalisationPreviewEnabled_Chkbox);
+										}
+									})
+							]
+						// >>>> Localization Preview List
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SComboBox<TSharedPtr<FString>>)
+									.OptionsSource(&PreviewsAvailables)
+									.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
+									{
+										return SNew(STextBlock).Text(FText::FromString(*InItem));
+									})
+									.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
+									{
+										SelectedPreviewLang = Item;
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnLocalizationPreviewLangChanged(*Item);
+										}
+									})
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+										.Text_Lambda([this]() -> FText
 											{
-												return FText::FromString(*SelectedPreviewLang);
-											}
-											return FText::GetEmpty();
-										})
+												if (SelectedPreviewLang.IsValid())
+												{
+													return FText::FromString(*SelectedPreviewLang);
+												}
+												return FText::GetEmpty();
+											})
+								]
 							]
 						]
 					]
@@ -296,96 +322,114 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("If enabled it won't save and load lastly set language automatically."))
-					// >>>> Manually Set Last Language Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Manually Set Last Language:"))
-						]
-					// >>>> Manually Set Last Language checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bManuallySetLastLanguage_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bManuallySetLastLanguage_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("If enabled it won't save and load lastly set language automatically."))
+						// >>>> Manually Set Last Language Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Manually Set Last Language:"))
+								]
+							]
+						// >>>> Manually Set Last Language checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
 									{
-										WidgetController->OnManuallySetLastUsedLanguageChanged(bManuallySetLastLanguage_Chkbox);
-									}
-								})
+										return bManuallySetLastLanguage_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bManuallySetLastLanguage_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnManuallySetLastUsedLanguageChanged(bManuallySetLastLanguage_Chkbox);
+										}
+									})
+							]
 						]
 					]
 					// > Override Language on Startup Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("If enabled, when the game starts for the very first time the selected language will be used.\nNormally, the system language will be used or it will fallback to \"en\"."))
-					// >>>> Override Language on Startup Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Override Language on Startup:"))
-						]
-					// >>>> Override Language on Startup Checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bOverrideLanguageOnStartup_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bOverrideLanguageOnStartup_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnLocalizationOnFirstRun(bOverrideLanguageOnStartup_Chkbox);
-									}
-								})
-						]
-					// >>>> Override Language on Startup List
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SComboBox<TSharedPtr<FString>>)
-								.OptionsSource(&LanguageOverridesAvailable)
-								.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
-								{
-									return SNew(STextBlock).Text(FText::FromString(*InItem));
-								})
-								.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
-								{
-									SelectedLanguageOverride = Item;
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnLocalizationOnFirstRunLangChanged(*Item);
-									}
-								})
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("If enabled, when the game starts for the very first time the selected language will be used.\nNormally, the system language will be used or it will fallback to \"en\"."))
+						// >>>> Override Language on Startup Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
 							[
-								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
-									.Text_Lambda([this]() -> FText
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Override Language on Startup:"))
+								]
+							]
+						// >>>> Override Language on Startup Checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
+									{
+										return bOverrideLanguageOnStartup_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bOverrideLanguageOnStartup_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
 										{
-											if (SelectedLanguageOverride.IsValid())
+											WidgetController->OnLocalizationOnFirstRun(bOverrideLanguageOnStartup_Chkbox);
+										}
+									})
+							]
+						// >>>> Override Language on Startup List
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SComboBox<TSharedPtr<FString>>)
+									.OptionsSource(&LanguageOverridesAvailable)
+									.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
+									{
+										return SNew(STextBlock).Text(FText::FromString(*InItem));
+									})
+									.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
+									{
+										SelectedLanguageOverride = Item;
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnLocalizationOnFirstRunLangChanged(*Item);
+										}
+									})
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+										.Text_Lambda([this]() -> FText
 											{
-												return FText::FromString(*SelectedLanguageOverride);
-											}
-											return FText::GetEmpty();
-										})
+												if (SelectedLanguageOverride.IsValid())
+												{
+													return FText::FromString(*SelectedLanguageOverride);
+												}
+												return FText::GetEmpty();
+											})
+								]
 							]
 						]
 					]
@@ -393,93 +437,159 @@ void SELTEditorWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SVerticalBox)
-						.ToolTipText(INVTEXT("A CSV column separator. It's \",\" by default, but it can be any other single character."))
-					// >>>> Separator Label
-						+SVerticalBox::Slot()
-						.AutoHeight()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight + 4.f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Separator:"))
-						]
-					// >>>> Separator Value
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						.HAlign(EHorizontalAlignment::HAlign_Left)
-						[
-							SNew(SEditableTextBox)
-								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
-								.MinDesiredWidth(256.f)
-								.Text_Lambda([this]() -> FText
-								{
-									return FText::FromString(SeparatorValue);
-								})
-								.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type CommitType) -> void
-								{
-									SeparatorValue = NewText.ToString();
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnSeparatorChanged(SeparatorValue);
-									}
-								})
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("A CSV column separator. It's \",\" by default, but it can be any other single character."))
+						// >>>> Separator Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Separator:"))
+								]
+							]
+						// >>>> Separator Value
+							+SHorizontalBox::Slot()
+							.FillWidth(1.f)
+							.HAlign(EHorizontalAlignment::HAlign_Left)
+							[
+								SNew(SBox)
+								.MaxDesiredWidth(TextBlockMaxWidth)
+								[
+									SNew(SEditableTextBox)
+										.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
+										.MinDesiredWidth(256.f)
+										.Text_Lambda([this]() -> FText
+										{
+											return FText::FromString(SeparatorValue);
+										})
+										.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type CommitType) -> void
+										{
+											SeparatorValue = NewText.ToString();
+											if (WidgetController.IsValid())
+											{
+												WidgetController->OnSeparatorChanged(SeparatorValue);
+											}
+										})
+								]
+							]
 						]
 					]
 					// > Fallback when empty Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 0.f))
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("\
-When the entry is empty should it fill it with a fallback value?\n\
-NONE - no fallback\n\
-FIRST_LANG - use value of the first language.If that value is empty use Key\n\
-KEY - use the key of this entry"))
-					// >>>> Fallback when empty Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Fallback when empty:"))
-						]
-					// >>>> Fallback when empty List
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SComboBox<TSharedPtr<FString>>)
-								.OptionsSource(&FallbackWhenEmptyAvailable)
-								.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
-								{
-									return SNew(STextBlock).Text(FText::FromString(*InItem));
-								})
-								.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
-								{
-									SelectedFallbackWhenEmpty = Item;
-									if (SelectedFallbackWhenEmpty.IsValid())
-									{
-										WidgetController->OnFallbackWhenEmptyChanged(*Item);
-									}
-								})
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("\
+	When the entry is empty should it fill it with a fallback value?\n\
+	NONE - no fallback\n\
+	FIRST_LANG - use value of the first language.If that value is empty use Key\n\
+	KEY - use the key of this entry"))
+						// >>>> Fallback when empty Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
 							[
-								SNew(STextBlock)
-									.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
-									.Text_Lambda([this]() -> FText
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Fallback when empty:"))
+								]
+							]
+						// >>>> Fallback when empty List
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SComboBox<TSharedPtr<FString>>)
+									.OptionsSource(&FallbackWhenEmptyAvailable)
+									.OnGenerateWidget_Lambda([this](TSharedPtr<FString> InItem) -> TSharedRef<SWidget>
+									{
+										return SNew(STextBlock).Text(FText::FromString(*InItem));
+									})
+									.OnSelectionChanged_Lambda([this](TSharedPtr<FString> Item, ESelectInfo::Type SelectInfo) -> void
+									{
+										SelectedFallbackWhenEmpty = Item;
+										if (SelectedFallbackWhenEmpty.IsValid())
 										{
-											if (SelectedFallbackWhenEmpty.IsValid())
+											WidgetController->OnFallbackWhenEmptyChanged(*Item);
+										}
+									})
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
+										.Text_Lambda([this]() -> FText
 											{
-												return FText::FromString(*SelectedFallbackWhenEmpty);
-											}
-											return FText::GetEmpty();
-										})
+												if (SelectedFallbackWhenEmpty.IsValid())
+												{
+													return FText::FromString(*SelectedFallbackWhenEmpty);
+												}
+												return FText::GetEmpty();
+											})
+								]
+							]
+						]
+					]
+					// > Generate Key Reference String Table on Import Box ================
+					+SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						[
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("\
+On CSV Import, a String Table filled with Key References will be generated PER namespace.\n\
+These String Table can be used to easily assign keys to FText properties.\n\n\
+The String Table will be generated in the Localization Folder path and IS OVERRIDDEN if it already exists."))
+						// >>>> Generate Key Reference String Table on Import Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Generate String Table on Import:"))
+								]
+							]
+						// >>>> Generate Key Reference String Table on Import Checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
+									{
+										return bGenerateKeyReferenceStringTable_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bGenerateKeyReferenceStringTable_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnGenerateKeyReferenceStringTableChanged(bGenerateKeyReferenceStringTable_Chkbox);
+										}
+									})
 							]
 						]
 					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, SpacerPadding, 0.f, SpacerPadding))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -502,7 +612,7 @@ KEY - use the key of this entry"))
 							[
 								SNew(STextBlock)
 									.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-									.Text(INVTEXT("CSV file:"))
+									.Text(INVTEXT("CSV file(s):"))
 							]
 					// >>>>>>> CSV files list value
 							+SVerticalBox::Slot()
@@ -519,10 +629,11 @@ KEY - use the key of this entry"))
 						+SVerticalBox::Slot()
 					// >>>> CSV select files box
 						.AutoHeight()
+						.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
 						[
 							SNew(SHorizontalBox)
 					// >>>>>>> CSV select files button
-							+ SHorizontalBox::Slot()
+							+SHorizontalBox::Slot()
 							.AutoWidth()
 							[
 								SNew(SButton)
@@ -535,6 +646,13 @@ KEY - use the key of this entry"))
 										}
 										return FReply::Handled();
 									})
+							]
+					// >>>>>>> Spacer between buttons
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SSpacer)
+									.Size(FVector2D(4.f, 1.f))
 							]
 					// >>>>>>> CSV import files button
 							+SHorizontalBox::Slot()
@@ -557,42 +675,55 @@ KEY - use the key of this entry"))
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SVerticalBox)
-						.ToolTipText(INVTEXT("This namespace will be assigned to every key in localization."))
-					// >>>> Global namespace label ================
-						+SVerticalBox::Slot()
-						.AutoHeight()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight + 4.f)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Global namespace:"))
-						]
-					// >>>> Global namespace value ================
-						+SVerticalBox::Slot()
-						.AutoHeight()
-						.HAlign(EHorizontalAlignment::HAlign_Left)
-						[
-							SNew(SEditableTextBox)
-								.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
-								.MinDesiredWidth(256.f)
-								.Text_Lambda([this]() -> FText
-								{
-									return FText::FromString(GlobalNamespaceValue);
-								})
-								.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type CommitType) -> void
-								{
-									GlobalNamespaceValue = NewText.ToString();
-									if (WidgetController.IsValid())
-									{
-										WidgetController->OnGlobalNamespaceChanged(GlobalNamespaceValue);
-									}
-								})
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("This namespace will be assigned to every key in localization."))
+						// >>>> Global namespace label ================
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Global namespace:"))
+								]
+							]
+						// >>>> Global namespace value ================
+							+SHorizontalBox::Slot()
+							.FillWidth(1.f)
+							.HAlign(EHorizontalAlignment::HAlign_Left)
+							[
+								SNew(SBox)
+								.MaxDesiredWidth(TextBlockMaxWidth)
+								[
+									SNew(SEditableTextBox)
+										.Font(FCoreStyle::GetDefaultFontStyle("Regular", 12))
+										.MinDesiredWidth(256.f)
+										.Text_Lambda([this]() -> FText
+										{
+											return FText::FromString(GlobalNamespaceValue);
+										})
+										.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type CommitType) -> void
+										{
+											GlobalNamespaceValue = NewText.ToString();
+											if (WidgetController.IsValid())
+											{
+												WidgetController->OnGlobalNamespaceChanged(GlobalNamespaceValue);
+											}
+										})
+								]
+							]
 						]
 					]
 					// > Spacer ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
-					.Padding(FMargin(0.f, 4.f, 0.f, 4.f))
+					.Padding(FMargin(0.f, SpacerPadding, 0.f, SpacerPadding))
 					.HAlign(EHorizontalAlignment::HAlign_Left)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
@@ -602,77 +733,95 @@ KEY - use the key of this entry"))
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("Select this option to see additional informations in Output Log.\nBe aware that big CSVs might generate a lot of logs."))
-					// >>>> Log Debug Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Log Debug:"))
-						]
-					// >>>> Log Debug checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bLogDebug_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bLogDebug_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("Select this option to see additional informations in Output Log.\nBe aware that big CSVs might generate a lot of logs."))
+						// >>>> Log Debug Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Log Debug:"))
+								]
+							]
+						// >>>> Log Debug checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
 									{
-										WidgetController->OnLogDebugChanged(bLogDebug_Chkbox);
-									}
-								})
+										return bLogDebug_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bLogDebug_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnLogDebugChanged(bLogDebug_Chkbox);
+										}
+									})
+							]
 						]
 					]
 					// > Preview In UI Box ================
 					+SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						SNew(SHorizontalBox)
-						.ToolTipText(INVTEXT("Select this option to show a localization preview under the Text fields in the Editor UI."))
-						.Visibility_Lambda([this]() -> EVisibility
-						{
-							if (WidgetController.IsValid())
+						SNew(SBox)
+						.MinDesiredHeight(BoxesHeight)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						[
+							SNew(SHorizontalBox)
+							.ToolTipText(INVTEXT("Select this option to show a localization preview under the Text fields in the Editor UI."))
+							.Visibility_Lambda([this]() -> EVisibility
 							{
-								if (WidgetController->IsPreviewInUISupported())
+								if (WidgetController.IsValid())
 								{
-									return EVisibility::Visible;
-								}
-							}
-							return EVisibility::Collapsed;
-						})
-					// >>>> Preview In UI Label
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(STextBlock)
-								.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
-								.Text(INVTEXT("Show preview in UI:"))
-						]
-					// >>>> Preview In UI checkbox
-						+SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							SNew(SCheckBox)
-								.IsChecked_Lambda([this]() -> ECheckBoxState
-								{
-									return bPreviewInUI_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
-								})
-								.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
-								{
-									bPreviewInUI_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
-									if (WidgetController.IsValid())
+									if (WidgetController->IsPreviewInUISupported())
 									{
-										WidgetController->OnPreviewInUIChanged(bPreviewInUI_Chkbox);
+										return EVisibility::Visible;
 									}
-								})
+								}
+								return EVisibility::Collapsed;
+							})
+						// >>>> Preview In UI Label
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SBox)
+								.WidthOverride(WidthMargin)
+								[
+									SNew(STextBlock)
+										.Font(FCoreStyle::GetDefaultFontStyle("Light", 12))
+										.Text(INVTEXT("Show preview in UI:"))
+								]
+							]
+						// >>>> Preview In UI checkbox
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								SNew(SCheckBox)
+									.IsChecked_Lambda([this]() -> ECheckBoxState
+									{
+										return bPreviewInUI_Chkbox ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+									})
+									.OnCheckStateChanged_Lambda([this](ECheckBoxState InCheckBoxState) -> void
+									{
+										bPreviewInUI_Chkbox = (InCheckBoxState == ECheckBoxState::Checked);
+										if (WidgetController.IsValid())
+										{
+											WidgetController->OnPreviewInUIChanged(bPreviewInUI_Chkbox);
+										}
+									})
+							]
 						]
 					]
 			]
@@ -817,6 +966,11 @@ void SELTEditorWidget::SetFallbackWhenEmpty(const FString& FallbackWhenEmpty)
 	{
 		SelectedFallbackWhenEmpty = *FoundFallbackWhenEmpty;
 	}
+}
+
+void SELTEditorWidget::SetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable)
+{
+	bGenerateKeyReferenceStringTable_Chkbox = bGenerateKeyReferenceStringTable;
 }
 
 void SELTEditorWidget::SetLogDebug(bool bLogDebug)
