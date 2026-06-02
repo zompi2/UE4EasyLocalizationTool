@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealEdMisc.h"
 #include "ELTEditor.generated.h"
 
 /**
@@ -44,6 +45,11 @@ public:
 	 * It is called from the Editor Module in a moment of Tab Creation.
 	 */
 	TSharedRef<class SWidget> CreateEditorUI();
+
+	/**
+	 * Gets the name of the StringTable based on the LocName and Namespace.
+	 */
+	static FString GetStringTableName(const FString& LocName, const FString& Namespace);
 
 	/**
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
