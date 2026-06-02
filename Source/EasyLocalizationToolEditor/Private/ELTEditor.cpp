@@ -858,6 +858,10 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			{
 				ExistingStringTableAsset->ClearFlags(RF_Public | RF_Standalone);
 #if (ENGINE_MAJOR_VERSION == 5)
+				if (ExistingStringTableAsset->IsRooted())
+				{
+				    ExistingStringTableAsset->RemoveFromRoot();
+				}
 				ExistingStringTableAsset->MarkAsGarbage();
 #else
 				ExistingStringTableAsset->MarkPendingKill();
