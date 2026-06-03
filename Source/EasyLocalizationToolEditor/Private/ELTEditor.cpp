@@ -857,6 +857,10 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			if (UStringTable* ExistingStringTableAsset = FindObject<UStringTable>(Package, *AssetName))
 			{
 				ExistingStringTableAsset->ClearFlags(RF_Public | RF_Standalone);
+				if (ExistingStringTableAsset->IsRooted())
+				{
+					ExistingStringTableAsset->RemoveFromRoot();
+				}
 #if (ENGINE_MAJOR_VERSION == 5)
 				ExistingStringTableAsset->MarkAsGarbage();
 #else
