@@ -1,3 +1,6 @@
+###### 1.10.1
+* Fix: Ensure the StringTable asset is not rooted before marking it as garbage.
+
 ###### 1.10.0
 * Added the option to generate StringTables right after the import (feature added thanks to @Crezetique)
 * The UI has been refurbished (also thanks to @Crezetique)
