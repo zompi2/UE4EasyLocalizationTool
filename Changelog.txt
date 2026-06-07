@@ -1,3 +1,6 @@
+###### 1.10.2
+* Fixed Fab compilation errors caused by the automated tests module.
+
 ###### 1.10.1
 * Fix: Ensure the StringTable asset is not rooted before marking it as garbage.
 
