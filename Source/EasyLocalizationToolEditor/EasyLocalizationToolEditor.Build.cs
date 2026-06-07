@@ -40,13 +40,18 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"EditorWidgets",
 				"BlueprintGraph",
 				"PropertyEditor",
-				"ToolWidgets"
             }
 		);
 
-		if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4)
-		{
-			PrivateDependencyModuleNames.Add("ToolMenus");
+        if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4)
+        {
+            PrivateDependencyModuleNames.AddRange(
+				new string[]
+				{
+                    "ToolMenus",
+                    "ToolWidgets"
+                }
+			);
 		}
 
 		// Ensure there are no duplicated definitions already

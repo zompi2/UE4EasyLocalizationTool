@@ -1,6 +1,25 @@
+###### 1.10.2
+* Fixed Fab compilation errors caused by the automated tests module.
+
+###### 1.10.1
+* Fix: Ensure the StringTable asset is not rooted before marking it as garbage.
+
+###### 1.10.0
+* Added the option to generate StringTables right after the import (feature added thanks to @Crezetique)
+* The UI has been refurbished (also thanks to @Crezetique)
+* Since UE5.8 you can add DevNotes to the generated StringTables via "devnotes" column in CSV
+* Added automated tests for quicker testing if the importer works correctly
+* Ground refactor of the importer code to be easier to work with in the future
+* Fixed incorrect outputs in `UELTBlueprintLibrary::GetTextData` function.
+* Fixed incorrect `FMessageDialog::Open` function call for UE4.27
+
+###### 1.9.2
+* Fixed deprecation warnings for UE5.8
+* Fixed compilation error for UE4.27
+
 ###### 1.9.1
-* Fixed the broken "Call In Editor" option which was broken by RegisterCustomClassLayout, which is required to display FText preview in the BP editor.
-* Fixed the duplicated categories when Localization preview in editor was enabled.
+* Fixed the broken "Call In Editor" option which was broken by RegisterCustomClassLayout, which is required to display FText preview in the BP editor. (the bug was present for UE 5.5+ version)
+* Fixed the duplicated categories when Localization preview in editor was enabled. (the bug was present for UE 5.5+ version)
 
 ###### 1.9.0
 * Added the option to set a fallback value when a value in CSV is empty.

@@ -33,6 +33,7 @@ public:
 	void SetGlobalNamespace(const FString& GlobalNamespace);
 	void SetSeparator(const FString& Separator);
 	void SetFallbackWhenEmpty(const FString& FallbackWhenEmpty);
+	void SetGenerateKeyReferenceStringTable(bool bGenerateKeyReferenceStringTable);
 	void SetLogDebug(bool bLogDebug);
 	void SetPreviewInUI(bool bPreviewInUI);
 
@@ -54,6 +55,7 @@ public:
 	bool bIsLocalisationPreviewEnabled_Chkbox = false;
 	bool bManuallySetLastLanguage_Chkbox = false;
 	bool bOverrideLanguageOnStartup_Chkbox = false;
+	bool bGenerateKeyReferenceStringTable_Chkbox = false;
 	bool bLogDebug_Chkbox = false;
 	bool bPreviewInUI_Chkbox = false;
 

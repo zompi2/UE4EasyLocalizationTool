@@ -1,0 +1,63 @@
+// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
+
+using UnrealBuildTool;
+
+public class EasyLocalizationToolTests : ModuleRules
+{
+	public EasyLocalizationToolTests(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+
+		PrivateIncludePaths.Add("EasyLocalizationToolTests/Private");
+
+		PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"Core",
+				"EasyLocalizationTool"
+			}
+		);
+
+		if (Target.bBuildEditor)
+        	{
+			PublicDependencyModuleNames.AddRange(
+				new string[]
+				{
+					"EasyLocalizationToolEditor"
+				}
+			);
+		}	
+
+		PrivateDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"CoreUObject",
+				"Engine"
+			}
+		);
+
+        // Ensure there are no duplicated definitions already
+        PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTTESTS_"));
+
+        // Disable optimization for non shipping builds (for easier debugging)
+        bool bDisableOptimization = false;
+        if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
+        {
+            if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
+            {
+                PublicDefinitions.Add("ELTTESTS_PRAGMA_DISABLE_OPTIMIZATION=UE_DISABLE_OPTIMIZATION");
+                PublicDefinitions.Add("ELTTESTS_PRAGMA_ENABLE_OPTIMIZATION=UE_ENABLE_OPTIMIZATION");
+            }
+            else
+            {
+                PublicDefinitions.Add("ELTTESTS_PRAGMA_DISABLE_OPTIMIZATION=PRAGMA_DISABLE_OPTIMIZATION");
+                PublicDefinitions.Add("ELTTESTS_PRAGMA_ENABLE_OPTIMIZATION=PRAGMA_ENABLE_OPTIMIZATION");
+            }
+        }
+        else
+        {
+            PublicDefinitions.Add("ELTTESTS_PRAGMA_DISABLE_OPTIMIZATION=");
+            PublicDefinitions.Add("ELTTESTS_PRAGMA_ENABLE_OPTIMIZATION=");
+        }
+    }
+}

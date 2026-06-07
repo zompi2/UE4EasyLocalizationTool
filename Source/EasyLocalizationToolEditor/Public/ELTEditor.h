@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UnrealEdMisc.h"
 #include "ELTEditor.generated.h"
 
 /**
@@ -46,11 +47,16 @@ public:
 	TSharedRef<class SWidget> CreateEditorUI();
 
 	/**
+	 * Gets the name of the StringTable based on the LocName and Namespace.
+	 */
+	static FString GetStringTableName(const FString& LocName, const FString& Namespace);
+
+	/**
 	 * Implementation of generating Unreal localization files. It is statically exposed, 
 	 * so other elements like Commandlet can run it.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
-	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
+	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
 
 private:
 
@@ -144,6 +150,11 @@ private:
 	 */
 	void OnFallbackWhenEmptyChanged(const FString& NewFallback);
 
+	/**
+	 * Called when "GenerateKeyReferenceStringTable" option has been changed in the Widget.
+	 */
+	void OnGenerateKeyReferenceStringTableChanged(bool bNewGenerateKeyReferenceStringTable);
+	
 	/**
 	 * Called when "LogDebug" option has been changed in the Widget.
 	 */

@@ -72,6 +72,16 @@ void UELTEditorSettings::SetReimportAtEditorStartup(bool bNewReimportAtEditorSta
 	ELTE_SET_SETTING(bReimportAtEditorStartup, bNewReimportAtEditorStartup);
 }
 
+bool UELTEditorSettings::GetGenerateKeyReferenceStringTable()
+{
+	ELTE_GET_SETTING(bGenerateKeyReferenceStringTable);
+}
+
+void UELTEditorSettings::SetGenerateKeyReferenceStringTable(bool bNewGenerateKeyReferenceStringTable)
+{
+	ELTE_SET_SETTING(bGenerateKeyReferenceStringTable, bNewGenerateKeyReferenceStringTable);
+}
+
 bool UELTEditorSettings::GetPreviewInUIEnabled()
 {
 	ELTE_GET_SETTING(bPreviewInUI);

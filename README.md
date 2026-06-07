@@ -4,7 +4,7 @@ This plugin introduces a way simplier method of localizing game made in Unreal E
 
 It simply allow to import CSV file with localization.
 
-The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.7.
+The plugin works on Unreal Engine: 4.27, 5.2, 5.4-5.8.
 
 # Contact
 
@@ -31,9 +31,10 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 | 4.27       | 1.9.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.9.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.4        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.7        | 1.9.0          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.9.1          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.8        | 1.9.2          | Soon |
 
 # Unrel Engine 5.3 Issue
 UE5.3 for some reasons doesn't generate package id for localizable texts in widgets editor. Because of that the plugin can't work as intended.  
@@ -47,6 +48,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Import](#import)
 - [Adding Localization Directories](#adding-localization-directories)
 - [Using Localizations](#using-localizations)
+- [String Tables](#string-tables)
 - [Cooking Localizations](#cooking-localizations)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
@@ -95,7 +97,7 @@ To open the tool select:
 
 ![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
-**UE5.2, UE5.4 - UE5.7** : `Tools -> Easy Localization Tool`  
+**UE5.2, UE5.4 - UE5.8** : `Tools -> Easy Localization Tool`  
 
  ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
 
@@ -122,6 +124,8 @@ The following window should appear:
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
 * **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
+
+> If you encounter any Editor UI bugs with the **Show preview in UI** option enabled (or with the whole plugin enabled) please report that and see if disabling the `bAddPreviewInUI` in the `EasyLocalizationToolEditor.Build.cs` file helps.
 
 [Back to top](#table-of-content)
 
@@ -177,6 +181,16 @@ To use it in a c++ code use the following macro:
 ``` cpp
 NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ```
+
+[Back to top](#table-of-content)
+
+## String tables
+
+Localization can be used in **String Tables**. Remember to set the **Key** and **Source String** to be the same value and set the **Namespace**
+<img width="918" height="244" alt="stabledefine" src="https://github.com/user-attachments/assets/05cd8c8a-bf22-4c4e-9455-86bd10fcb00d" />  
+
+Then, use them like standard **String Tables** in Text properties.  
+<img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
 
 [Back to top](#table-of-content)
 
@@ -318,7 +332,7 @@ set PROJECT_PATH=C:\MyGame
 call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
 ```
 
-**UE5.2, UE5.4, UE5.5** :  
+**UE5.2, UE5.4-UE5.8** :  
 
 ```
 set UE5_PATH=C:\UE5
@@ -462,7 +476,7 @@ The workflow of importing CSV into localization files has been implemented with 
 
 # Special Thanks
 
-I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work and to everyone that contributed to this project.  
+I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work, to [gnat](https://github.com/gnat) for finding elusive bugs, and to everyone that contributed to this project.  
 Also, I want to thank You for using this plugin! It is very important for me that my work is useful for someone!  
 Happy coding!
 

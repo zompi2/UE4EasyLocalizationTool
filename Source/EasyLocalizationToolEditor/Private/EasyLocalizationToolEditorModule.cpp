@@ -37,7 +37,11 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	FELTEditorCommands::Register();
 
 	// Register OnPostEngineInit delegate.
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+	OnPostEngineInitDelegateHandle = FCoreDelegates::GetOnPostEngineInit().AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
+#else
 	OnPostEngineInitDelegateHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
+#endif
 
 	// Create and initialize Editor object.
 	Editor = NewObject<UELTEditor>();
@@ -83,7 +87,11 @@ void FEasyLocalizationToolEditorModule::ShutdownModule()
 	Editor = nullptr;
 
 	// Remove OnPostEngineInit delegate
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+	FCoreDelegates::GetOnPostEngineInit().Remove(OnPostEngineInitDelegateHandle);
+#else
 	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitDelegateHandle);
+#endif
 
 	// Unregister UICommands.
 	FELTEditorCommands::Unregister();

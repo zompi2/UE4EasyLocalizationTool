@@ -37,11 +37,13 @@ int32 UELTCommandlet::Main(const FString& Params)
 	FString Fallback = TEXT("NONE");
 	FParse::Value(*Params, TEXT("-Fallback="), Fallback);
 
+	bool bGenerateStringTables = FParse::Param(*Params, TEXT("-GenStringTables"));
+
 	const FString LocName = FPaths::GetBaseFilename(LocPath);
 
 	// Run generation of loc files implementation. Get the output message and display it the localization fails.
 	FString OutMessage;
-	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, Separator, Fallback, OutMessage) == false)
+	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, Separator, Fallback, bGenerateStringTables, OutMessage) == false)
 	{
 		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization: %s"), *OutMessage);
 		return 1;

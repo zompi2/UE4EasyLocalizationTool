@@ -60,8 +60,8 @@ void UELTBlueprintLibrary::GetTextData(FText InText, FString& OutPackage, FStrin
 		TOptional<FString> Namespace = FTextInspector::GetNamespace(InText);
 		if (Namespace.IsSet())
 		{
-			OutPackage = Namespace.GetValue();
-			OutPackage.Split(TEXT(" "), &OutNamespace, &OutPackage);
+			OutNamespace = Namespace.GetValue();
+			OutNamespace.Split(TEXT(" "), &OutNamespace, &OutPackage);
 		}
 
 		TOptional<FString> Key = FTextInspector::GetKey(InText);
