@@ -1,5 +1,7 @@
 ﻿// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
+#if WITH_EDITOR
+
 #include "Misc/AutomationTest.h"
 #include "ELTEditor.h"
 #include "Misc/FileHelper.h"
@@ -165,7 +167,7 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 	else TestFalse(TEXT("GenerateLocFilesImpl failed (and it's good)"), bSuccess); \
 }
 
-BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 FString LocName = TEXT("Game");
 FString LocPath = UELTEditorSettings::GetLocalizationPath();
 FString CSVName = TEXT("CSVTest");
@@ -766,5 +768,7 @@ void FELTTests::Define()
 		});
 	});
 }
+
+#endif // WITH_EDITOR
 
 ELTTESTS_PRAGMA_ENABLE_OPTIMIZATION
