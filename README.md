@@ -126,6 +126,8 @@ The following window should appear:
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
 * **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
+<img width="225" height="110" alt="eltuiprev1" src="https://github.com/user-attachments/assets/1783786d-4ca1-4a15-8d0d-e089f9d3f0f0" />
+<img width="369" height="94" alt="eltprev2" src="https://github.com/user-attachments/assets/d5152871-ec93-4952-a0d5-7176fda779f3" />
 
 > If you encounter any Editor UI bugs with the **Show preview in UI** option enabled (or with the whole plugin enabled) please report that and see if disabling the `bAddPreviewInUI` in the `EasyLocalizationToolEditor.Build.cs` file helps.
 
