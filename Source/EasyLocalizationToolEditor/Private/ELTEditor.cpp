@@ -467,10 +467,15 @@ FString UELTEditor::GetStringTableName(const FString& LocName, const FString& Na
 
 // IMPORTANT.
 // CSV must have the following structure:
+// |Namespace|DevNotes|Key|lang-en|lang-pl|...|
+// or
+// |DevNotes|Namespace|Key|lang-en|lang-pl|...|
+// or
 // |Namespace|Key|lang-en|lang-pl|...|
 // or
 // |Key|lang-en|lang-pl|lang-...| (if used global namespace)
-// Namespace and Key MUST be at the beginning.
+// Namespace and Key and optionally DevNotes MUST be at the beginning.
+// DevNotes and Namespace must be before the Key column.
 // Everything with lang-... will be treated as a language
 // Any other key/value will be ignored
 bool UELTEditor::GenerateLocFiles(FString& OutMessage)
@@ -559,6 +564,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 		int32 NamespaceColumn = INDEX_NONE;
 		int32 DevNotesColumn = INDEX_NONE;
 		int32 KeysColumn = INDEX_NONE;
+		int32 FirstLangColumn = INDEX_NONE;
 		const TArray<FCSVColumn> Columns = Reader.Columns;
 		for (int32 ColumnIdx = 0; ColumnIdx < Columns.Num(); ColumnIdx++)
 		{
@@ -601,10 +607,9 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 				Header.ReplaceCharInline(TEXT('_'), TEXT('-'));
 				if (Header.RemoveFromStart(TEXT("lang-"), ESearchCase::IgnoreCase))
 				{
-					if (KeysColumn == INDEX_NONE)
+					if (FirstLangColumn == INDEX_NONE)
 					{
-						OutMessage = FString::Printf(TEXT("ERROR: Invalid CSV structure in file (%s)! Language column found before key column!"), *(CSVPaths[CSVIdx]));
-						return false;
+						FirstLangColumn = ColumnIdx;
 					}
 				}
 			}
@@ -617,11 +622,19 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			return false;
 		}
 
-		// Ensure namespace/devnotes (if present) are located before the key column.
-		if ((NamespaceColumn != INDEX_NONE && NamespaceColumn > KeysColumn) ||
-			(DevNotesColumn != INDEX_NONE && DevNotesColumn > KeysColumn))
+		// Make sure we have first lang column.
+		if (FirstLangColumn == INDEX_NONE)
 		{
-			OutMessage = TEXT("ERROR: Invalid CSV! The 'namespace' and 'devnotes' columns must be before the 'key' column!");
+			OutMessage = TEXT("ERROR: Invalid CSV! No Lang column found!");
+			return false;
+		}
+
+		// Ensure namespace/devnotes/keys are located before the lang column.
+		if ((NamespaceColumn != INDEX_NONE && NamespaceColumn >= FirstLangColumn) ||
+			(DevNotesColumn != INDEX_NONE && DevNotesColumn >= FirstLangColumn) ||
+			(KeysColumn >= FirstLangColumn))
+		{
+			OutMessage = TEXT("ERROR: Invalid CSV! The 'namespace', 'devnotes', and 'key' columns must be before the 'lang' column!");
 			return false;
 		}
 
@@ -634,7 +647,7 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 
 		// Validate if all columns have the same number of values. If not - we have invalid CSV structure and we can't generate loc files.
 		const int32 NumOfValues = Columns[KeysColumn].Values.Num();
-		for (int32 CIdx = KeysColumn + 1; CIdx < Columns.Num(); CIdx++)
+		for (int32 CIdx = FirstLangColumn; CIdx < Columns.Num(); CIdx++)
 		{
 			if (Columns[CIdx].Values.Num() != NumOfValues)
 			{
@@ -708,11 +721,8 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			UE_LOG(ELTEditorLog, Log, TEXT("[Lang] | [Namespace] | [Key] | [Value]"));
 		}
 
-		// Prepare to cache the index of the first language column. We will need it if the FallbackWhenEmptyType is set to FIRST_LANG.
-		int32 FirstLangColumn = INDEX_NONE;
-
 		// Go through all language columns and add entries to proper LocRes.
-		for (int32 Column = KeysColumn + 1; Column < Columns.Num(); Column++)
+		for (int32 Column = FirstLangColumn; Column < Columns.Num(); Column++)
 		{
 			// Get the column with the localized values.
 			const FCSVColumn& Locs = Columns[Column];
@@ -728,12 +738,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			if (Lang.RemoveFromStart(TEXT("lang-")) == false)
 			{
 				continue;
-			}
-
-			// This is our first language column, cache its index.
-			if (FirstLangColumn == INDEX_NONE)
-			{
-				FirstLangColumn = Column;
 			}
 
 			// Add LocRes for this language if it doesn't exist yet.
