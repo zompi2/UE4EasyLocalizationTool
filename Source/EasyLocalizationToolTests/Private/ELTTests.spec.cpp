@@ -145,12 +145,12 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 	TestTrue(TEXT(#_Namespace" string table exists"), FELTAutomationCommon::StringTableFileExists(LocPath, LocName, TEXT(_Namespace))); \
 }
 
-#define IMPORT_CSV_ASYNC(_Namespace, _Separator, _Fallback, _GenStringTable, _ExpectTrue) {\
+#define IMPORT_CSV_ASYNC(_Namespace, _Separator, _Fallback, _GenStringTable, _ExpectTrue, _ExpectedError) {\
 	bool bSuccess = false; \
 	bool bDone = false; \
-	AsyncTask(ENamedThreads::GameThread, [this, &bSuccess, &bDone]() \
+	FString OutMessage; \
+	AsyncTask(ENamedThreads::GameThread, [this, &bSuccess, &bDone, &OutMessage]() \
 	{ \
-		FString OutMessage; \
 		bSuccess = UELTEditor::GenerateLocFilesImpl( \
 			FELTAutomationCommon::GetTestCSVPath(CSVName), \
 			LocPath, \
@@ -163,8 +163,15 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 		bDone = true; \
 	}); \
 	while (bDone == false) { FPlatformProcess::Sleep(0.1f); } \
-	if (_ExpectTrue) TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess); \
-	else TestFalse(TEXT("GenerateLocFilesImpl failed (and it's good)"), bSuccess); \
+	if (_ExpectTrue) \
+	{ \
+		TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess); \
+	} \
+	else \
+	{ \
+		TestFalse(TEXT("GenerateLocFilesImpl failed (and it's good)"), bSuccess); \
+		TestTrue(FString::Printf(TEXT("Error expected = %s Result = %s"), TEXT(_ExpectedError), *OutMessage), OutMessage.Contains(TEXT(_ExpectedError)));\
+	} \
 }
 
 BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
@@ -248,7 +255,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -283,7 +290,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -318,7 +325,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -367,7 +374,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -400,24 +407,100 @@ void FELTTests::Define()
 				TestDone.Execute();
 		});
 
-		// ====================== 5. TESTS: INVALID CSV WITH NAMESPACE AND DEVNOTES IN BAD PLACE ======================
-		LatentIt(TEXT("INVALID CSV WITH NAMESPACE AND DEVNOTES IN BAD PLACE"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
+		// ====================== 4-B. TESTS: VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES WITH KEYS IN OTHER ORDER ======================
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES WITH KEYS IN OTHER ORDER"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
 		{
-			const FString CSV = TEXT("devnotes,key,namespace,lang-en,lang-pl,lang-fr,lang-de\n")
-				TEXT("DevNote_1,StartGame,MainMenu,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
-				TEXT("DevNote_2,QuitGame,MainMenu,Quit,Wyjd ,Quitter,Beenden\n")
-				TEXT("DevNote_3,Settings,MainMenu,Settings,Ustawienia,Paramtres,Einstellungen\n")
-				TEXT("DevNote_4,MainMenu,Credits,Napisy,Cr dits,Abspann\n")
-				TEXT("DevNote_5,Health,Gameplay,Health,Zdrowie,Sant,Gesundheit\n")
-				TEXT("DevNote_6,Damage,Gameplay,Damage,Obra enia,D g ts,Schaden\n")
-				TEXT("DevNote_7,Score,Gameplay,Score,Wynik,Score,Punktzahl\n")
-				TEXT("DevNote_8,Level,Gameplay,Level,Poziom,Niveau,Stufe\n");
+			const FString CSV = TEXT("key,namespace,devnotes,lang-en,lang-pl,lang-fr,lang-de\n")
+				TEXT("StartGame,MainMenu,DevNote_1,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
+				TEXT("QuitGame,MainMenu,DevNote_2,Quit,Wyjd,Quitter,Beenden\n")
+				TEXT("Settings,MainMenu,DevNote_3,Settings,Ustawienia,Paramtres,Einstellungen\n")
+				TEXT("Credits,MainMenu,DevNote_4,Credits,Napisy,Cr dits,Abspann\n")
+				TEXT("Health,Gameplay,DevNote_5,Health,Zdrowie,Sant,Gesundheit\n")
+				TEXT("Damage,Gameplay,DevNote_6,Damage,Obra enia,D g ts,Schaden\n")
+				TEXT("Score,Gameplay,DevNote_7,Score,Wynik,Score,Punktzahl\n")
+				TEXT("Level,Gameplay,DevNote_8,Level,Poziom,Niveau,Stufe\n");
 
-			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, false);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
 
-			TestDone.Execute();
+				TEST_LOCFILE_EXISTS("en");
+				TEST_LOCFILE_EXISTS("pl");
+				TEST_LOCFILE_EXISTS("fr");
+				TEST_LOCFILE_EXISTS("de");
+
+				TEST_TRANSLATION("en", "MainMenu", "StartGame", "Start Game");
+				TEST_TRANSLATION("pl", "MainMenu", "StartGame", "Rozpocznij gre");
+				TEST_TRANSLATION("fr", "MainMenu", "StartGame", "Commencer le jeu");
+				TEST_TRANSLATION("de", "MainMenu", "StartGame", "Spiel starten");
+
+				TEST_TRANSLATION("en", "Gameplay", "Health", "Health");
+				TEST_TRANSLATION("pl", "Gameplay", "Health", "Zdrowie");
+				TEST_TRANSLATION("fr", "Gameplay", "Health", "Sant");
+				TEST_TRANSLATION("de", "Gameplay", "Health", "Gesundheit");
+
+				TEST_STRING_TABLE_EXISTS("MainMenu");
+				TEST_STRING_TABLE_EXISTS("Gameplay");
+
+				TEST_STRING_TABLE("en", "MainMenu", "StartGame", "Start Game");
+				TEST_STRING_TABLE("pl", "MainMenu", "StartGame", "Rozpocznij gre");
+				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
+				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
+				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
+#endif
+				TestDone.Execute();
+		});
+
+		// ====================== 4-c. TESTS: VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES IN OTHER ORDER (DevNotesAtEnd) ======================
+		LatentIt(TEXT("VALID CSV WITH NAMESPACE AND DEVNOTES AND STRING TABLES IN OTHER ORDER (DevNotesAtEnd)"), EAsyncExecution::ThreadPool, [this](const FDoneDelegate TestDone)
+		{
+			const FString CSV = TEXT("namespace,key,devnotes,lang-en,lang-pl,lang-fr,lang-de\n")
+				TEXT("MainMenu,StartGame,DevNote_1,Start Game,Rozpocznij gre,Commencer le jeu,Spiel starten\n")
+				TEXT("MainMenu,QuitGame,DevNote_2,Quit,Wyjd ,Quitter,Beenden\n")
+				TEXT("MainMenu,Settings,DevNote_3,Settings,Ustawienia,Paramtres,Einstellungen\n")
+				TEXT("Credits,Credits,DevNote_4,Napisy,Cr dits,Abspann,\n")
+				TEXT("Gameplay,Health,DevNote_5,Health,Zdrowie,Sant,Gesundheit\n")
+				TEXT("Gameplay,Damage,DevNote_6,Damage,Obra enia,D g ts,Schaden\n")
+				TEXT("Gameplay,Score,DevNote_7,Score,Wynik,Score,Punktzahl\n")
+				TEXT("Gameplay,Level,DevNote_8,Level,Poziom,Niveau,Stufe\n");
+
+				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
+
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+
+				TEST_LOCFILE_EXISTS("en");
+				TEST_LOCFILE_EXISTS("pl");
+				TEST_LOCFILE_EXISTS("fr");
+				TEST_LOCFILE_EXISTS("de");
+
+				TEST_TRANSLATION("en", "MainMenu", "StartGame", "Start Game");
+				TEST_TRANSLATION("pl", "MainMenu", "StartGame", "Rozpocznij gre");
+				TEST_TRANSLATION("fr", "MainMenu", "StartGame", "Commencer le jeu");
+				TEST_TRANSLATION("de", "MainMenu", "StartGame", "Spiel starten");
+
+				TEST_TRANSLATION("en", "Gameplay", "Health", "Health");
+				TEST_TRANSLATION("pl", "Gameplay", "Health", "Zdrowie");
+				TEST_TRANSLATION("fr", "Gameplay", "Health", "Sant");
+				TEST_TRANSLATION("de", "Gameplay", "Health", "Gesundheit");
+
+				TEST_STRING_TABLE_EXISTS("MainMenu");
+				TEST_STRING_TABLE_EXISTS("Gameplay");
+
+				TEST_STRING_TABLE("en", "MainMenu", "StartGame", "Start Game");
+				TEST_STRING_TABLE("pl", "MainMenu", "StartGame", "Rozpocznij gre");
+				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
+				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
+
+#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
+				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
+				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
+#endif
+				TestDone.Execute();
 		});
 
 		// ====================== 6. TESTS: INVALID CSV WITHOUT NAMESPACE AND NO GLOBAL NAMESPACE ======================
@@ -435,7 +518,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Namespaces in CSV not found!");
 
 			TestDone.Execute();
 		});
@@ -455,7 +538,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -491,7 +574,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -527,7 +610,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "KEY", true, true);
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "KEY", true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -563,7 +646,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pt-br");
@@ -584,7 +667,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Multiple 'namespace' columns found!");
 
 			TestDone.Execute();
 		});
@@ -597,7 +680,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Key column not found!");
 
 			TestDone.Execute();
 		});
@@ -610,7 +693,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "No Lang column found!");
 
 			TestDone.Execute();
 		});
@@ -624,7 +707,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Every Column must have the same amount of values!");
 
 			TestDone.Execute();
 		});
@@ -637,7 +720,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ";", "NONE", false, false);
+			IMPORT_CSV_ASYNC("", ";", "NONE", false, false, "Key column not found!");
 
 			TestDone.Execute();
 		});
@@ -653,7 +736,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ";", "NONE", false, true);
+			IMPORT_CSV_ASYNC("", ";", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("sv");
@@ -676,7 +759,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", "\t", "NONE", false, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", "\t", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("da");
@@ -699,7 +782,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("es");
@@ -734,7 +817,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true);
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");

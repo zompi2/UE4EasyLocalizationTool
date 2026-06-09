@@ -1,3 +1,7 @@
+###### 1.10.3
+* First 3 columns (Key,Namespace,DevNotes) order doesn't matter now.
+* Automated tests check for the exact error CVS import returns when failed.
+
 ###### 1.10.2
 * Fixed Fab compilation errors caused by the automated tests module.
 

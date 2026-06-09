@@ -56,6 +56,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
 - [Utilities](#utilities)
+- [Automated Tests](#automated-tests)
 - [Troubleshooting Errors](#troubleshooting-errors)
 - [Used In](#used-in)
 - [Special Thanks](#special-thanks)
@@ -449,6 +450,18 @@ OriginTextOwner might be required when the OriginText is empty and has not packa
 ``` cpp
 UELTEditorUtils::ReplaceText(this, OriginText, OtherText);
 ```
+
+[Back to top](#table-of-content)
+
+## Automated Tests  
+
+The plugin contains a module with Automated Tests. Their goal is to test if the CSV import works as expected. They do not guarantee that there are no bugs in the plugin, but they help to weed out the most common issues. The list of tests will probably expand when a new bug is found.  
+You can run the tests from the Session Frontend. 
+> **Have in mind that the tests will clear the localization directory!** After running tests you will have to reimport your localizations.
+
+These tests were implemented mostly to make the plugin developer life easier.  
+
+![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/33fce1f5-91b6-4486-a385-6348c2ae25b9)
 
 [Back to top](#table-of-content)
 
