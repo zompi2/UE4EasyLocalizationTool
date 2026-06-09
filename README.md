@@ -483,7 +483,7 @@ The workflow of importing CSV into localization files has been implemented with 
 
 # Special Thanks
 
-I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work, to [gnat](https://github.com/gnat) for finding elusive bugs, and to everyone that contributed to this project.  
+I want to send special thanks to Monika, because she always supports me and believes in me, to Pawel, for allowing me to test this plugin on his project, to [cziter15](https://github.com/cziter15) for the idea of how it should work, to [gnat](https://github.com/gnat) for finding elusive bugs, to [Crezetique](https://github.com/Crezetique) for String Table import and experimental features implementation, and to everyone that contributed to this project.  
 Also, I want to thank You for using this plugin! It is very important for me that my work is useful for someone!  
 Happy coding!
 
