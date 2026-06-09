@@ -74,6 +74,7 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 > By default the `,` is used as a column separator, but you can change it in the Plugin's settings.
 
 * **Namespace** - a namespace in which current entry is located. This column is **optional**, but without it a **Global Namespace** must be defined.
+* **DevNotes** - *(since 1.10.0 available for UE 5.8 and newer)* optional notes which can be put into the String Table. 
 * **Key** - a key of this entry, used later in text implementation.
 * **lang-x** - a value in a **x** language. **x** is a language code, such as *en*, *pl*, *de*, etc.
 > Unreal Engine uses ICU Locales. The full list of them can be found here: https://www.localeplanet.com/icu/  
@@ -105,7 +106,7 @@ or use a shortcut : `Alt + Shift + L`
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/a32915c5-3fdd-4cdd-b4cc-bdd8e13b7a06)
+![ELTSShot](https://github.com/user-attachments/assets/852145fd-9c75-4af3-95d3-64d0c6095847)  
 
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
@@ -120,6 +121,7 @@ The following window should appear:
     * NONE - no fallback
     * FIRST_LANG - use value of the first language. If that value is empty use Key
     * KEY - use the key of this entry
+* **Generate String Table on Import** - *(since 1.10.0)* select this option to generate a String Table asset with all the imported keys.
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
@@ -184,13 +186,16 @@ NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 
 [Back to top](#table-of-content)
 
-## String tables
+## String Tables
 
 Localization can be used in **String Tables**. Remember to set the **Key** and **Source String** to be the same value and set the **Namespace**
 <img width="918" height="244" alt="stabledefine" src="https://github.com/user-attachments/assets/05cd8c8a-bf22-4c4e-9455-86bd10fcb00d" />  
 
 Then, use them like standard **String Tables** in Text properties.  
 <img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
+
+You can select the **Generate String Table on Import** option in the ELT import window in order to automatically generate the String Table with the imported keys.  
+The String Table asset will be generated in the current Localization directory and will be named `ELT_KeyReferences_[LocalizationName]_[Namespace]`.
 
 [Back to top](#table-of-content)
 
