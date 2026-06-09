@@ -86,9 +86,9 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 > **!!! VERY IMPORTANT !!!**  
 > 
 > The newline character for every entry **MUST** be a **CRLF**, otherwise UE's Slate will constantly try to replace the given text Source, leading to errors!   
-> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.
-> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
-> Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
+> **Namespace**, **DevNotes**, and **Key** must be the first columns. The order of other columns doesn't matter.  
+> *(Since 1.8.0)* All columns before **Namespace**, **DevNotes**, and **Key** columns are ignored.  
+> Any column that isn't **Namespace**, **DevNotes**, **Key**, or **lang-x** is ignored by the tool.  
 
 [Back to top](#table-of-content)
 
