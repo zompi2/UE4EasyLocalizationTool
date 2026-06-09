@@ -468,16 +468,12 @@ FString UELTEditor::GetStringTableName(const FString& LocName, const FString& Na
 // IMPORTANT.
 // CSV must have the following structure:
 // |Namespace|DevNotes|Key|lang-en|lang-pl|...|
-// or
-// |DevNotes|Namespace|Key|lang-en|lang-pl|...|
-// or
-// |Namespace|Key|lang-en|lang-pl|...|
-// or
-// |Key|lang-en|lang-pl|lang-...| (if used global namespace)
-// Namespace and Key and optionally DevNotes MUST be at the beginning.
-// DevNotes and Namespace must be before the Key column.
+// The order of Namespace, DevNotes and Key columns can be different, but they must be before any lang-... column.
+// DevNotes column is optional.
+// If there is no Namespace column - the global namespace will be used.
 // Everything with lang-... will be treated as a language
 // Any other key/value will be ignored
+// Any column before Namespace, DevNotes or Key column will be ignored.
 bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 {
 	if (CurrentLocPath.IsEmpty() || GetCurrentLocName().IsEmpty())
@@ -635,13 +631,6 @@ bool UELTEditor::GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FSt
 			(KeysColumn >= FirstLangColumn))
 		{
 			OutMessage = TEXT("ERROR: Invalid CSV! The 'namespace', 'devnotes', and 'key' columns must be before the 'lang' column!");
-			return false;
-		}
-
-		// Check if there are more columns after keys column. If not - we don't have any language columns and we can't generate loc files.
-		if (Columns.Num() <= KeysColumn + 1)
-		{
-			OutMessage = TEXT("ERROR: Invalid CSV! There are no lang columns after key column!");
 			return false;
 		}
 
