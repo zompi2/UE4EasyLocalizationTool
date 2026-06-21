@@ -28,12 +28,12 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 
 | UE version | Plugin version  | Link |
 | :--------- | :-------------  | :--- |
-| 4.27       | 1.10.2          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.10.2-4.27-Prebuild.zip) |
+| 4.27       | 1.10.3          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.10.3-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.4        | 1.9.0           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.5        | 1.9.1           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.6        | 1.9.1           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
-| 5.7        | 1.9.1           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.4        | 1.10.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.5        | 1.10.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.6        | 1.10.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
+| 5.7        | 1.10.3          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.8        |                 | Soon |
 
 # Unrel Engine 5.3 Issue
@@ -86,9 +86,9 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 > **!!! VERY IMPORTANT !!!**  
 > 
 > The newline character for every entry **MUST** be a **CRLF**, otherwise UE's Slate will constantly try to replace the given text Source, leading to errors!   
-> **Namespace** and **Key** must be first columns. The order of other columns doesn't matter.
-> *(Since 1.8.0)* All columns before Namespace or Key columns are ignored.
-> Any column that isn't **Namespace**, **Key** or **lang-x** is ignored by the tool.
+> **Namespace**, **DevNotes**, and **Key** must be the first columns. The order of other columns doesn't matter.  
+> *(Since 1.8.0)* All columns before **Namespace**, **DevNotes**, and **Key** columns are ignored.  
+> Any column that isn't **Namespace**, **DevNotes**, **Key**, or **lang-x** is ignored by the tool.  
 
 [Back to top](#table-of-content)
 
@@ -337,7 +337,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
 ```
 
 **UE5.2, UE5.4-UE5.8** :  
@@ -346,7 +346,7 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
 ```
 
 Where:
@@ -356,6 +356,7 @@ Where:
 * **-Namespace** - optional parameter which sets a **Global Namespace** value.
 * **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used.
 * **-Fallback** - optional parameter which sets a *Fallback when Empty* value. If not given, the default `NONE` will be used. Can be either `NONE` or `FIRST_LANG` or `KEY` (case insensitive). 
+* **-GenStringTables** - optional parameter which, when present, generates string tables on import
 
 [Back to top](#table-of-content)
 
