@@ -1,3 +1,7 @@
+###### 1.10.4
+* Fixed broken localization preview in UE5.8
+* Removed legacy Editor Widget
+
 ###### 1.10.3
 * First 3 columns (Key,Namespace,DevNotes) order doesn't matter now.
 * Automated tests check for the exact error CVS import returns when failed.

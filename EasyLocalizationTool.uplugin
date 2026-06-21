@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.10.3",
+	"VersionName": "1.10.4",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "A simpler localization pipeline.",
 	"Category": "Localization",
@@ -11,7 +11,7 @@
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/7ffcfa0830e5409991d56f546d5b9cbb",
 	"FabURL": "com.epicgames.launcher://ue/Fab/product/66e4306e-9e77-4028-9db8-56a3ac2844d1",
 	"SupportURL": "mailto:zompi2@gmail.com",
-	"CanContainContent": true,
+	"CanContainContent": false,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": true,
