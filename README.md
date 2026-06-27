@@ -1,3 +1,20 @@
+# Notes on the new feature
+
+To change current localizations with a runtime locres use the following function
+
+```
+FTextLocalizationResource MyLocRes;
+FTextLocalizationManager::Get().UpdateFromLocalizationResource(MyLocRes);
+```
+
+However, it only changes the values locally and whenever the refresh happens the old locres jumps in place.  
+It needs to have a function that caches local locreses and sets them whenever:
+* a change language
+* refresh resources or
+* preview change
+happens
+Remember that it must cache localizations for all localization names/paths.
+
 # Easy Localization Tool for Unreal Engine
 
 This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
