@@ -1,0 +1,52 @@
+// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
+
+using UnrealBuildTool;
+
+public class EasyLocalizationToolImporter : ModuleRules
+{
+	public EasyLocalizationToolImporter(ReadOnlyTargetRules Target) : base(Target)
+	{
+		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+
+		PrivateIncludePaths.Add("EasyLocalizationToolImporter/Private");
+
+		PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"Core"
+			}
+		);
+
+		PrivateDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"CoreUObject",
+				"Engine"
+			}
+		);
+
+        // Ensure there are no duplicated definitions already
+        PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELTIMP_"));
+
+        // Disable optimization for non shipping builds (for easier debugging)
+        bool bDisableOptimization = true;
+        if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
+        {
+            if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
+            {
+                PublicDefinitions.Add("ELTIMP_PRAGMA_DISABLE_OPTIMIZATION=UE_DISABLE_OPTIMIZATION");
+                PublicDefinitions.Add("ELTIMP_PRAGMA_ENABLE_OPTIMIZATION=UE_ENABLE_OPTIMIZATION");
+            }
+            else
+            {
+                PublicDefinitions.Add("ELTIMP_PRAGMA_DISABLE_OPTIMIZATION=PRAGMA_DISABLE_OPTIMIZATION");
+                PublicDefinitions.Add("ELTIMP_PRAGMA_ENABLE_OPTIMIZATION=PRAGMA_ENABLE_OPTIMIZATION");
+            }
+        }
+        else
+        {
+            PublicDefinitions.Add("ELTIMP_PRAGMA_DISABLE_OPTIMIZATION=");
+            PublicDefinitions.Add("ELTIMP_PRAGMA_ENABLE_OPTIMIZATION=");
+        }
+    }
+}

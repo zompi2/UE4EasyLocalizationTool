@@ -5,13 +5,12 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "LocText.h"
+#include "ELTImporter.h"
 #include "ELTBlueprintLibrary.generated.h"
 
 /**
  * Blueprint Function Library which exposes core Easy Localization Tool functionalities.
  */
-
-DECLARE_DYNAMIC_DELEGATE(FELTTestDelegate);
 
 UCLASS()
 class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionLibrary
@@ -19,6 +18,16 @@ class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionL
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Import CSV to Unreal Localization", Separator = ","), Category = "Easy Localization Tool")
+	static bool ImportCSVToUnrealLocalization(const TArray<FString>& CSVPaths, 
+												const FString& LocName, 
+												const FString& GlobalNamespace, 
+												const FString& Separator,
+												EFallbackWhenEmptyType FallbackWhenEmpty,
+												bool bGenerateStringTables, 
+												bool bLogDebug, 
+												FString& OutMessage);
 
 	/**
 	 * Returns code for currently used language.

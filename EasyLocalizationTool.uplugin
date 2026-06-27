@@ -25,6 +25,14 @@
 			]
 		},
 		{
+			"Name": "EasyLocalizationToolImporter",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
 			"Name": "EasyLocalizationToolEditor",
 			"Type": "Editor",
 			"LoadingPhase": "PreDefault",

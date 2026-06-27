@@ -2,6 +2,7 @@
 
 #include "ELTCommandlet.h"
 #include "ELTEditor.h"
+#include "ELTImporter.h"
 #include "Misc/Parse.h"
 
 DEFINE_LOG_CATEGORY_STATIC(ELTCommandletLog, Log, All);
@@ -38,12 +39,25 @@ int32 UELTCommandlet::Main(const FString& Params)
 	FParse::Value(*Params, TEXT("-Fallback="), Fallback);
 
 	bool bGenerateStringTables = FParse::Param(*Params, TEXT("-GenStringTables"));
+	bool bLogDebug = FParse::Param(*Params, TEXT("-LogDebug"));
 
 	const FString LocName = FPaths::GetBaseFilename(LocPath);
 
 	// Run generation of loc files implementation. Get the output message and display it the localization fails.
 	FString OutMessage;
-	if (UELTEditor::GenerateLocFilesImpl(CSVPath, LocPath, LocName, Namespace, Separator, Fallback, bGenerateStringTables, OutMessage) == false)
+	const bool bSuccess = FELTImporter::GenerateLoc(
+		UELTEditor::PathsStringToList(CSVPath),
+		LocPath, 
+		LocName, 
+		Namespace, 
+		Separator, 
+		FELTImporter::FallbackStringToEnum(Fallback),
+		bGenerateStringTables, 
+		true, // Save to files. 
+		bLogDebug, 
+		OutMessage);
+
+	if (bSuccess == false)
 	{
 		UE_LOG(ELTCommandletLog, Log, TEXT("+++ Failed to generate Localization: %s"), *OutMessage);
 		return 1;

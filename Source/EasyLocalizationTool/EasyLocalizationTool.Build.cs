@@ -13,8 +13,9 @@ public class EasyLocalizationTool : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core"
-			}
+				"Core",
+                "EasyLocalizationToolImporter"
+            }
 		);
 
 		PrivateDependencyModuleNames.AddRange(

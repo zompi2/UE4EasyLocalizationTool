@@ -4,6 +4,7 @@
 
 #include "Misc/AutomationTest.h"
 #include "ELTEditor.h"
+#include "ELTImporter.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Internationalization/TextLocalizationResource.h"
@@ -55,7 +56,7 @@ public:
 
 	static bool StringTableFileExists(const FString& LocPath, const FString& LocNameOld, const FString& Namespace)
 	{
-		FString FilePath = LocPath / UELTEditor::GetStringTableName(LocNameOld, Namespace) + TEXT(".uasset");
+		FString FilePath = LocPath / FELTImporter::GetStringTableName(LocNameOld, Namespace) + TEXT(".uasset");
 		return IFileManager::Get().FileExists(*FilePath);
 	}
 };
@@ -88,7 +89,7 @@ public:
 	); \
 }
 
-#define GET_STRING_TABLE_NAME(_Namespace) const FString StringTableName = UELTEditor::GetStringTableName(LocName, _Namespace); \
+#define GET_STRING_TABLE_NAME(_Namespace) const FString StringTableName = FELTImporter::GetStringTableName(LocName, _Namespace); \
 const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / StringTableName + TEXT(".uasset")) + TEXT(".") + StringTableName;
 
 #define TEST_STRING_TABLE(_Lang, _Namespace, _Key, _Expected) { \
@@ -151,14 +152,16 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 	FString OutMessage; \
 	AsyncTask(ENamedThreads::GameThread, [this, &bSuccess, &bDone, &OutMessage]() \
 	{ \
-		bSuccess = UELTEditor::GenerateLocFilesImpl( \
-			FELTAutomationCommon::GetTestCSVPath(CSVName), \
+		bSuccess = FELTImporter::GenerateLoc( \
+			{FELTAutomationCommon::GetTestCSVPath(CSVName)}, \
 			LocPath, \
 			LocName, \
 			TEXT(_Namespace), \
 			TEXT(_Separator), \
-			TEXT(_Fallback), \
+			_Fallback, \
 			_GenStringTable, \
+			true, \
+			true, \
 			OutMessage); \
 		bDone = true; \
 	}); \
@@ -198,14 +201,16 @@ void FELTTests::Define()
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
 			FString OutMessage;
-			const bool bSuccess = UELTEditor::GenerateLocFilesImpl(
-				FELTAutomationCommon::GetTestCSVPath(CSVName), 
+			const bool bSuccess = FELTImporter::GenerateLoc(
+				{FELTAutomationCommon::GetTestCSVPath(CSVName)}, 
 				LocPath, 
 				LocName, 
 				TEXT(""),
 				TEXT(","),
-				TEXT("NONE"),
+				EFallbackWhenEmptyType::NONE,
 				false, 
+				true,
+				true,
 				OutMessage); 
 			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
 
@@ -255,7 +260,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -290,7 +295,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");
@@ -325,7 +330,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -374,7 +379,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -422,7 +427,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -470,7 +475,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("pl");
@@ -518,7 +523,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Namespaces in CSV not found!");
+			IMPORT_CSV_ASYNC("", ",", EFallbackWhenEmptyType::NONE, false, false, "Namespaces in CSV not found!");
 
 			TestDone.Execute();
 		});
@@ -538,7 +543,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::FIRST_LANG, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -574,7 +579,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -610,7 +615,7 @@ void FELTTests::Define()
 
 				TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-				IMPORT_CSV_ASYNC("GlobalNamespace", ",", "KEY", true, true, "");
+				IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::KEY, true, true, "");
 
 				TEST_LOCFILE_EXISTS("en");
 				TEST_LOCFILE_EXISTS("ja");
@@ -646,7 +651,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "FIRST_LANG", true, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::FIRST_LANG, true, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pt-br");
@@ -667,7 +672,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Multiple 'namespace' columns found!");
+			IMPORT_CSV_ASYNC("", ",", EFallbackWhenEmptyType::NONE, false, false, "Multiple 'namespace' columns found!");
 
 			TestDone.Execute();
 		});
@@ -680,7 +685,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Key column not found!");
+			IMPORT_CSV_ASYNC("", ",", EFallbackWhenEmptyType::NONE, false, false, "Key column not found!");
 
 			TestDone.Execute();
 		});
@@ -693,7 +698,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "No Lang column found!");
+			IMPORT_CSV_ASYNC("", ",", EFallbackWhenEmptyType::NONE, false, false, "No Lang column found!");
 
 			TestDone.Execute();
 		});
@@ -707,7 +712,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ",", "NONE", false, false, "Every Column must have the same amount of values!");
+			IMPORT_CSV_ASYNC("", ",", EFallbackWhenEmptyType::NONE, false, false, "Every Column must have the same amount of values!");
 
 			TestDone.Execute();
 		});
@@ -720,7 +725,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ";", "NONE", false, false, "Key column not found!");
+			IMPORT_CSV_ASYNC("", ";", EFallbackWhenEmptyType::NONE, false, false, "Key column not found!");
 
 			TestDone.Execute();
 		});
@@ -736,7 +741,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("", ";", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("", ";", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("sv");
@@ -759,7 +764,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", "\t", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", "\t", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("da");
@@ -782,7 +787,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("es");
@@ -817,7 +822,7 @@ void FELTTests::Define()
 
 			TestTrue(TEXT("CSV file created"), FELTAutomationCommon::WriteTestCSV(CSVName, CSV));
 
-			IMPORT_CSV_ASYNC("GlobalNamespace", ",", "NONE", false, true, "");
+			IMPORT_CSV_ASYNC("GlobalNamespace", ",", EFallbackWhenEmptyType::NONE, false, true, "");
 
 			TEST_LOCFILE_EXISTS("en");
 			TEST_LOCFILE_EXISTS("pl");

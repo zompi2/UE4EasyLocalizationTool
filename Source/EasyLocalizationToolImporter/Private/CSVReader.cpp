@@ -5,7 +5,7 @@
 #include "CSVReader.h"
 #include "Misc/FileHelper.h"
 
-ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
+ELTIMP_PRAGMA_DISABLE_OPTIMIZATION
 
 bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Separator, FString& OutMessage)
 {
@@ -116,4 +116,4 @@ bool FCSVReader::LoadFromFile(const FString& FilePath, const TCHAR& Separator, F
 	}
 }
 
-ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION
+ELTIMP_PRAGMA_ENABLE_OPTIMIZATION
