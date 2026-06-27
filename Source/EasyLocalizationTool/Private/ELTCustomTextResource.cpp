@@ -1,9 +1,10 @@
+// Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "ELTCustomTextResource.h"
 #include "ELT.h"
 #include "ELTImporter.h"
 
-UE_DISABLE_OPTIMIZATION
+ELT_PRAGMA_DISABLE_OPTIMIZATION
 
 int32 FELTCustomTextResource::GetPriority() const
 {
@@ -41,15 +42,23 @@ void FELTCustomTextResource::LoadLocalizedResources(const ELocalizationLoadFlags
 		return;
 	}
 
+	const FString NativeCultureName = TextLocalizationResourceUtil::GetNativeCultureName(ELocalizedTextSourceCategory::Game);
+	if (NativeCultureName.IsEmpty() == false)
+	{
+		if (FTextLocalizationResource* FoundRes = FELTImporter::CachedResources.Find(NativeCultureName))
+		{
+			InOutNativeResource = *FoundRes;
+		}
+	}
+
 	for (const FString& CultureName : InPrioritizedCultures)
 	{
 		if (FTextLocalizationResource* FoundRes = FELTImporter::CachedResources.Find(CultureName))
 		{
-			InOutNativeResource = *FoundRes;
 			InOutLocalizedResource = *FoundRes;
 			break;
 		}
 	}
 }
 
-UE_ENABLE_OPTIMIZATION
+ELT_PRAGMA_ENABLE_OPTIMIZATION

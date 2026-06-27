@@ -4,6 +4,8 @@
 
 IMPLEMENT_MODULE(FEasyLocalizationToolModule, EasyLocalizationTool)
 
+ELT_PRAGMA_DISABLE_OPTIMIZATION
+
 void FEasyLocalizationToolModule::StartupModule()
 {
 	CustomTextResource = MakeShared<FELTCustomTextResource>();
@@ -14,3 +16,5 @@ void FEasyLocalizationToolModule::ShutdownModule()
 {
 	CustomTextResource.Reset();
 }
+
+ELT_PRAGMA_ENABLE_OPTIMIZATION
