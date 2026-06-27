@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "ELTImporter.h"
-#include "Internationalization/TextLocalizationResource.h"
 #include "Internationalization/StringTableCore.h"
 #include "Internationalization/StringTable.h"
 #include "UObject/SavePackage.h"
@@ -16,6 +15,7 @@
 DEFINE_LOG_CATEGORY_STATIC(ELTImporterLog, Log, All);
 
 
+TMap<FString, FTextLocalizationResource> FELTImporter::CachedResources = {};
 
 bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 								const FString& LocPath, 
@@ -341,10 +341,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 	}
 	else
 	{
-		for (auto& LocRes : LocReses)
-		{
-			FTextLocalizationManager::Get().UpdateFromLocalizationResource(LocRes.Value);
-		}
+		CachedResources = LocReses;
 	}
 
 	// Generate Key Reference String Table

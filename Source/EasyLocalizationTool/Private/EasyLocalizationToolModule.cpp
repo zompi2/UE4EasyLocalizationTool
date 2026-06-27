@@ -1,12 +1,16 @@
 // Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
-#include "Modules/ModuleManager.h"
-
-/**
- * Just a module, nothing to see here.
- */
-
-class EASYLOCALIZATIONTOOL_API FEasyLocalizationToolModule : public IModuleInterface
-{};
+#include "EasyLocalizationToolModule.h"
 
 IMPLEMENT_MODULE(FEasyLocalizationToolModule, EasyLocalizationTool)
+
+void FEasyLocalizationToolModule::StartupModule()
+{
+	CustomTextResource = MakeShared<FELTCustomTextResource>();
+	FTextLocalizationManager::Get().RegisterTextSource(CustomTextResource.ToSharedRef(), true);
+}
+
+void FEasyLocalizationToolModule::ShutdownModule()
+{
+	CustomTextResource.Reset();
+}

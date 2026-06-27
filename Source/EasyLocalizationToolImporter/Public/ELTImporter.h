@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Internationalization/TextLocalizationResource.h"
 
 // Define the type of behavior when the localized string in CSV is empty and the fallback value should be used. 
 UENUM(BlueprintType)
@@ -47,6 +48,8 @@ public:
 	 * Converts Fallback type Enum to String.
 	 */
 	static FString FallbackEnumToString(EFallbackWhenEmptyType Enum);
+
+	static TMap<FString, FTextLocalizationResource> CachedResources;
 };
 
 
