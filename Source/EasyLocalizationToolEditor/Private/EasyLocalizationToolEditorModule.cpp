@@ -63,6 +63,7 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	FEdGraphUtilities::RegisterVisualPinFactory(GraphPanelPinFactory);
 #endif
 
+	// Clear runtime cache when PIE has ended.
 	FEditorDelegates::EndPIE.AddLambda([](const bool bIsSimulating)
 	{
 		FELTImporter::CachedResources.Empty();
