@@ -1,3 +1,9 @@
+###### 1.11.0
+* Added ImportCSVToUnrealLocalization function, which allows you to reimport CSV files into the Unreal localization system in runtime now!
+* Added instructions to the README about how to import and package localizations in plugins.
+* Added -LogDebug flag to Commandlet.
+* Fixed some function display names typos.
+
 ###### 1.10.4
 * Fixed broken localization preview in UE5.8
 * Removed legacy Editor Widget

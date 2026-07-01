@@ -54,6 +54,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
 - [Controlling Localizations](#controlling-localizations)
+- [Reimporting Localizations during the Game](#reimporting-localizations-during-the-game)
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
 - [Utilities](#utilities)
@@ -337,7 +338,7 @@ GetELT()->RefreshLanguageResources();
 
 [Back to top](#table-of-content)
 
-## Reimporting localizations during the game
+## Reimporting Localizations during the Game
 
 *(Since 1.11.0)* The tool can reimport csv files into the game in runtime, even in packaged game. This might be an excelent feature that can allow other players to mod existing localizations if the original cvs files are provided with the game. The parameters are the same as when normally importing using the Editor tool. The localization is not saved into any file, so it must be run every time the game starts.
 
@@ -387,7 +388,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables -LogDebug
 ```
 
 **UE5.2, UE5.4-UE5.8** :  
@@ -396,7 +397,7 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables -LogDebug
 ```
 
 Where:
@@ -407,6 +408,7 @@ Where:
 * **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used.
 * **-Fallback** - optional parameter which sets a *Fallback when Empty* value. If not given, the default `NONE` will be used. Can be either `NONE` or `FIRST_LANG` or `KEY` (case insensitive). 
 * **-GenStringTables** - optional parameter which, when present, generates string tables on import
+* **-LogDebug** - optional parameter which, when present, will print more logs for debugging
 
 [Back to top](#table-of-content)
 
