@@ -37,7 +37,7 @@ void FELTCustomTextResource::LoadLocalizedResources(const ELocalizationLoadFlags
 		return;
 	}
 
-	if (FELTImporter::CachedResources.IsEmpty())
+	if (FELTImporter::CachedResources.Num() == 0)
 	{
 		return;
 	}

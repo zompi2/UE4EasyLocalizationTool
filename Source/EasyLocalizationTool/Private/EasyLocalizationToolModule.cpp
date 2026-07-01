@@ -16,8 +16,6 @@ void FEasyLocalizationToolModule::StartupModule()
 void FEasyLocalizationToolModule::ShutdownModule()
 {
 	CustomTextResource.Reset();
-	FELTImporter::CachedResources.Empty();
-	FELTImporter::CachedResourcesPriority = -1;
 }
 
 ELT_PRAGMA_ENABLE_OPTIMIZATION

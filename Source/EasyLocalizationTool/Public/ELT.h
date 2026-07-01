@@ -49,7 +49,7 @@ public:
 	/**
 	 * Returns a list of codes of all available languages.
 	 */
-	UFUNCTION(BlueprintPure, meta=(DisplayName = "ELT - Get Available Languagtes"), Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "ELT - Get Available Languages"), Category = "Easy Localization Tool")
 	static TArray<FString> GetAvailableLanguages();
 
 	/**
