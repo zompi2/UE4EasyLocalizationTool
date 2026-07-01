@@ -15,15 +15,16 @@ public class EasyLocalizationToolEditor : ModuleRules
 			new string[]
 			{
 				"Core",
-				"InputCore"
-			}
+				"InputCore",
+				"EasyLocalizationTool",
+                "EasyLocalizationToolImporter"
+            }
 		);
 
 
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"EasyLocalizationTool",
 				"Engine",
 				"CoreUObject",
 				"Slate",

@@ -238,6 +238,34 @@ void UELT::SetLastUsedLanguage()
 	}
 }
 
+bool UELT::ImportCSVToUnrealLocalization(const TArray<FString>& CSVPaths,
+	const FString& LocName,
+	const FString& GlobalNamespace,
+	const FString& Separator,
+	EFallbackWhenEmptyType FallbackWhenEmpty,
+	bool bLogDebug,
+	FString& OutMessage)
+{
+	const bool bResult = FELTImporter::GenerateLoc(CSVPaths,
+		TEXT(""),
+		LocName,
+		GlobalNamespace,
+		Separator,
+		FallbackWhenEmpty,
+		false, // Never generate string tables
+		false, // Do not generate loc asset files
+		true, // Cache the resources in memory
+		bLogDebug,
+		OutMessage);
+
+	if (bResult)
+	{
+		RefreshLanguageResources();
+	}
+
+	return bResult;
+}
+
 void UELT::BroadcastOnTextLocalizationChanged()
 {
 	OnTextLocalizationChangedStatic.Broadcast();

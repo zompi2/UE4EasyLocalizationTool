@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.10.4",
+	"VersionName": "1.11.0",
 	"FriendlyName": "EasyLocalizationTool",
 	"Description": "A simpler localization pipeline.",
 	"Category": "Localization",
@@ -18,6 +18,14 @@
 	"Modules": [
 		{
 			"Name": "EasyLocalizationTool",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "EasyLocalizationToolImporter",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [

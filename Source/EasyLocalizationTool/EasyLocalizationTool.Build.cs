@@ -13,8 +13,9 @@ public class EasyLocalizationTool : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core"
-			}
+				"Core",
+                "EasyLocalizationToolImporter"
+            }
 		);
 
 		PrivateDependencyModuleNames.AddRange(
@@ -29,7 +30,7 @@ public class EasyLocalizationTool : ModuleRules
         PublicDefinitions.RemoveAll(ECFDefinition => ECFDefinition.StartsWith("ELT_"));
 
         // Disable optimization for non shipping builds (for easier debugging)
-        bool bDisableOptimization = false;
+        bool bDisableOptimization = true;
         if (bDisableOptimization && (Target.Configuration != UnrealTargetConfiguration.Shipping))
         {
             if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)

@@ -7,6 +7,32 @@
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
+bool UELTBlueprintLibrary::ImportCSVToUnrealLocalization(const UObject* WorldContextObject,
+	const TArray<FString>& CSVPaths,
+	const FString& LocName,
+	const FString& GlobalNamespace,
+	const FString& Separator,
+	EFallbackWhenEmptyType FallbackWhenEmpty,
+	bool bLogDebug,
+	FString& OutMessage)
+{
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
+	{
+		if (UELT* ELT = UELT::Get(ThisWorld))
+		{
+			return ELT->ImportCSVToUnrealLocalization(CSVPaths,
+				LocName,
+				GlobalNamespace,
+				Separator,
+				FallbackWhenEmpty,
+				bLogDebug,
+				OutMessage);
+		}
+	}
+
+	return false;
+}
+
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)
 {
 	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))

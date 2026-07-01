@@ -14,12 +14,13 @@ public class EasyLocalizationToolTests : ModuleRules
 			new string[]
 			{
 				"Core",
-				"EasyLocalizationTool"
-			}
+				"EasyLocalizationTool",
+                "EasyLocalizationToolImporter"
+            }
 		);
 
 		if (Target.bBuildEditor)
-        	{
+        {
 			PublicDependencyModuleNames.AddRange(
 				new string[]
 				{

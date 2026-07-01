@@ -6,6 +6,7 @@
 #include "ELTEditorStyle.h"
 #include "LocTextDetails.h"
 #include "TextLocPreview.h"
+#include "ELTImporter.h"
 
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Docking/TabManager.h"
@@ -61,6 +62,13 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	GraphPanelPinFactory = MakeShared<FTextPreviewGraphPanelPinFactory>();
 	FEdGraphUtilities::RegisterVisualPinFactory(GraphPanelPinFactory);
 #endif
+
+	// Clear runtime cache when PIE has ended.
+	FEditorDelegates::EndPIE.AddLambda([](const bool bIsSimulating)
+	{
+		FELTImporter::CachedResources.Empty();
+		FELTImporter::CachedResourcesPriority = -1;
+	});
 }
 
 void FEasyLocalizationToolEditorModule::ShutdownModule()
