@@ -5,6 +5,7 @@
 #include "Internationalization/StringTable.h"
 #include "UObject/SavePackage.h"
 #include "CSVReader.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
 #include "AssetRegistry/AssetRegistryModule.h"
