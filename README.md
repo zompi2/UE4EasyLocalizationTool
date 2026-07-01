@@ -1,3 +1,4 @@
+<img width="440" height="327" alt="ELTReimp" src="https://github.com/user-attachments/assets/75690be2-2bea-402a-8018-353066f7f707" />
 # Notes on the new feature
 
 To change localization in runtime we use custom `ILocalizedTextSource` which returns correct cached `FTextLocalizationResource` when requested.
