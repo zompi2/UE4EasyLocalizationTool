@@ -16,23 +16,21 @@ bool UELTBlueprintLibrary::ImportCSVToUnrealLocalization(const UObject* WorldCon
 	bool bLogDebug,
 	FString& OutMessage)
 {
-	const bool bResult = FELTImporter::GenerateLoc(CSVPaths,	
-										TEXT(""),
-										LocName, 
-										GlobalNamespace, 
-										Separator, 
-										FallbackWhenEmpty, 
-										false, // Never generate string tables
-										false, // Do not generate loc asset files
-										true, // Cache the resources in memory
-										bLogDebug, 
-										OutMessage);
-	if (bResult)
+	if (UWorld* ThisWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull))
 	{
-		RefreshLanguageResources(WorldContextObject);
+		if (UELT* ELT = UELT::Get(ThisWorld))
+		{
+			return ELT->ImportCSVToUnrealLocalization(CSVPaths,
+				LocName,
+				GlobalNamespace,
+				Separator,
+				FallbackWhenEmpty,
+				bLogDebug,
+				OutMessage);
+		}
 	}
 
-	return bResult;
+	return false;
 }
 
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)

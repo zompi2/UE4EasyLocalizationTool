@@ -19,6 +19,9 @@ class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionL
 
 public:
 
+	/**
+	 * Imports the CSV into the localization files during the game runtime.
+	 */
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", DisplayName = "ELT - Import CSV to Unreal Localization", Separator = ","), Category = "Easy Localization Tool")
 	static bool ImportCSVToUnrealLocalization(const UObject* WorldContextObject,
 												const TArray<FString>& CSVPaths,

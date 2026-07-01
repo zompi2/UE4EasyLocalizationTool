@@ -1,10 +1,3 @@
-<img width="440" height="327" alt="ELTReimp" src="https://github.com/user-attachments/assets/75690be2-2bea-402a-8018-353066f7f707" />
-# Notes on the new feature
-
-To change localization in runtime we use custom `ILocalizedTextSource` which returns correct cached `FTextLocalizationResource` when requested.
-Currently it requires some cleanups and tests.  
-Check how it behaves with localizations in different localization paths.
-
 # Easy Localization Tool for Unreal Engine
 
 This plugin introduces a way simplier method of localizing game made in Unreal Engine. 
@@ -57,6 +50,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Using Localizations](#using-localizations)
 - [String Tables](#string-tables)
 - [Cooking Localizations](#cooking-localizations)
+- [Add Localizations to Plugins](#adding-localizations-to-plugins)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
 - [Controlling Localizations](#controlling-localizations)
@@ -218,6 +212,27 @@ In order to make localization work on standnalone build there are two options in
 
 [Back to top](#table-of-content)
 
+## Adding localizations to Plugins
+If you want to localize assets inside of the Plugin and you want to keep localization files inside of that plugin, you must:
+1. Add the localization directory like described [here](#adding-localization-directories). For example:
+```
+[Internationalization]
++LocalizationPaths=%GAMEDIR%Plugins/TestPlugin/Content/Localization/TestPlugin
+```
+2. Implement copying the localization assets to the output dir, so it will also work with packaged builds. Sadly, the `Addidiontal Non-Asset Directories to Copy` setting doesn't work with Plugin content directory. In order to tell the package tool to make that copy you must add these files to the `RuntimeDependencies` list in the Plugin's `Build.cs` script:
+```cs
+string SourceFolder = Path.Combine(ModuleDirectory, "..", "..", "Content", "Localization");       
+if (Directory.Exists(SourceFolder))
+{
+    foreach (string FilePath in Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories))
+    {
+        RuntimeDependencies.Add(FilePath, StagedFileType.NonUFS);
+    }
+}
+```
+
+[Back to top](#table-of-content)
+
 ## LocText Struct
 
 There is an unwanted behaviour of `FText` - it keeps creating a new Key for every child Blueprint it's in.  
@@ -319,6 +334,34 @@ There is a high chance running this function will fix this issue.
 ``` cpp
 GetELT()->RefreshLanguageResources();
 ```
+
+[Back to top](#table-of-content)
+
+## Reimporting localizations during the game
+
+*(Since 1.11.0)* The tool can reimport csv files into the game in runtime, even in packaged game. This might be an excelent feature that can allow other players to mod existing localizations if the original cvs files are provided with the game. The parameters are the same as when normally importing using the Editor tool. The localization is not saved into any file, so it must be run every time the game starts.
+
+```cpp
+const FString CSVPath = FPaths::ConvertRelativePathToFull(
+    FPaths::Combine(
+        FPaths::ProjectContentDir(), 
+        TEXT("Localization/TestLoc.csv")
+    )
+);
+
+FString OutMessage;
+const bool bSuccess = GetELT()->ImportCSVToUnrealLocalization(
+    { CSVPath }, // CSV Paths
+    TEXT("Game"), // Localization Name
+    TEXT("GAME") // Global Namespace
+    TEXT(","), // Separator
+    EFallbackWhenEmptyType::NONE,  // Fallback when empty
+    false, // Log Debug
+    OutMessage // Result Message
+);
+```
+
+<img width="440" height="327" alt="ELTReimp" src="https://github.com/user-attachments/assets/75690be2-2bea-402a-8018-353066f7f707"/>
 
 [Back to top](#table-of-content)
 
