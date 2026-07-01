@@ -14,8 +14,6 @@
  * parses given CSV into the Unreal localization data.
  */
 
-EASYLOCALIZATIONTOOLEDITOR_API DECLARE_LOG_CATEGORY_EXTERN(ELTEditorLog, Log, All);
-
 UCLASS()
 class EASYLOCALIZATIONTOOLEDITOR_API UELTEditor : public UObject
 {
@@ -47,16 +45,14 @@ public:
 	TSharedRef<class SWidget> CreateEditorUI();
 
 	/**
-	 * Gets the name of the StringTable based on the LocName and Namespace.
+	 * Converst a list of paths into one string with ; separator.
 	 */
-	static FString GetStringTableName(const FString& LocName, const FString& Namespace);
+	static FString PathsListToString(const TArray<FString>& Paths);
 
 	/**
-	 * Implementation of generating Unreal localization files. It is statically exposed, 
-	 * so other elements like Commandlet can run it.
+	 * Converts a string of paths with ; separator into a list of paths.
 	 */
-	static bool GenerateLocFilesImpl(const FString& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
-	static bool GenerateLocFilesImpl(const TArray<FString>& CSVPaths, const FString& LocPath, const FString& LocName, const FString& GlobalNamespace, const FString& Separator, const FString& FallbackWhenEmpty, bool bGenerateStringTables, FString& OutMessage);
+	static TArray<FString> PathsStringToList(const FString& Paths);
 
 private:
 
@@ -185,7 +181,6 @@ private:
 	 */
 	bool GenerateLocFiles(FString& OutMessage);
 
-
 	/**
 	 * Returns the path to the CSV file for this Localization directory.
 	 */
@@ -205,16 +200,6 @@ private:
 	 * Converts a list of relative paths to a list of absolute paths.
 	 */
 	static TArray<FString> RelativeToAbsolutePaths(const TArray<FString>& RelativePaths);
-
-	/**
-	 * Converst a list of paths into one string with ; separator.
-	 */
-	static FString PathsListToString(const TArray<FString>& Paths);
-
-	/**
-	 * Converts a string of paths with ; separator into a list of paths.
-	 */
-	static TArray<FString> PathsStringToList(const FString& Paths);
 
 	// Handler of the created Editor Utility Widget. 
 	// Is created in CreateEditorWidget().

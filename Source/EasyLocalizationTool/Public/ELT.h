@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "ELTImporter.h"
 #include "ELT.generated.h"
 
 /**
@@ -49,7 +50,7 @@ public:
 	/**
 	 * Returns a list of codes of all available languages.
 	 */
-	UFUNCTION(BlueprintPure, meta=(DisplayName = "ELT - Get Available Languagtes"), Category = "Easy Localization Tool")
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "ELT - Get Available Languages"), Category = "Easy Localization Tool")
 	static TArray<FString> GetAvailableLanguages();
 
 	/**
@@ -85,6 +86,18 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Get Localized String"), Category = "Easy Localization Tool")
 	static FString GetLocalizedString(const FString& Namespace, const FString& Key);
+
+	/**
+	 * Imports the CSV into the localization files during the game runtime.
+	 */
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Import CSV to Unreal Localization", Separator = ","), Category = "Easy Localization Tool")
+	bool ImportCSVToUnrealLocalization(const TArray<FString>& CSVPaths,
+		const FString& LocName,
+		const FString& GlobalNamespace,
+		const FString& Separator,
+		EFallbackWhenEmptyType FallbackWhenEmpty,
+		bool bLogDebug,
+		FString& OutMessage);
 
 	/**
 	 * An event which runs when text localizations has changed (dynamic version).

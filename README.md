@@ -50,9 +50,11 @@ If it is not possible, the workaround would be to set the widget text value in P
 - [Using Localizations](#using-localizations)
 - [String Tables](#string-tables)
 - [Cooking Localizations](#cooking-localizations)
+- [Add Localizations to Plugins](#adding-localizations-to-plugins)
 - [LocText Struct](#loctext-struct)
 - [Previewing Localizations](#previewing-localizations)
 - [Controlling Localizations](#controlling-localizations)
+- [Reimporting Localizations during the Game](#reimporting-localizations-during-the-game)
 - [Save File](#save-file)
 - [Commandlet](#commandlet)
 - [Utilities](#utilities)
@@ -211,6 +213,27 @@ In order to make localization work on standnalone build there are two options in
 
 [Back to top](#table-of-content)
 
+## Adding localizations to Plugins
+If you want to localize assets inside of the Plugin and you want to keep localization files inside of that plugin, you must:
+1. Add the localization directory like described [here](#adding-localization-directories). For example:
+```
+[Internationalization]
++LocalizationPaths=%GAMEDIR%Plugins/TestPlugin/Content/Localization/TestPlugin
+```
+2. Implement copying the localization assets to the output dir, so it will also work with packaged builds. Sadly, the `Addidiontal Non-Asset Directories to Copy` setting doesn't work with Plugin content directory. In order to tell the package tool to make that copy you must add these files to the `RuntimeDependencies` list in the Plugin's `Build.cs` script:
+```cs
+string SourceFolder = Path.Combine(ModuleDirectory, "..", "..", "Content", "Localization");       
+if (Directory.Exists(SourceFolder))
+{
+    foreach (string FilePath in Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories))
+    {
+        RuntimeDependencies.Add(FilePath, StagedFileType.NonUFS);
+    }
+}
+```
+
+[Back to top](#table-of-content)
+
 ## LocText Struct
 
 There is an unwanted behaviour of `FText` - it keeps creating a new Key for every child Blueprint it's in.  
@@ -315,6 +338,34 @@ GetELT()->RefreshLanguageResources();
 
 [Back to top](#table-of-content)
 
+## Reimporting Localizations during the Game
+
+*(Since 1.11.0)* The tool can reimport csv files into the game in runtime, even in packaged game. This might be an excelent feature that can allow other players to mod existing localizations if the original cvs files are provided with the game. The parameters are the same as when normally importing using the Editor tool. The localization is not saved into any file, so it must be run every time the game starts.
+
+```cpp
+const FString CSVPath = FPaths::ConvertRelativePathToFull(
+    FPaths::Combine(
+        FPaths::ProjectContentDir(), 
+        TEXT("Localization/TestLoc.csv")
+    )
+);
+
+FString OutMessage;
+const bool bSuccess = GetELT()->ImportCSVToUnrealLocalization(
+    { CSVPath }, // CSV Paths
+    TEXT("Game"), // Localization Name
+    TEXT("GAME") // Global Namespace
+    TEXT(","), // Separator
+    EFallbackWhenEmptyType::NONE,  // Fallback when empty
+    false, // Log Debug
+    OutMessage // Result Message
+);
+```
+
+<img width="440" height="327" alt="ELTReimp" src="https://github.com/user-attachments/assets/75690be2-2bea-402a-8018-353066f7f707"/>
+
+[Back to top](#table-of-content)
+
 ## Save File
 
 Easy Localization Tool saves lastly used language and sets it when starting a game.  
@@ -337,7 +388,7 @@ You can use the following script (win64) to generate localization files:
 set UE4_PATH=C:\UE4
 set PROJECT_PATH=C:\MyGame
 
-call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
+call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables -LogDebug
 ```
 
 **UE5.2, UE5.4-UE5.8** :  
@@ -346,7 +397,7 @@ call %UE4_PATH%\Engine\Binaries\Win64\UE4Editor-Cmd.exe %PROJECT_PATH%\MyGame.up
 set UE5_PATH=C:\UE5
 set PROJECT_PATH=C:\MyGame
 
-call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables
+call %UE5_PATH%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe %PROJECT_PATH%\MyGame.uproject -run=ELTCommandlet -CSVPath=%PROJECT_PATH%\Lockit.csv -LocPath=%PROJECT_PATH%\Content\Localization\Game -Namespace=GAME -Separator=, -Fallback=NONE -GenStringTables -LogDebug
 ```
 
 Where:
@@ -357,6 +408,7 @@ Where:
 * **-Separator** - optional parameter which sets a **Separator** value. If not given, the default `,` separator will be used.
 * **-Fallback** - optional parameter which sets a *Fallback when Empty* value. If not given, the default `NONE` will be used. Can be either `NONE` or `FIRST_LANG` or `KEY` (case insensitive). 
 * **-GenStringTables** - optional parameter which, when present, generates string tables on import
+* **-LogDebug** - optional parameter which, when present, will print more logs for debugging
 
 [Back to top](#table-of-content)
 
