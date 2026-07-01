@@ -5,8 +5,11 @@
 #include "Internationalization/StringTable.h"
 #include "UObject/SavePackage.h"
 #include "CSVReader.h"
+#include "UObject/Package.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Misc/Paths.h"
+#include "HAL/FileManager.h"
+#include "Misc/PackageName.h"
 
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
 #include "AssetRegistry/AssetRegistryModule.h"
