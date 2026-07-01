@@ -19,13 +19,13 @@ class EASYLOCALIZATIONTOOL_API UELTBlueprintLibrary : public UBlueprintFunctionL
 
 public:
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "ELT - Import CSV to Unreal Localization", Separator = ","), Category = "Easy Localization Tool")
-	static bool ImportCSVToUnrealLocalization(const TArray<FString>& CSVPaths, 
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", DisplayName = "ELT - Import CSV to Unreal Localization", Separator = ","), Category = "Easy Localization Tool")
+	static bool ImportCSVToUnrealLocalization(const UObject* WorldContextObject,
+												const TArray<FString>& CSVPaths,
 												const FString& LocName, 
 												const FString& GlobalNamespace, 
 												const FString& Separator,
 												EFallbackWhenEmptyType FallbackWhenEmpty,
-												bool bGenerateStringTables, 
 												bool bLogDebug, 
 												FString& OutMessage);
 

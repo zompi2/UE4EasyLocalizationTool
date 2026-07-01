@@ -54,6 +54,7 @@ int32 UELTCommandlet::Main(const FString& Params)
 		FELTImporter::FallbackStringToEnum(Fallback),
 		bGenerateStringTables, 
 		true, // Save to files. 
+		false, // Do not cache in memory.
 		bLogDebug, 
 		OutMessage);
 

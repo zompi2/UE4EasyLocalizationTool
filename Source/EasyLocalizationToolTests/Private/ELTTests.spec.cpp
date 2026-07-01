@@ -160,8 +160,9 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 			TEXT(_Separator), \
 			_Fallback, \
 			_GenStringTable, \
-			true, \
-			true, \
+			true, /* SaveToFiles */ \
+			false, /* Cache */ \
+			true, /* LogDebug */ \
 			OutMessage); \
 		bDone = true; \
 	}); \
@@ -208,9 +209,10 @@ void FELTTests::Define()
 				TEXT(""),
 				TEXT(","),
 				EFallbackWhenEmptyType::NONE,
-				false, 
-				true,
-				true,
+				false,	// String Tables 
+				true,	// Save to Files
+				false,	// Cache
+				true,	// LogDebug
 				OutMessage); 
 			TestTrue(TEXT("GenerateLocFilesImpl succeeded"), bSuccess);
 

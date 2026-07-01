@@ -14,8 +14,9 @@
 
 DEFINE_LOG_CATEGORY_STATIC(ELTImporterLog, Log, All);
 
-
+// Declaration of a static cache
 TMap<FString, FTextLocalizationResource> FELTImporter::CachedResources = {};
+int32 FELTImporter::CachedResourcesPriority = -1;
 
 bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 								const FString& LocPath, 
@@ -25,6 +26,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 								EFallbackWhenEmptyType FallbackWhenEmpty,
 								bool bGenerateStringTables, 
 								bool bSaveToFiles,
+								bool bCache,
 								bool bLogDebug, 
 								FString& OutMessage)
 {
@@ -42,11 +44,18 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 		return false;
 	}
 
+	// Check if the Importer will do anything
+	if ((bSaveToFiles == false) && (bCache == false) && (bGenerateStringTables == false))
+	{
+		OutMessage = TEXT("ERROR: Imported do not generate neither files nor cache nor string tables. What is it suppose to do?");
+		return false;
+	}
+
 	// Prepare locmeta file name.
 	const FString MetaFileName = bSaveToFiles ? (LocPath / LocName + TEXT(".locmeta")) : TEXT("");
 	
 	// Prepare containers for localization informations we will use later.
-	TMap<FString, FTextLocalizationResource> LocReses; // Actual LocRes for each language.
+	TMap<FString, FTextLocalizationResource> LocReses; // Actual LocRes for each language. Will be used to save them to files.
 	TMap<FString, TSet<FString>> NamespaceToKeysMap; // List of keys for each  namespace (used for generating String Tables).
 #if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
 	TMap<FString, TMap<FString, FString>> NamespaceToKeysToNotesMap; // List of keys with dev notes for each namespace (used for generating String Tables with dev notes). 
@@ -247,11 +256,11 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 			}
 
 			// Add LocRes for this language if it doesn't exist yet.
-			if (LocReses.Contains(Lang) == false)
-			{
-				LocReses.Add(Lang, FTextLocalizationResource());
-			}
-			FTextLocalizationResource& LocRes = LocReses[Lang];
+			FTextLocalizationResource& LocRes = LocReses.FindOrAdd(Lang);
+
+			// Add LocRes cache if the cache is required
+			static FTextLocalizationResource DummyLocRes = {};
+			FTextLocalizationResource& CachedLocRes = bCache ? CachedResources.FindOrAdd(Lang) : DummyLocRes;
 
 			// For each key add the entry to the LocRes.
 			for (int32 Key = 1; Key < Keys.Values.Num(); Key++)
@@ -301,12 +310,30 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 				}
 
 				// Finally, we can add the LocRes entry!
-				LocRes.AddEntry(
-					FTextKey(Namespace),
-					FTextKey(Keys.Values[Key]),
-					Keys.Values[Key],
-					LocalizedString,
-					0);
+				// We do this only if we will save them to file later.
+				// In any other case they are not useable.
+				if (bSaveToFiles)
+				{
+					LocRes.AddEntry(
+						FTextKey(Namespace),
+						FTextKey(Keys.Values[Key]),
+						Keys.Values[Key],
+						LocalizedString,
+						0);
+				}
+
+				// Add cache. We keep cache and LocRes separate, because Cache 
+				// needs to be incremental, while LocReses (which are then saved to file) 
+				// are always constructed from scratch.
+				if (bCache)
+				{
+					CachedLocRes.AddEntry(
+						FTextKey(Namespace),
+						FTextKey(Keys.Values[Key]),
+						Keys.Values[Key],
+						LocalizedString,
+						CachedResourcesPriority);
+				}
 
 				// If we want to generate string tables with key references - cache the key for this namespace. We will use it later to generate string tables.
 				if (bGenerateStringTables && (Keys.Values[Key].IsEmpty() == false))
@@ -315,6 +342,14 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 				}
 			}
 		}
+	}
+
+	// Decrease the priority for cached resources, so that the next import 
+	// will have a higher priority and will override the previous one.
+	// (Lower value = higher priority)
+	if (bCache)
+	{
+		--CachedResourcesPriority;
 	}
 
 	// LocMeta must be created for every localization path.
@@ -338,10 +373,6 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 			}
 			LocRes.Value.SaveToFile(LocFileName);
 		}
-	}
-	else
-	{
-		CachedResources = LocReses;
 	}
 
 	// Generate Key Reference String Table
@@ -422,8 +453,11 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 				{
 					DevNotes = *Note;
 				}
-
+#if WITH_EDITORONLY_DATA
 				StringTableRef->SetSourceString(FTextKey(Key), Key, DevNotes);
+#else
+				StringTableRef->SetSourceString(FTextKey(Key), Key);
+#endif
 			}
 	#else
 			// For UE5.0 - UE5.7 add source strings to the String Table without dev notes.

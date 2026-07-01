@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Damian Nowakowski. All rights reserved.
 
 #include "EasyLocalizationToolModule.h"
+#include "ELTImporter.h"
 
 IMPLEMENT_MODULE(FEasyLocalizationToolModule, EasyLocalizationTool)
 
@@ -15,6 +16,8 @@ void FEasyLocalizationToolModule::StartupModule()
 void FEasyLocalizationToolModule::ShutdownModule()
 {
 	CustomTextResource.Reset();
+	FELTImporter::CachedResources.Empty();
+	FELTImporter::CachedResourcesPriority = -1;
 }
 
 ELT_PRAGMA_ENABLE_OPTIMIZATION

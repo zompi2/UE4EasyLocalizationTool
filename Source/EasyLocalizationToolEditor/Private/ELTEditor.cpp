@@ -460,6 +460,7 @@ bool UELTEditor::GenerateLocFiles(FString& OutMessage)
 		FELTImporter::FallbackStringToEnum(UELTEditorSettings::GetFallbackWhenEmpty()),
 		UELTEditorSettings::GetGenerateKeyReferenceStringTable(),
 		true, // Save to files.
+		false, // Don't cache LocReses in memory. We don't need them in Editor.
 		UELTEditorSettings::GetLogDebug(),
 		OutMessage);
 }

@@ -7,25 +7,32 @@
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
-bool UELTBlueprintLibrary::ImportCSVToUnrealLocalization(const TArray<FString>& CSVPaths,
+bool UELTBlueprintLibrary::ImportCSVToUnrealLocalization(const UObject* WorldContextObject,
+	const TArray<FString>& CSVPaths,
 	const FString& LocName,
 	const FString& GlobalNamespace,
 	const FString& Separator,
 	EFallbackWhenEmptyType FallbackWhenEmpty,
-	bool bGenerateStringTables,
 	bool bLogDebug,
 	FString& OutMessage)
 {
-	return FELTImporter::GenerateLoc(	CSVPaths,	
+	const bool bResult = FELTImporter::GenerateLoc(CSVPaths,	
 										TEXT(""),
 										LocName, 
 										GlobalNamespace, 
 										Separator, 
 										FallbackWhenEmpty, 
-										bGenerateStringTables, 
-										false, // Do not generate loc asset files 
+										false, // Never generate string tables
+										false, // Do not generate loc asset files
+										true, // Cache the resources in memory
 										bLogDebug, 
 										OutMessage);
+	if (bResult)
+	{
+		RefreshLanguageResources(WorldContextObject);
+	}
+
+	return bResult;
 }
 
 FString UELTBlueprintLibrary::GetCurrentLanguage(const UObject* WorldContextObject)

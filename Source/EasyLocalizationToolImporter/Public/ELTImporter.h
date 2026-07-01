@@ -31,6 +31,7 @@ public:
 							EFallbackWhenEmptyType FallbackWhenEmpty,
 							bool bGenerateStringTables, 
 							bool bSaveToFiles,
+							bool bCache,
 							bool bLogDebug, 
 							FString& OutMessage);
 
@@ -49,7 +50,11 @@ public:
 	 */
 	static FString FallbackEnumToString(EFallbackWhenEmptyType Enum);
 
+	// Cache of localization resources used for runtime reimport.
 	static TMap<FString, FTextLocalizationResource> CachedResources;
+
+	// Priority of the cached resources. Used to determine if the cache should be updated or not.
+	static int32 CachedResourcesPriority;
 };
 
 
