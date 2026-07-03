@@ -199,6 +199,8 @@ Localization can be used in **String Tables**. Remember to set the **Key** and *
 Then, use them like standard **String Tables** in Text properties.  
 <img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
 
+### String Tables Auto Generation  
+
 You can select the **Generate String Table on Import** option in the ELT import window in order to automatically generate the String Table with the imported keys.  
 The String Table asset will be generated in the current Localization directory and will be named `ELT_KeyReferences_[LocalizationName]_[Namespace]`.
 
