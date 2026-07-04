@@ -180,7 +180,7 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 
 BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 FString LocName = TEXT("Game");
-FString LocPath = UELTEditorSettings::GetLocalizationPath();
+FString LocPath = GIsEditor ? UELTEditorSettings::GetLocalizationPath() : TEXT("");
 FString CSVName = TEXT("CSVTest");
 #if (ENGINE_MAJOR_VERSION == 5)
 bool bLangChanged = false;
@@ -190,6 +190,11 @@ END_DEFINE_SPEC(FELTTests)
 
 void FELTTests::Define()
 {
+	if (GIsEditor == false)
+	{
+		return;
+	}
+
 	Describe(TEXT("ELT - PRE PASS"), [this]()
 	{
 		It(TEXT("Just Runs a Pre Run"), [this]()

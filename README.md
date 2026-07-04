@@ -28,7 +28,7 @@ If you don't want to build the plugin from the source you can get the prebuilt b
 
 | UE version | Plugin version  | Link |
 | :--------- | :-------------  | :--- |
-| 4.27       | 1.10.4          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.10.4-4.27-Prebuild.zip) |
+| 4.27       | 1.11.0          | [Zip](https://github.com/zompi2/UE4EasyLocalizationTool/raw/packs/Packs/EasyLocalizationTool-1.11.0-4.27-Prebuild.zip) |
 | 5.2        | 1.7.1           | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.4        | 1.10.4          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
 | 5.5        | 1.10.4          | [Fab](https://www.fab.com/listings/c0b87152-0c7a-453d-aea9-58c93936fc32) |
@@ -198,6 +198,8 @@ Localization can be used in **String Tables**. Remember to set the **Key** and *
 
 Then, use them like standard **String Tables** in Text properties.  
 <img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
+
+### String Tables Auto Generation  
 
 You can select the **Generate String Table on Import** option in the ELT import window in order to automatically generate the String Table with the imported keys.  
 The String Table asset will be generated in the current Localization directory and will be named `ELT_KeyReferences_[LocalizationName]_[Namespace]`.

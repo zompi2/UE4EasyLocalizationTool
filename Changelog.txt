@@ -1,3 +1,6 @@
+###### 1.11.1
+* Fixed crash when running the Unreal Editor with -game option, which was caused by Test modules trying to load editor only classes.
+
 ###### 1.11.0
 * Added ImportCSVToUnrealLocalization function, which allows you to reimport CSV files into the Unreal localization system in runtime now!
 * Added instructions to the README about how to import and package localizations in plugins.
