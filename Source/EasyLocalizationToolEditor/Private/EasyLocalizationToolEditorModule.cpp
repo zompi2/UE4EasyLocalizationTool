@@ -65,11 +65,7 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 #endif
 
 	// Clear runtime cache when PIE has ended.
-#if UE_VERSION_NEWER_THAN_OR_EQUAL(6,0,0)
-	UE::Editor::PIE::OnEnd.AddLambda([](const bool bIsSimulating)
-#else
 	FEditorDelegates::EndPIE.AddLambda([](const bool bIsSimulating)
-#endif
 	{
 		FELTImporter::CachedResources.Empty();
 		FELTImporter::CachedResourcesPriority = -1;
