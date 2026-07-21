@@ -515,7 +515,7 @@ You can run the tests from the Session Frontend.
 
 These tests were implemented mostly to make the plugin developer life easier.  
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/33fce1f5-91b6-4486-a385-6348c2ae25b9)
+![](ReadmeImgs/604899123-33fce1f5-91b6-4486-a385-6348c2ae25b9.png)
 
 [Back to top](#table-of-content)
 
