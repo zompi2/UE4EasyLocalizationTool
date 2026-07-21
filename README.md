@@ -67,7 +67,7 @@ If it is not possible, the workaround would be to set the widget text value in P
 
 The tool accepts a CSV file of a defined format:
 
-![csvtesteg](https://user-images.githubusercontent.com/7863125/143495161-338a59b2-a41f-43a2-85cb-6a3b28078ab1.png)
+![](ReadmeImgs/143495161-338a59b2-a41f-43a2-85cb-6a3b28078ab1.png)
 
 ``` csv
 Namespace,Key,lang-en,lang-pl,lang-de,Comments
@@ -99,18 +99,17 @@ GAME,TEST_EXAMPLE,"Hello, world!",Witaj świecie!,Hallo Welt!,Anything you wish 
 To open the tool select:  
 **UE4.27** : `Window -> Easy Localization Tool`  
 
-![open](https://user-images.githubusercontent.com/7863125/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
+![](ReadmeImgs/143495187-8ceab883-f00f-463b-af32-0effd64f642b.png)  
 
 **UE5.2, UE5.4 - UE5.8** : `Tools -> Easy Localization Tool`  
 
- ![open55](https://github.com/user-attachments/assets/b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12)
+![](ReadmeImgs/415814894-b2f79602-1ce7-4fa8-a5b1-2db9ae4e3e12.jpg)
 
 or use a shortcut : `Alt + Shift + L`  
 
 The following window should appear:  
 
-![ELTSShot](https://github.com/user-attachments/assets/852145fd-9c75-4af3-95d3-64d0c6095847)  
-
+![](ReadmeImgs/604872329-852145fd-9c75-4af3-95d3-64d0c6095847.png)
 
 * **Localization Name** - Name of currently selected Localization. The game can have multiple localization directories.
 * **Available Languages in Selected Localization** - list of language codes that are implemented in selected localization directory.
@@ -128,9 +127,8 @@ The following window should appear:
 * **CSV Files** - CSV files to import. You can import mutliple files at once to the same Localization.
 * **Global Namespace** - this namespace will be assigned to every key in localization.
 * **Log Debug** - select this option to see additional informations in Output Log. Be aware that big CSVs might generate a lot of logs.
-* **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.
-<img width="225" height="110" alt="eltuiprev1" src="https://github.com/user-attachments/assets/1783786d-4ca1-4a15-8d0d-e089f9d3f0f0" />
-<img width="369" height="94" alt="eltprev2" src="https://github.com/user-attachments/assets/d5152871-ec93-4952-a0d5-7176fda779f3" />
+* **Show preview in UI** - *(Since 1.8.0)* select this option to show a localization preview under the Text fields in the Editor UI *(available for UE 5.5 and newer)*.  
+![](ReadmeImgs/604880761-1783786d-4ca1-4a15-8d0d-e089f9d3f0f0.png) ![](ReadmeImgs/604880754-d5152871-ec93-4952-a0d5-7176fda779f3.png)
 
 > If you encounter any Editor UI bugs with the **Show preview in UI** option enabled (or with the whole plugin enabled) please report that and see if disabling the `bAddPreviewInUI` in the `EasyLocalizationToolEditor.Build.cs` file helps.
 
@@ -177,11 +175,11 @@ The **Game** localization is the default one. In order to add another localizati
 
 In order to use a localized phrase type a **KEY** into the Text form and then set a Namespace and Key values for this Text:
 
-![testexampleloc](https://github.com/user-attachments/assets/1303cbbe-7451-4404-9f45-751967405e02)
+![](ReadmeImgs/547230008-1303cbbe-7451-4404-9f45-751967405e02.gif)
 
 For UE4.27 it will look like this:
 
-![testexampleloc](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67)
+![](ReadmeImgs/248021560-e28d1a4f-cd9f-4ce8-a966-e4dd388e1c67.gif)
 
 To use it in a c++ code use the following macro:
 
@@ -194,10 +192,10 @@ NSLOCTEXT("GAME", "TEST_EXAMPLE", "TEST_EXAMPLE")
 ## String Tables
 
 Localization can be used in **String Tables**. Remember to set the **Key** and **Source String** to be the same value and set the **Namespace**
-<img width="918" height="244" alt="stabledefine" src="https://github.com/user-attachments/assets/05cd8c8a-bf22-4c4e-9455-86bd10fcb00d" />  
+![](ReadmeImgs/593042641-05cd8c8a-bf22-4c4e-9455-86bd10fcb00d.png)
 
 Then, use them like standard **String Tables** in Text properties.  
-<img width="495" height="280" alt="stableuse" src="https://github.com/user-attachments/assets/512e3f29-28eb-4a2a-af32-0516b983b419" />
+![](ReadmeImgs/593043039-512e3f29-28eb-4a2a-af32-0516b983b419.png)
 
 ### String Tables Auto Generation  
 
@@ -209,9 +207,9 @@ The String Table asset will be generated in the current Localization directory a
 ## Cooking localizations
 In order to make localization work on standnalone build there are two options in `Project Settings` in  the `Packaging` section (under `Advanced options`!) that need to be set:
 * `Internationalization Support` set to `All`:  
-![int support](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/fbac259c-fec0-4656-b0f1-d830298385b9)
+![](ReadmeImgs/248023643-fbac259c-fec0-4656-b0f1-d830298385b9.png)
 * Localization directory added to the `Addidiontal Non-Asset Directories to Copy` list:  
-![loccopy](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/0f244d7c-2744-411f-ac77-b85dedc46e0e)
+![](ReadmeImgs/248023648-0f244d7c-2744-411f-ac77-b85dedc46e0e.png)
 
 [Back to top](#table-of-content)
 
@@ -250,8 +248,8 @@ FString LocalizedString = LocalizedStruct.ToString();
 ```
 Struct is supported in Blueprints too, of course.
 
-![locstructimg](https://user-images.githubusercontent.com/7863125/147063762-8501121a-50f9-4dca-bfd4-fad096b63437.png)
-![locstructbpcast](https://user-images.githubusercontent.com/7863125/147063770-e669c169-273b-4b09-97df-14ba834cf8c8.png)
+![](ReadmeImgs/147063762-8501121a-50f9-4dca-bfd4-fad096b63437.png)
+![](ReadmeImgs/147063770-e669c169-273b-4b09-97df-14ba834cf8c8.png)
 
 [Back to top](#table-of-content)
 
@@ -259,7 +257,7 @@ Struct is supported in Blueprints too, of course.
 
 You can use **Localization Preview** option in the tool, or use the Preview option inside UMG Designer
 
-![preview](https://user-images.githubusercontent.com/7863125/144485817-09998bdb-a27b-4d10-b139-4db271880996.png)
+![](ReadmeImgs/144485817-09998bdb-a27b-4d10-b139-4db271880996.png)
 
 [Back to top](#table-of-content)
 
@@ -271,7 +269,7 @@ Easy Localization Tool comes with few handy functions to control localization in
 
 Returns a list of available language codes.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/acc12392-9879-4306-8c5e-e0ee36bf6283)
+![](ReadmeImgs/266406981-acc12392-9879-4306-8c5e-e0ee36bf6283.png)
 
 ``` cpp
 // Since 1.8.0
@@ -285,7 +283,7 @@ GetELT()->GetAvailableLanguages();
 
 Returns a code of the language which is currently in use.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/b27e6c1b-0683-4f10-bc26-c915b8be732d)
+![](ReadmeImgs/266406849-b27e6c1b-0683-4f10-bc26-c915b8be732d.png)
 
 ``` cpp
 GetELT()->GetCurrentLanguage();
@@ -295,7 +293,7 @@ GetELT()->GetCurrentLanguage();
 
 Checks if a language with the given language code can be set.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/6f051be5-58e0-4171-958f-e24292eaad19)
+![](ReadmeImgs/266410941-6f051be5-58e0-4171-958f-e24292eaad19.png)
 
 ``` cpp
 GetELT()->CanSetLanguage("en");
@@ -305,7 +303,7 @@ GetELT()->CanSetLanguage("en");
 
 Sets a language with the given language code. Returns false if the language couldn't be set.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/70e6e9a0-0ecc-4fac-b04e-7de390a701f9)
+![](ReadmeImgs/266411005-70e6e9a0-0ecc-4fac-b04e-7de390a701f9.png)
 
 ``` cpp
 GetELT()->SetLanguage("en");
@@ -315,7 +313,7 @@ GetELT()->SetLanguage("en");
 
 Allow to bind delegate which will run every time a Text Localization has been changed.
 
-![locchange](https://user-images.githubusercontent.com/7863125/152312310-7beafb2b-616b-4cfe-b757-305519985721.png)
+![](ReadmeImgs/152312310-7beafb2b-616b-4cfe-b757-305519985721.png)
 
 ``` cpp
 GetELT()->OnTextLocalizationChanged.AddDynamic(this, &UMyObject::OnTextLocalizationChangedUFunc);
@@ -332,7 +330,7 @@ GetELT()->OnTextLocalizationChangedStatic.AddLambda([this]()
 There might be a rare situation when texts won't be displayed in a localized form.  
 There is a high chance running this function will fix this issue.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/7aa102b3-dcee-466d-86e8-81b458bac1bb)
+![](ReadmeImgs/266407011-7aa102b3-dcee-466d-86e8-81b458bac1bb.png)
 
 ``` cpp
 GetELT()->RefreshLanguageResources();
@@ -364,7 +362,7 @@ const bool bSuccess = GetELT()->ImportCSVToUnrealLocalization(
 );
 ```
 
-<img width="440" height="327" alt="ELTReimp" src="https://github.com/user-attachments/assets/75690be2-2bea-402a-8018-353066f7f707"/>
+![](ReadmeImgs/616004397-75690be2-2bea-402a-8018-353066f7f707.png)
 
 [Back to top](#table-of-content)
 
@@ -420,7 +418,7 @@ Where:
 
 Gets a Package, Namespace, Key and Source info from FText.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/b9612997-0536-419e-b46b-3b5d8380fd5a)
+![](ReadmeImgs/266406948-b9612997-0536-419e-b46b-3b5d8380fd5a.png)
 
 ``` cpp
 FString Package, Namespace, Key, Source;
@@ -431,7 +429,8 @@ UELTBlueprintLibrary::GetTextData(MyText, Package, Namespace, Key, Source);
 
 Checks if two FTexts' keys are the same. If at least one of them has invalid key it will return false.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/c72f24f3-026b-4aa2-8de7-cee17052a92a)
+![](ReadmeImgs/266406818-c72f24f3-026b-4aa2-8de7-cee17052a92a.png)
+
 
 ``` cpp
 UELTBlueprintLibrary::AreTextKeysEqual(MyTextA, MyTextB);
@@ -441,7 +440,7 @@ UELTBlueprintLibrary::AreTextKeysEqual(MyTextA, MyTextB);
 
 Gets a localized FText based on the given Namespace and Key. Use this method only for debugging purposes.
 
-![image](https://github.com/user-attachments/assets/0c8956a2-be4d-4c52-a603-77fe4a34dd83)
+![](ReadmeImgs/543415097-0c8956a2-be4d-4c52-a603-77fe4a34dd83.png)
 
 ```cpp
 UELT::GetLocalizedText(TEXT("NAMESPACE"), TEXT("KEY"));
@@ -451,7 +450,7 @@ UELT::GetLocalizedText(TEXT("NAMESPACE"), TEXT("KEY"));
 
 Gets a localized FString based on the given Namespace and Key. Use this method only for debugging purposes.
 
-![image](https://github.com/user-attachments/assets/a4f1801e-bef9-4791-a08d-49807a7c5eaa)
+![](ReadmeImgs/543415095-a4f1801e-bef9-4791-a08d-49807a7c5eaa.png)
 
 ```cpp
 UELT::GetLocalizedString(TEXT("NAMESPACE"), TEXT("KEY"));
@@ -464,7 +463,7 @@ The buffer contains Package, Namespace and Key.
 - `RequiresQuotes` - True if the written text literal must be surrounded by quotes (eg, when saving as a delimited list)
 - `StripPackage` - Namespace True to strip the package namespace from the written NSLOCTEXT value (eg, when saving cooked data)
 
-![image](https://github.com/user-attachments/assets/7412eb1a-ef18-411e-9e24-75c9c3f034a7)
+![](ReadmeImgs/558323846-7412eb1a-ef18-411e-9e24-75c9c3f034a7.png)
 
 ```cpp
 UELTBlueprintLibrary::GetTextAsBuffer(MyText, false, false);
@@ -475,7 +474,7 @@ UELTBlueprintLibrary::GetTextAsBuffer(MyText, false, false);
 Creates FText from a buffer string created by GetTextAsBuffer. The buffer should contain Package, Namespace and Key.
 - `RequiresQuotes` - True if the read text literal must be surrounded by quotes (eg, when loading from a delimited list).
 
-![image](https://github.com/user-attachments/assets/c1c3c7f5-6427-4d3c-8343-4e786838c021)
+![](ReadmeImgs/558324654-c1c3c7f5-6427-4d3c-8343-4e786838c021.png)
 
 ```cpp
 UELTBlueprintLibrary::MakeTextFromBuffer(MyBuffer, false);
@@ -487,7 +486,7 @@ UELTBlueprintLibrary::MakeTextFromBuffer(MyBuffer, false);
 It checks if the given FText is properly localized - it means it checks if Source and Key are the same.  
 It will return false if given FText is empty or if it is Culture Invariant.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/3943435e-436a-409f-9f03-9d83a692ad17)
+![](ReadmeImgs/266406776-3943435e-436a-409f-9f03-9d83a692ad17.png)
 
 ``` cpp
 UELTEditorUtils::ValidateText(MyText);
@@ -500,7 +499,7 @@ It replaces the OriginText with ReplaceWithText while keeping the OriginText's p
 Use this instead of normal FText copy operator when using editor scripts, because it copies the package id which leads to broken FText localizations.  
 OriginTextOwner might be required when the OriginText is empty and has not package id assigned yet.
 
-![image](https://github.com/zompi2/UE4EasyLocalizationTool/assets/7863125/13c83c4f-c4f4-4fa2-8fe8-f6c32fe5cfe0)
+![](ReadmeImgs/266406795-13c83c4f-c4f4-4fa2-8fe8-f6c32fe5cfe0.png)
 
 ``` cpp
 UELTEditorUtils::ReplaceText(this, OriginText, OtherText);
