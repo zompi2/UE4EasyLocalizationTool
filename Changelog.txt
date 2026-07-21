@@ -1,3 +1,6 @@
+###### 1.11.2
+* Better engine version check.
+
 ###### 1.11.1
 * Fixed crash when running the Unreal Editor with -game option, which was caused by Test modules trying to load editor only classes.
 * Enabled code optimizations back.
