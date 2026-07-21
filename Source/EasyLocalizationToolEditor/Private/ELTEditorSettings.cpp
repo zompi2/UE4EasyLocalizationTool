@@ -3,12 +3,13 @@
 #pragma once
 
 #include "ELTEditorSettings.h"
+#include "ELTEngineVersionComparsion.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELTE_GET_SETTING(_SettingName) return GetDefault<UELTEditorSettings>()->_SettingName;
 
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 #define ELTE_SET_SETTING(_SettingName, _SettingValue) UELTEditorSettings* Settings = GetMutableDefault<UELTEditorSettings>(); \
 Settings->_SettingName = _SettingValue; \
 Settings->TryUpdateDefaultConfigFile();

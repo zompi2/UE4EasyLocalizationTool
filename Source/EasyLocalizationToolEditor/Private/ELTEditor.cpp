@@ -4,6 +4,7 @@
 #include "ELTImporter.h"
 #include "Internationalization/TextLocalizationManager.h"
 
+#include "ELTEngineVersionComparsion.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
@@ -11,7 +12,7 @@
 #include "ELTEditorWidget.h"
 #include "ELTSettings.h"
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,1,0)
 #include "AssetRegistry/AssetRegistryModule.h"
 #else
 #include "AssetRegistryModule.h"
@@ -52,7 +53,7 @@ UEditorUtilityWidgetBlueprint* UELTEditor::GetUtilityWidgetBlueprint()
 {
 	// Get the Editor Utility Widget Blueprint from the content directory.
 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,1,0)
 	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath(FSoftObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP"));
 #else
 	FAssetData AssetData = AssetRegistryModule.Get().GetAssetByObjectPath("/EasyLocalizationTool/ELTEditorWidget_BP.ELTEditorWidget_BP");
@@ -247,7 +248,7 @@ void UELTEditor::OnGenerateLocFiles()
 	}
 	
 	// Display a Dialog Window to inform user that the localization generation has been finished.
-#if (ENGINE_MAJOR_VERSION == 5) && ENGINE_MINOR_VERSION >= 3
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,3,0)
 	FMessageDialog::Open((bSuccess ? EAppMsgCategory::Success : EAppMsgCategory::Error), EAppMsgType::Ok, FText::FromString(ReturnMessage));
 #else
 	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(ReturnMessage));
@@ -362,7 +363,7 @@ void UELTEditor::SetLanguagePreview()
 	const FString& CurrentLang = UELTEditorSettings::GetLocalizationPreviewLang();
 	if (UELTEditorSettings::GetLocalizationPreview() && CurrentAvailableLangs.Contains(CurrentLang))
 	{
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 		FTextLocalizationManager::Get().ConfigureGameLocalizationPreviewLanguage(CurrentLang);
 #endif
 		FTextLocalizationManager::Get().EnableGameLocalizationPreview(CurrentLang);

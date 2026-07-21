@@ -10,7 +10,7 @@
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "UObject/Package.h"
-#include "Runtime/Launch/Resources/Version.h"
+#include "ELTEngineVersionComparsion.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -202,7 +202,7 @@ FText UELT::GetLocalizedText(const FString& Namespace, const FString& Key)
 {
 	FText Result{};
 	const FTextId TextId(*Namespace, *Key);
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 5))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,5,0)
 	FText::FindTextInLiveTable_Advanced(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);
 #else
 	FText::FindText(TextId.GetNamespace(), TextId.GetKey(), Result, &Key);

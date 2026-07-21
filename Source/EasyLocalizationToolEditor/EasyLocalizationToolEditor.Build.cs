@@ -17,7 +17,10 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"Core",
 				"InputCore",
 				"EasyLocalizationTool",
-                "EasyLocalizationToolImporter"
+                "EasyLocalizationToolImporter",
+                "UnrealEd",
+				"LevelEditor",
+                "DetailCustomizations"
             }
 		);
 
@@ -29,7 +32,6 @@ public class EasyLocalizationToolEditor : ModuleRules
 				"CoreUObject",
 				"Slate",
 				"SlateCore",
-				"UnrealEd",
 				"WorkspaceMenuStructure",
 				"DesktopPlatform",
 				"Blutility",
@@ -44,7 +46,7 @@ public class EasyLocalizationToolEditor : ModuleRules
             }
 		);
 
-        if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4)
+        if ((Target.Version.MajorVersion == 6) || (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 4))
         {
             PrivateDependencyModuleNames.AddRange(
 				new string[]
@@ -62,7 +64,7 @@ public class EasyLocalizationToolEditor : ModuleRules
 		bool bDisableOptimization = false;
 		if (bDisableOptimization)
 		{
-			if (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2)
+			if ((Target.Version.MajorVersion == 6) || (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 2))
 			{
 				PublicDefinitions.Add("ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION=UE_DISABLE_OPTIMIZATION");
 				PublicDefinitions.Add("ELTEDITOR_PRAGMA_ENABLE_OPTIMIZATION=UE_ENABLE_OPTIMIZATION");
@@ -80,7 +82,7 @@ public class EasyLocalizationToolEditor : ModuleRules
 		}
 
 		bool bAddPreviewInUI = true;
-		if (bAddPreviewInUI && Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 5)
+		if (bAddPreviewInUI && ((Target.Version.MajorVersion == 6) || (Target.Version.MajorVersion == 5 && Target.Version.MinorVersion >= 5)))
 		{
 			PublicDefinitions.Add("ELTEDITOR_WITH_PREVIEW_IN_UI=1");
 		}

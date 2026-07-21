@@ -16,8 +16,9 @@
 #include "LevelEditor.h"
 
 #include "BlueprintEditorModule.h"
+#include "ELTEngineVersionComparsion.h"
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,4,0)
 #include "ToolMenu.h"
 #endif
 
@@ -38,7 +39,7 @@ void FEasyLocalizationToolEditorModule::StartupModule()
 	FELTEditorCommands::Register();
 
 	// Register OnPostEngineInit delegate.
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 	OnPostEngineInitDelegateHandle = FCoreDelegates::GetOnPostEngineInit().AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
 #else
 	OnPostEngineInitDelegateHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FEasyLocalizationToolEditorModule::OnPostEngineInit);
@@ -95,7 +96,7 @@ void FEasyLocalizationToolEditorModule::ShutdownModule()
 	Editor = nullptr;
 
 	// Remove OnPostEngineInit delegate
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 	FCoreDelegates::GetOnPostEngineInit().Remove(OnPostEngineInitDelegateHandle);
 #else
 	FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitDelegateHandle);
@@ -133,7 +134,7 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			MainFrame.GetMainFrameCommandBindings()->Append(Commands.ToSharedRef());
 
 			
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 4))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,4,0)
 			// The Menu Extender doesn't work correctly for new menus in UE5.4 as they don't have proper Hook names as they should...
 			// Attempt to add menu entry with UICommandList of opening ELT Window to the Tools menu.
 			UToolMenu* Menu = UToolMenus::Get()->FindMenu("LevelEditor.MainMenu.Tools");
@@ -150,7 +151,7 @@ void FEasyLocalizationToolEditorModule::OnPostEngineInit()
 			// Create a Menu Extender, which adds a button that executes the UICommandList of opening ELT Window.
 			TSharedPtr<FExtender> MainMenuExtender = MakeShareable(new FExtender);
 			MainMenuExtender->AddMenuExtension(
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 				FName(TEXT("Tools")),
 #else
 				FName(TEXT("General")),
@@ -195,7 +196,7 @@ void FEasyLocalizationToolEditorModule::AddReferencedObjects(FReferenceCollector
 	}
 }
 
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 FString FEasyLocalizationToolEditorModule::GetReferencerName() const
 {
 	return TEXT("ELTEditorModuleGCObject");
