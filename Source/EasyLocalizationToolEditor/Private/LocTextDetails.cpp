@@ -8,7 +8,7 @@
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"
 #include "ELT.h"
-#include "Runtime/Launch/Resources/Version.h"
+#include "ELTEngineVersionComparsion.h"
 
 ELTEDITOR_PRAGMA_DISABLE_OPTIMIZATION
 

@@ -3,13 +3,13 @@
 #pragma once
 
 #include "ELTSettings.h"
-#include "Runtime/Launch/Resources/Version.h"
+#include "ELTEngineVersionComparsion.h"
 
 ELT_PRAGMA_DISABLE_OPTIMIZATION
 
 #define ELT_GET_SETTING(_SettingName) return GetDefault<UELTSettings>()->_SettingName;
 
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 #define ELT_SET_SETTING(_SettingName, _SettingValue) UELTSettings* Settings = GetMutableDefault<UELTSettings>(); \
 Settings->_SettingName = _SettingValue; \
 Settings->TryUpdateDefaultConfigFile();

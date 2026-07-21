@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/GCObject.h"
 #include "Modules/ModuleManager.h"
+#include "ELTEngineVersionComparsion.h"
 
 /**
  * Localization Editor module, which handles Editor object and DockTab creation.
@@ -21,7 +22,7 @@ public:
 
 	// FGCObject implementation
 	void AddReferencedObjects(FReferenceCollector& Collector) override;
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 	FString GetReferencerName() const override;
 #endif
 
@@ -56,7 +57,7 @@ private:
 	void InvokeEditorSpawn();
 	
 	// Editor object.
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 	TObjectPtr<class UELTEditor> Editor;
 #else
 	class UELTEditor* Editor;

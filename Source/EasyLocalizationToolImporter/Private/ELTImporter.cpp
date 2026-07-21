@@ -6,12 +6,12 @@
 #include "UObject/SavePackage.h"
 #include "CSVReader.h"
 #include "UObject/Package.h"
-#include "Runtime/Launch/Resources/Version.h"
+#include "ELTEngineVersionComparsion.h"
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
 #include "Misc/PackageName.h"
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 1))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,1,0)
 #include "AssetRegistry/AssetRegistryModule.h"
 #else
 #include "AssetRegistryModule.h"
@@ -62,7 +62,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 	// Prepare containers for localization informations we will use later.
 	TMap<FString, FTextLocalizationResource> LocReses; // Actual LocRes for each language. Will be used to save them to files.
 	TMap<FString, TSet<FString>> NamespaceToKeysMap; // List of keys for each  namespace (used for generating String Tables).
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 	TMap<FString, TMap<FString, FString>> NamespaceToKeysToNotesMap; // List of keys with dev notes for each namespace (used for generating String Tables with dev notes). 
 #endif
 
@@ -214,7 +214,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 		// Get the keys column. We know it's valid because we've already validated it.
 		const FCSVColumn& Keys = Columns[KeysColumn];
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8))
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 		// Gather Dev Notes if available
 		if (DevNotesColumn != INDEX_NONE)
 		{
@@ -417,7 +417,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 					{
 						ExistingStringTableAsset->RemoveFromRoot();
 					}
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 					ExistingStringTableAsset->MarkAsGarbage();
 #else
 					ExistingStringTableAsset->MarkPendingKill();
@@ -447,8 +447,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 			StringTableRef->SetNamespace(Namespace);
 			StringTableRef->ClearSourceStrings();
 
-#if (ENGINE_MAJOR_VERSION == 5)
-	#if (ENGINE_MINOR_VERSION >= 8)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0)
 			// For UE5.8 and newer add source strings to the String Table alongside with dev notes if they are available in the CSV.
 			TMap<FString, FString>* KeysToNotes = NamespaceToKeysToNotesMap.Find(Namespace);
 			for (const FString& Key : Keys)
@@ -464,13 +463,12 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 				StringTableRef->SetSourceString(FTextKey(Key), Key);
 #endif
 			}
-	#else
+#elif UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 			// For UE5.0 - UE5.7 add source strings to the String Table without dev notes.
 			for (const FString& Key : Keys)
 			{
 				StringTableRef->SetSourceString(FTextKey(Key), Key);
 			}
-	#endif
 #else
 			// For UE4 add source strings to the String Table, but with different function signature.
 			for (const FString& Key : Keys)
@@ -487,7 +485,7 @@ bool FELTImporter::GenerateLoc(	const TArray<FString>& CSVPaths,
 				SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
 				SaveArgs.Error = GError;
 
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 				if (UPackage::SavePackage(Package, StringTableAsset, *PackageFileName, SaveArgs) == false)
 #else
 				if (UPackage::SavePackage(Package, StringTableAsset, SaveArgs.TopLevelFlags, *PackageFileName, SaveArgs.Error) == false)

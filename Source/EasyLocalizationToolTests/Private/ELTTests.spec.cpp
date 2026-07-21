@@ -14,6 +14,7 @@
 #include "ELT.h"
 #include "ELTEditorUtils.h"
 #include "ELTBlueprintLibrary.h"
+#include "ELTEngineVersionComparsion.h"
 
 ELTTESTS_PRAGMA_DISABLE_OPTIMIZATION
 
@@ -61,7 +62,7 @@ public:
 	}
 };
 
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 #define SWITCH_LANG(_Lang) { \
 	bLangChanged = false; \
 	FTextLocalizationManager::Get().DisableGameLocalizationPreview(); \
@@ -113,7 +114,7 @@ const FString StringTableID = FPackageName::FilenameToLongPackageName(LocPath / 
 	); \
 }
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0) && WITH_EDITORONLY_DATA
 #define TEST_STRING_TABLE_DEVNOTE(_Namespace, _Key, _Expected) { \
 	GET_STRING_TABLE_NAME(_Namespace) \
 	bool bResult = false; \
@@ -182,7 +183,7 @@ BEGIN_DEFINE_SPEC(FELTTests, "EasyLocalizationTool.Tests", EAutomationTestFlags:
 FString LocName = TEXT("Game");
 FString LocPath = GIsEditor ? UELTEditorSettings::GetLocalizationPath() : TEXT("");
 FString CSVName = TEXT("CSVTest");
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 bool bLangChanged = false;
 FDelegateHandle OnLangChangedHandle;
 #endif
@@ -236,7 +237,7 @@ void FELTTests::Define()
 		BeforeEach([this]()
 		{
 			FELTAutomationCommon::MakeTestDirectory();
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 			OnLangChangedHandle = FTextLocalizationManager::Get().OnTextRevisionChangedEvent.AddLambda([this]()
 			{
 				bLangChanged = true;
@@ -247,7 +248,7 @@ void FELTTests::Define()
 		AfterEach([this]()
 		{
 			FELTAutomationCommon::CleanTestDirectory();
-#if (ENGINE_MAJOR_VERSION == 5)
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,0,0)
 			FTextLocalizationManager::Get().OnTextRevisionChangedEvent.Remove(OnLangChangedHandle);
 #endif
 		});
@@ -362,7 +363,7 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0) && WITH_EDITORONLY_DATA
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
 				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
@@ -411,7 +412,7 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0) && WITH_EDITORONLY_DATA
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
 				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
@@ -459,7 +460,7 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0) && WITH_EDITORONLY_DATA
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
 				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
@@ -507,7 +508,7 @@ void FELTTests::Define()
 				TEST_STRING_TABLE("fr", "Gameplay", "Health", "Sant");
 				TEST_STRING_TABLE("de", "Gameplay", "Health", "Gesundheit");
 
-#if ((ENGINE_MAJOR_VERSION == 5) && (ENGINE_MINOR_VERSION >= 8) && WITH_EDITORONLY_DATA)	
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5,8,0) && WITH_EDITORONLY_DATA
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "StartGame", "DevNote_1");
 				TEST_STRING_TABLE_DEVNOTE("MainMenu", "Settings", "DevNote_3");
 				TEST_STRING_TABLE_DEVNOTE("Gameplay", "Score", "DevNote_7");
